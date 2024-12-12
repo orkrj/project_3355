@@ -1,4 +1,4 @@
-package elice.webshopping.service.order;
+package elice.webshopping.repository.order;
 
 import elice.webshopping.domain.order.Order;
 import org.springframework.data.jpa.repository.JpaRepository;

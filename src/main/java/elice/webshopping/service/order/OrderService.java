@@ -1,4 +1,4 @@
-package elice.webshopping.repository.order;
+package elice.webshopping.service.order;
 
 import org.springframework.stereotype.Service;
 
