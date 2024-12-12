@@ -1,6 +1,7 @@
 package elice.webshopping.domain.order;
 
 import elice.webshopping.domain.common.BaseEntity;
+import elice.webshopping.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

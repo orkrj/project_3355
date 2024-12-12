@@ -15,15 +15,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "address_id")
     private Long addressId;
 
     @Column(length = 255)
     private String zipCode;
 
-    @Column(length = 255)
+    @Column(length = 255, name = "street_address")
     private String streetAddress;
 
-    @Column(length = 255)
+    @Column(length = 255, name = "detail_address")
     private String detailAddress;
 
     @Builder
