@@ -38,6 +38,9 @@ public class Category {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children = new ArrayList<>();
 
+//    @OneToMany(mappedBy = "category")
+//    private List<Product> products = new ArrayList<>()
+
     @Embedded
     private BaseEntity baseEntity;
 }
