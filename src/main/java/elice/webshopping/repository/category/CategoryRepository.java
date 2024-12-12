@@ -1,4 +1,4 @@
 package elice.webshopping.repository.category;
 
-public class CategoryService {
+public interface CategoryRepository {
 }
