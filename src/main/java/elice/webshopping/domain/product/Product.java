@@ -1,5 +1,6 @@
 package elice.webshopping.domain.product;
 
+import elice.webshopping.domain.category.Category;
 import elice.webshopping.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,9 +41,9 @@ public class Product {
     @Embedded
     private BaseEntity baseEntity;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "category_id")
-//    private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images = new ArrayList<>();

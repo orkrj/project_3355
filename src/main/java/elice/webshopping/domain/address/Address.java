@@ -1,6 +1,7 @@
 package elice.webshopping.domain.address;
 
 import elice.webshopping.domain.common.BaseEntity;
+import elice.webshopping.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,9 +38,9 @@ public class Address {
 
 
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Embedded
     private BaseEntity baseEntity;

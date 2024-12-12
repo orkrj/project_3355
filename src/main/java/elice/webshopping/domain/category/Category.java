@@ -1,6 +1,7 @@
 package elice.webshopping.domain.category;
 
 import elice.webshopping.domain.common.BaseEntity;
+import elice.webshopping.domain.product.Product;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -38,8 +39,8 @@ public class Category {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "category")
-//    private List<Product> products = new ArrayList<>()
+    @OneToMany(mappedBy = "category")
+    private List<Product> products = new ArrayList<>();
 
     @Embedded
     private BaseEntity baseEntity;
