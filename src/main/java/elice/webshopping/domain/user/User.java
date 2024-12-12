@@ -35,5 +35,4 @@ public class User implements UserDetails {
 
     @Embedded
     private BaseEntity baseEntity;
-
 }
