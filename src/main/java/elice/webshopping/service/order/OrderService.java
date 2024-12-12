@@ -1,9 +1,7 @@
 package elice.webshopping.service.order;
 
-import elice.webshopping.domain.order.Order;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository
-public interface OrderService extends JpaRepository<Order, Long> {
+@Service
+public class OrderService {
 }
