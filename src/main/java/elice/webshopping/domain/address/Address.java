@@ -1,6 +1,7 @@
 package elice.webshopping.domain.address;
 
 import elice.webshopping.domain.common.BaseEntity;
+import elice.webshopping.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "addresses")
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Getter
 public class Address {
@@ -33,14 +34,23 @@ public class Address {
     private User user;
 
     @Builder
-    public Address(String zipCode, String streetAddress, String detailAddress) {
+    public Address(String zipCode, String streetAddress, String detailAddress, User user) {
         this.zipCode = zipCode;
         this.streetAddress = streetAddress;
         this.detailAddress = detailAddress;
     }
 
-    @Embedded
-    private BaseEntity baseEntity;
+    public void update(String zipCode, String streetAddress, String detailAddress) {
+        this.zipCode = zipCode;
+        this.streetAddress = streetAddress;
+        this.detailAddress = detailAddress;
+    }
+
+//    @Embedded
+//    private BaseEntity baseEntity;
+
+
+
 
 
 }

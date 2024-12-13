@@ -4,6 +4,7 @@ import elice.webshopping.domain.address.Address;
 import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.repository.user.Role;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -11,7 +12,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,8 +21,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long user_id;
 
     @Column(nullable = false, unique = true)
@@ -43,8 +42,20 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+/*
     @Embedded
     private BaseEntity baseEntity;
+*/
+
+    @Builder
+    public User(String username, String password, String real_name, String email, String phone, Role role) {
+        this.username = username;
+        this.password = password;
+        this.real_name = real_name;
+        this.email = email;
+        this.phone = phone;
+        this.role = role;
+    }
 
     @OneToMany(mappedBy = "user")
     private List<Address> addressList = new ArrayList<>();
@@ -83,4 +94,7 @@ public class User implements UserDetails {
     public boolean isEnabled(){ //계정 사용 가능 여부
         return true;
     }
+
+
+
 }
