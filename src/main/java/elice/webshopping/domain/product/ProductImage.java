@@ -20,9 +20,12 @@ public class ProductImage {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    // setImageUrl 및 setImageType 메서드 추가
+    @Setter
     @Column(nullable = false, length = 255)
     private String imageUrl;
 
+    @Setter
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private ImageType imageType;
@@ -39,4 +42,5 @@ public class ProductImage {
                 .product(product)  // product 설정
                 .build();
     }
+
 }

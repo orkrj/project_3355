@@ -56,13 +56,18 @@ public class Product {
     private List<ProductImage> images = new ArrayList<>();
 
     public void addImage(ProductImage image) {
-        images.add(image);
+        if (this.images == null) {
+            this.images = new ArrayList<>();
+        }
+        this.images.add(image);
         image.setProduct(this);
     }
 
     public void removeImage(ProductImage image) {
-        images.remove(image);
-        image.setProduct(null);
+        if (image != null && this.images != null) {
+            images.remove(image);
+            image.setProduct(null);
+        }
     }
 
     public void update(String name, int price, String description, int stockQuantity) {
