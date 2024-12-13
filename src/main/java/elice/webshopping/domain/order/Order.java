@@ -3,19 +3,18 @@ package elice.webshopping.domain.order;
 import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.domain.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "orders")
-@Getter @Setter
+@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 // @EntityListeners(AuditingEntityListener.class)
@@ -64,4 +63,33 @@ public class Order {
     private LocalDateTime updatedAt;
 
     private LocalDateTime deletedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    public static Order of(
+            OrderRequestDto orderRequestDto,
+            ReceiverRequestDto receiverRequestDto,
+            User user,
+            Receiver receiver) {
+
+        return Order.builder()
+                .orderNumber(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")))
+                // 초 단위로 같은 주문은 보장 안 한다는 가정
+                .payment(orderRequestDto.payment())
+                .message(orderRequestDto.message())
+                .status(OrderStatus.ORDER_COMPLETED)
+                .totalPrice(orderRequestDto.totalPrice())
+                .payment(orderRequestDto.payment())
+                .user(user)
+                .receiver(receiver)
+                .build();
+    }
 }
