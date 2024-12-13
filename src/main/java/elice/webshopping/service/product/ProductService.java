@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,12 +84,13 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    // 5. 상품 삭제 (Delete)
+    // 5. 상품 삭제 (Soft Delete)
     public void deleteProduct(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        productRepository.delete(product);
+        // Soft delete 처리: deletedAt 값을 현재 시간으로 설정
+        productRepository.softDeleteProduct(productId, LocalDateTime.now());
     }
 
     // 헬퍼 메서드: Product -> ProductResponseDto 변환
