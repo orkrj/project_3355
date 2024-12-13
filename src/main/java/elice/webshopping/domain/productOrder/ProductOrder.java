@@ -3,17 +3,14 @@ package elice.webshopping.domain.productOrder;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.product.Product;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "products_orders")
-@Getter @Builder
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class productOrder {
+public class ProductOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

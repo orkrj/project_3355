@@ -1,6 +1,7 @@
 package elice.webshopping.domain.order;
 
 import elice.webshopping.domain.common.BaseEntity;
+import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -54,6 +57,9 @@ public class Order {
     @JoinColumn(name = "receiver_id", nullable = false)
     private Receiver receiver;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductOrder> productOrders = new ArrayList<>();
+
     // @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
@@ -76,20 +82,30 @@ public class Order {
 
     public static Order of(
             OrderRequestDto orderRequestDto,
-            ReceiverRequestDto receiverRequestDto,
             User user,
-            Receiver receiver) {
-
-        return Order.builder()
-                .orderNumber(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")))
-                // 초 단위로 같은 주문은 보장 안 한다는 가정
+            Receiver receiver,
+            List<ProductOrder> productOrders
+    ) {
+        Order order = Order.builder()
+                .orderNumber(generateOrderNumber())
                 .payment(orderRequestDto.payment())
                 .message(orderRequestDto.message())
                 .status(OrderStatus.ORDER_COMPLETED)
                 .totalPrice(orderRequestDto.totalPrice())
-                .payment(orderRequestDto.payment())
                 .user(user)
                 .receiver(receiver)
                 .build();
+
+        for (ProductOrder productOrder : productOrders) {
+            order.getProductOrders().add(productOrder);
+            productOrder.setOrder(order);
+        }
+
+        return order;
+    }
+
+    private static String generateOrderNumber() {
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+                + (int) (Math.random() * 1000);
     }
 }
