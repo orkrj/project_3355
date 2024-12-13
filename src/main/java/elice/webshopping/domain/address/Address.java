@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.catalina.User;
+import elice.webshopping.domain.user.User;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -28,19 +28,16 @@ public class Address {
     @Column(length = 255, name = "detail_address")
     private String detailAddress;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Builder
     public Address(String zipCode, String streetAddress, String detailAddress) {
         this.zipCode = zipCode;
         this.streetAddress = streetAddress;
         this.detailAddress = detailAddress;
     }
-
-
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
     @Embedded
     private BaseEntity baseEntity;

@@ -17,7 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByDeletedAtIsNull();
 
     // 상품 ID와 deletedAt이 null인 상품 조회
-    Optional<Product> findByIdAndDeletedAtIsNull(Long productId);
+    Optional<Product> findByproductIdAndDeletedAtIsNull(Long productId);
 
     // Soft delete: deletedAt 값을 현재 시간으로 업데이트
     @Modifying

@@ -32,7 +32,7 @@ public class ProductService {
     // 2. 상품 단건 조회 (Read)
     @Transactional(readOnly = true)
     public ProductResponseDto getProductById(Long productId) {
-        Product product = productRepository.findByIdAndDeletedAtIsNull(productId) // 삭제된 상품 제외
+        Product product = productRepository.findByproductIdAndDeletedAtIsNull(productId) // 삭제된 상품 제외
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         return convertToProductResponseDto(product);
     }
@@ -48,21 +48,13 @@ public class ProductService {
 
         // 메인 이미지 추가
         for (String url : request.getMainImageUrls()) {
-            ProductImage mainImage = ProductImage.builder()
-                    .imageUrl(url)
-                    .imageType(ProductImage.ImageType.MAIN)
-                    .product(product)
-                    .build();
+            ProductImage mainImage = ProductImage.createWithProduct(product, url, ProductImage.ImageType.MAIN);
             product.addImage(mainImage);
         }
 
         // 상세 이미지 추가
         for (String url : request.getDescriptionImageUrls()) {
-            ProductImage descriptionImage = ProductImage.builder()
-                    .imageUrl(url)
-                    .imageType(ProductImage.ImageType.DESCRIPTION)
-                    .product(product)
-                    .build();
+            ProductImage descriptionImage = ProductImage.createWithProduct(product, url, ProductImage.ImageType.DESCRIPTION);
             product.addImage(descriptionImage);
         }
 
@@ -74,29 +66,17 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-        product.setDescription(request.getDescription());
-        product.setStockQuantity(request.getStockQuantity());
+        product.update(request.getName(), request.getPrice(), request.getDescription(), request.getStockQuantity());
 
         // 기존 이미지 제거 및 새로운 이미지 추가
         product.getImages().clear();
-
         for (String url : request.getMainImageUrls()) {
-            ProductImage mainImage = ProductImage.builder()
-                    .imageUrl(url)
-                    .imageType(ProductImage.ImageType.MAIN)
-                    .product(product)
-                    .build();
+            ProductImage mainImage = ProductImage.createWithProduct(product, url, ProductImage.ImageType.MAIN);
             product.addImage(mainImage);
         }
 
         for (String url : request.getDescriptionImageUrls()) {
-            ProductImage descriptionImage = ProductImage.builder()
-                    .imageUrl(url)
-                    .imageType(ProductImage.ImageType.DESCRIPTION)
-                    .product(product)
-                    .build();
+            ProductImage descriptionImage = ProductImage.createWithProduct(product, url, ProductImage.ImageType.DESCRIPTION);
             product.addImage(descriptionImage);
         }
 

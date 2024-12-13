@@ -1,10 +1,12 @@
 package elice.webshopping.domain.product;
 
 import elice.webshopping.domain.category.Category;
+import elice.webshopping.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,11 +14,11 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "products")
-@Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Product {
 
     @Id
@@ -61,5 +63,12 @@ public class Product {
     public void removeImage(ProductImage image) {
         images.remove(image);
         image.setProduct(null);
+    }
+
+    public void update(String name, int price, String description, int stockQuantity) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.stockQuantity = stockQuantity;
     }
 }
