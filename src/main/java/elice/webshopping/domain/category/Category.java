@@ -5,6 +5,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,12 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @Table(name = "categories")
+@EntityListeners(AuditingEntityListener.class)
 public class Category {
 
     @Id
@@ -39,9 +41,29 @@ public class Category {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children = new ArrayList<>();
 
+
 //    @OneToMany(mappedBy = "category")
 //    private List<Product> products = new ArrayList<>()
 
 //    @Embedded
 //    private BaseEntity baseEntity;
+    public Category(String name) {
+        this.name = name;
+    }
+
+    public static Category from(String name){
+        return new Category(name);
+    }
+
+    public void addChild(Category child){
+        child.setParent(this);
+        this.children.add(child);
+    }
+
+    private void setParent(Category parent){
+        this.parent = parent;
+    }
+    public void linkToParent(Category parent){
+        this.setParent(parent);
+    }
 }

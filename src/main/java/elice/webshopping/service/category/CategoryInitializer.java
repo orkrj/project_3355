@@ -3,6 +3,7 @@ package elice.webshopping.service.category;
 import elice.webshopping.domain.category.Category;
 import elice.webshopping.repository.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryInitializer implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
@@ -27,20 +29,18 @@ public class CategoryInitializer implements CommandLineRunner {
 
         // 카테고리 저장
         for (CategoryData categoryData : categories) {
-            Category parentCategory = new Category();
-            parentCategory.setName(categoryData.getParentName());
-            categoryRepository.save(parentCategory);
+            Category parent = Category.from(categoryData.getParentName());
+            categoryRepository.save(parent);
 
             for (String childName : categoryData.getChildNames()) {
-                Category childCategory = new Category();
-                childCategory.setName(childName);
-                childCategory.setParent(parentCategory);
-                parentCategory.getChildren().add(childCategory);
-                categoryRepository.save(childCategory);
-            }
-        }
+                Category child = Category.from(childName);
 
-        System.out.println("Categories initialized.");
+                child.linkToParent(parent);
+                parent.addChild(child);
+                categoryRepository.save(child);
+            }
+            log.info("부모 테이블 :{}, 자식 개수 {}",parent.getName(),parent.getChildren().size());
+        }
     }
 
     // 내부 클래스 또는 별도 파일로 데이터 구조 정의

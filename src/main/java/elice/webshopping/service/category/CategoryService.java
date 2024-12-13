@@ -17,8 +17,7 @@ public class CategoryService {
     //부모를 저장하려면 => 이름, 부모ID
     public Category save(String name, Long parentId){
 
-        Category category = new Category();
-        category.setName(name);
+        Category category = Category.from(name);
 
         //자식 카테고리인 경우 부모설정
         if (parentId != null) {
@@ -26,15 +25,10 @@ public class CategoryService {
             Category parent = categoryRepository.findById(parentId)
                     .orElseThrow(() -> new IllegalArgumentException("부모 ID가 없습니다."));
 
-            parent.getChildren().add(category);
-            category.setParent(parent);
+            parent.addChild(category);
+            category.linkToParent(parent);
         }
         return categoryRepository.save(category);
     }
 
-
-
-    public void init(){
-
-    }
 }
