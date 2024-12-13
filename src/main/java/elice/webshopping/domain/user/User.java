@@ -1,6 +1,6 @@
 package elice.webshopping.domain.user;
 
-import elice.webshopping.domain.Address;
+//import elice.webshopping.domain.Address;
 import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.repository.user.Role;
 import jakarta.persistence.*;
@@ -46,10 +46,10 @@ public class User implements UserDetails {
     @Embedded
     private BaseEntity baseEntity;
 
-    /*
-    @OneToMany(mappedBy = "user")
-    private List<Address> addressList = new ArrayList<>();
-    */
+
+    //    @OneToMany(mappedBy = "user")
+//    private List<Address> addressList = new ArrayList<>();
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){  //사용자가 가진 권한 반환
