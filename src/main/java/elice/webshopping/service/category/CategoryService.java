@@ -13,9 +13,6 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-
-
-
     //자식을 저장하려면 => 이름, 부모ID
     //부모를 저장하려면 => 이름, 부모ID
     public Category save(String name, Long parentId){
