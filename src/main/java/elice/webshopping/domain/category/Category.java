@@ -17,9 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 @Table(name = "categories")
 public class Category {
@@ -41,6 +42,6 @@ public class Category {
 //    @OneToMany(mappedBy = "category")
 //    private List<Product> products = new ArrayList<>()
 
-    @Embedded
-    private BaseEntity baseEntity;
+//    @Embedded
+//    private BaseEntity baseEntity;
 }
