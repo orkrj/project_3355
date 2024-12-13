@@ -43,16 +43,19 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+
     @Embedded
     private BaseEntity baseEntity;
 
+
     @Builder
-    public User(String username, String password, String real_name, String email, String phone){
+    public User(String username, String password, String real_name, String email, String phone, Role role) {
         this.username = username;
         this.password = password;
         this.real_name = real_name;
         this.email = email;
         this.phone = phone;
+        this.role = role;
     }
 
     @OneToMany(mappedBy = "user")

@@ -2,6 +2,7 @@ package elice.webshopping.service.user;
 
 import elice.webshopping.domain.user.User;
 import elice.webshopping.domain.user.UserRequestDto;
+import elice.webshopping.repository.user.Role;
 import elice.webshopping.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +22,7 @@ public class UserService {
                 .real_name(userRequestDto.getReal_name())
                 .email(userRequestDto.getEmail())
                 .phone(userRequestDto.getPhone())
+                .role(Role.USER)
                 .build());
 
         return register.getUser_id();
