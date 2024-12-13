@@ -31,4 +31,11 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
+    public void update(String name, Long id){
+        Category category = categoryRepository.findById(id)
+                            .orElseThrow(() -> new IllegalArgumentException("해당 ID가 없습니다."));
+
+        category.update(name);
+    }
+
 }

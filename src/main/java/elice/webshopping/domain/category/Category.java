@@ -51,6 +51,11 @@ public class Category {
         this.name = name;
     }
 
+    public Category(String name, Long parentId) {
+        this.name = name;
+        this.id = parentId;
+    }
+
     public static Category from(String name){
         return new Category(name);
     }
@@ -65,5 +70,9 @@ public class Category {
     }
     public void linkToParent(Category parent){
         this.setParent(parent);
+    }
+
+    public void update(String name) {
+        this.name = name;
     }
 }
