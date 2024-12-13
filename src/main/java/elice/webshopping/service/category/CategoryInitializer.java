@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 public class CategoryInitializer implements CommandLineRunner {
 
-    private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
 
 
     @Override
@@ -30,14 +30,14 @@ public class CategoryInitializer implements CommandLineRunner {
         // 카테고리 저장
         for (CategoryData categoryData : categories) {
             Category parent = Category.from(categoryData.getParentName());
-            categoryService.save(parent.getName(), parent.getId());
+            categoryRepository.save(parent);
 
             for (String childName : categoryData.getChildNames()) {
                 Category child = Category.from(childName);
 
                 child.linkToParent(parent);
                 parent.addChild(child);
-                categoryService.save(child.getName(), parent.getId());
+                categoryRepository.save(child);
             }
             log.info("부모 테이블 :{}, 자식 개수 {}",parent.getName(),parent.getChildren().size());
         }
