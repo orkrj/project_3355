@@ -43,10 +43,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
+/*
     @Embedded
     private BaseEntity baseEntity;
-
+*/
 
     @Builder
     public User(String username, String password, String real_name, String email, String phone, Role role) {
