@@ -25,7 +25,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponseDto> getOrders() {
-        return List.of();
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getDeletedAt() == null)
+                .map()
+                .toList();
     }
 
     @Override
