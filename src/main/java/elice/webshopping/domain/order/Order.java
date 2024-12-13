@@ -7,14 +7,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
+// @EntityListeners(AuditingEntityListener.class)
 public class Order {
 
     @Id
@@ -36,8 +40,12 @@ public class Order {
     @Column(nullable = false)
     private int totalPrice;
 
-    @Embedded
-    private BaseEntity baseEntity;
+    /**
+     * TODO
+     * audit 가 안 됨 -> superclass 로 한 번 시도해볼 것
+     */
+//    @Embedded
+//    private BaseEntity baseEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -46,4 +54,14 @@ public class Order {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "receiver_id", nullable = false)
     private Receiver receiver;
+
+    // @CreatedDate
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
+    // @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    private LocalDateTime deletedAt;
 }
