@@ -3,6 +3,7 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
+import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.user.User;
 import elice.webshopping.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponseDto> getOrders() {
-        return orderRepository.findAll()
-                .stream()
-                .filter(order -> order.getDeletedAt() == null)
-                .map()
-                .toList();
+        return List.of();
+//        return orderRepository.findAll()
+//                .stream()
+//                .filter(order -> order.getDeletedAt() == null)
+//                .map(this::orderToOrderResponseDto)
+//                .toList();
     }
 
     @Override
@@ -49,6 +51,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(Long orderId) {
-
     }
+
+//    public OrderResponseDto orderToOrderResponseDto(Order order) {
+//        return new OrderResponseDto(
+//                order.getOrderNumber(),
+//                order.getPayment(),
+//                order.getMessage(),
+//                order.getStatus(),
+//                order.getTotalPrice(),
+//                order.getCreatedAt(),
+//                order.getReceiver(),
+//                order.getProductOrders()
+//        )
+//    }
+//
+//    public List<OrderResponseDto> to()
 }
