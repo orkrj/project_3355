@@ -15,7 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public Long save(UserRequestDto userRequestDto){ //회원가입
+    public String save(UserRequestDto userRequestDto){ //회원가입
         User register = userRepository.save(User.builder()
                 .username(userRequestDto.getUsername())
                 .password(bCryptPasswordEncoder.encode(userRequestDto.getPassword()))
@@ -25,7 +25,7 @@ public class UserService {
                 .role(Role.USER)
                 .build());
 
-        return register.getUser_id();
+        return register.getUsername();  //가입한 유저의 id 반환
 
     }
 
