@@ -1,6 +1,7 @@
 package elice.webshopping.domain.category;
 
 import elice.webshopping.domain.common.BaseEntity;
+import elice.webshopping.domain.product.Product;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
