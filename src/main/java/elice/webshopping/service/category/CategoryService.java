@@ -13,6 +13,9 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+
+
+
     //자식을 저장하려면 => 이름, 부모ID
     //부모를 저장하려면 => 이름, 부모ID
     public Category save(String name, Long parentId){
@@ -36,6 +39,10 @@ public class CategoryService {
                             .orElseThrow(() -> new IllegalArgumentException("해당 ID가 없습니다."));
 
         category.update(name);
+    }
+
+    public void delete(Long id){
+        categoryRepository.deleteById(id);
     }
 
 }
