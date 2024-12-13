@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "addresses")
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Getter
 public class Address {
@@ -29,18 +29,23 @@ public class Address {
     private String detailAddress;
 
     @Builder
-    public Address(String zipCode, String streetAddress, String detailAddress) {
+    public Address(String zipCode, String streetAddress, String detailAddress, User user) {
         this.zipCode = zipCode;
         this.streetAddress = streetAddress;
         this.detailAddress = detailAddress;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    public void update(String zipCode, String streetAddress, String detailAddress) {
+        this.zipCode = zipCode;
+        this.streetAddress = streetAddress;
+        this.detailAddress = detailAddress;
+    }
 
-    @Embedded
-    private BaseEntity baseEntity;
+//    @Embedded
+//    private BaseEntity baseEntity;
+
+
+
 
 
 }
