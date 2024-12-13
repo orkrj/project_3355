@@ -1,18 +1,15 @@
 package elice.webshopping.domain.product;
 
-import elice.webshopping.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Table(name = "products_images")
-@EntityListeners(AuditingEntityListener.class)
+@Builder
 public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,9 +25,6 @@ public class ProductImage {
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private ImageType imageType;
-
-    @Embedded
-    private BaseEntity baseEntity;
 
     public enum ImageType {
         MAIN, DESCRIPTION
