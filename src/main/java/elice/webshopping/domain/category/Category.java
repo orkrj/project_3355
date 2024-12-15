@@ -1,7 +1,6 @@
 package elice.webshopping.domain.category;
 
 import elice.webshopping.domain.common.BaseEntity;
-import elice.webshopping.domain.product.Product;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -19,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -46,7 +46,7 @@ public class Category {
 //    @OneToMany(mappedBy = "category")
 //    private List<Product> products = new ArrayList<>()
 
-//    @Embedded
+    //    @Embedded
 //    private BaseEntity baseEntity;
     public Category(String name) {
         this.name = name;
@@ -68,9 +68,6 @@ public class Category {
 
     private void setParent(Category parent){
         this.parent = parent;
-    }
-    public void linkToParent(Category parent){
-        this.setParent(parent);
     }
 
     public void update(String name) {

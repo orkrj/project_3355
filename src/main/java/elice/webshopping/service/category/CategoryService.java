@@ -26,14 +26,13 @@ public class CategoryService {
                     .orElseThrow(() -> new IllegalArgumentException("부모 ID가 없습니다."));
 
             parent.addChild(category);
-            category.linkToParent(parent);
         }
         return categoryRepository.save(category);
     }
 
     public void update(String name, Long id){
         Category category = categoryRepository.findById(id)
-                            .orElseThrow(() -> new IllegalArgumentException("해당 ID가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID가 없습니다."));
 
         category.update(name);
     }
