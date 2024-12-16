@@ -14,4 +14,18 @@ public record OrderResponseDto (
         LocalDateTime createdAt,
         ReceiverResponseDto receiver,
         List<ProductOrderResponseDto> productOrdersResponseDto
-) {}
+) {
+
+    public static OrderResponseDto from(Order order) {
+        return new OrderResponseDto(
+                order.getOrderNumber(),
+                order.getPayment(),
+                order.getMessage(),
+                order.getStatus(),
+                order.getTotalPrice(),
+                order.getCreatedAt(),
+                ReceiverResponseDto.from(order),
+                ProductOrderResponseDto.from(order)
+        );
+    }
+}
