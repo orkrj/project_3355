@@ -26,12 +26,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponseDto> getOrders() {
-        return List.of();
-//        return orderRepository.findAll()
-//                .stream()
-//                .filter(order -> order.getDeletedAt() == null)
-//                .map(this::orderToOrderResponseDto)
-//                .toList();
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getDeletedAt() == null)
+                .map(OrderResponseDto::from)
+                .toList();
     }
 
     @Override
@@ -53,18 +52,5 @@ public class OrderServiceImpl implements OrderService {
     public void deleteOrder(Long orderId) {
     }
 
-//    public OrderResponseDto orderToOrderResponseDto(Order order) {
-//        return new OrderResponseDto(
-//                order.getOrderNumber(),
-//                order.getPayment(),
-//                order.getMessage(),
-//                order.getStatus(),
-//                order.getTotalPrice(),
-//                order.getCreatedAt(),
-//                order.getReceiver(),
-//                order.getProductOrders()
-//        )
-//    }
-//
 //    public List<OrderResponseDto> to()
 }
