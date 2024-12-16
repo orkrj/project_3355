@@ -24,6 +24,9 @@ public interface OrderService {
     //== 주문 수정 ==//
     public OrderResponseDto updateOrder(Long orderId, OrderRequestDto orderRequestDto);
 
-    //== 주문 삭제 ==//
+    //== 주문 취소: 유저 ==//
+    public void cancelOrder(Long orderId);
+
+    //== 주문 삭제: 관리자 ==//
     public void deleteOrder(Long orderId);
 }

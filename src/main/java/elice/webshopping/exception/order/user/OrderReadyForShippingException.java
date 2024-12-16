@@ -1,4 +1,4 @@
-package elice.webshopping.exception.order;
+package elice.webshopping.exception.order.user;
 
 import elice.webshopping.domain.order.OrderStatus;
 

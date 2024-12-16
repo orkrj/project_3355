@@ -84,6 +84,7 @@ class OrderServiceImplTest {
         verify(orderRepository, times(1)).findById(1L);
     }
 
+
     private User givenMockUser() {
         return Mockito.mock(User.class);
     }
@@ -121,7 +122,7 @@ class OrderServiceImplTest {
                         .orderNumber("202412161200000001")
                         .payment("CARD")
                         .message("getOrders 1")
-                        .status(OrderStatus.ORDER_COMPLETED)
+                        .status(OrderStatus.ORDERED)
                         .totalPrice(5000)
                         .user(mockUser)
                         .receiver(mockReceiver)
@@ -135,7 +136,7 @@ class OrderServiceImplTest {
                         .orderNumber("202412161200000002")
                         .payment("CASH")
                         .message("getOrders 2")
-                        .status(OrderStatus.ORDER_COMPLETED)
+                        .status(OrderStatus.ORDERED)
                         .totalPrice(10000)
                         .user(mockUser)
                         .receiver(mockReceiver)
@@ -149,7 +150,7 @@ class OrderServiceImplTest {
                         .orderNumber("202412161200000003")
                         .payment("CASH")
                         .message("getOrders 3")
-                        .status(OrderStatus.ORDER_COMPLETED)
+                        .status(OrderStatus.ORDERED)
                         .totalPrice(10000)
                         .user(mockUser)
                         .receiver(mockReceiver)
@@ -167,7 +168,7 @@ class OrderServiceImplTest {
                 .orderNumber("202412161200000001")
                 .payment("CARD")
                 .message("getOrderEntityById")
-                .status(OrderStatus.ORDER_COMPLETED)
+                .status(OrderStatus.ORDERED)
                 .totalPrice(10000)
                 .user(Mockito.mock(User.class))
                 .receiver(Mockito.mock(Receiver.class))

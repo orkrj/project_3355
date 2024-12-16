@@ -3,17 +3,14 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
-import elice.webshopping.domain.order.OrderStatus;
-import elice.webshopping.domain.productOrder.ProductOrder;
-import elice.webshopping.domain.user.User;
-import elice.webshopping.exception.order.OrderReadyForShippingException;
+import elice.webshopping.exception.order.admin.OrderNotCanceledException;
+import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(Long orderId) {
+    public void cancelOrder(Long orderId) {
         Order order = getOrderEntityById(orderId);
         if (order.getStatus().orderCanBeDeleted()) {
             order.deleteOrder();
@@ -63,5 +60,18 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-//    public List<OrderResponseDto> to()
+    @Override
+    public void deleteOrder(Long orderId) {
+        /** TODO
+         * 역할 필요: ADMIN
+         * 직권 취소도 고려해야 함
+         */
+
+        Order order = getOrderEntityById(orderId);
+        if (order.getDeletedAt() != null) {
+            orderRepository.deleteById(orderId);
+        } else {
+            throw new OrderNotCanceledException(orderId);
+        }
+    }
 }
