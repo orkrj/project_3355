@@ -111,5 +111,6 @@ public class Order {
 
     public void deleteOrder() {
         this.deletedAt = LocalDateTime.now();
+        this.status = OrderStatus.CANCELED;
     }
 }
