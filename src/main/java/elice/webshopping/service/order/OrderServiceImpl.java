@@ -48,7 +48,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getOrderEntityById(Long orderId) {
-        return null;
+        return orderRepository.findById(orderId).filter(order -> order.getDeletedAt() == null)
+                .orElseThrow(() -> new NotFoundException("Order not found"));
     }
 
     @Override
