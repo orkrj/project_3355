@@ -3,14 +3,14 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
-import elice.webshopping.domain.productOrder.ProductOrder;
-import elice.webshopping.domain.user.User;
+import elice.webshopping.exception.order.admin.OrderNotCanceledException;
+import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,22 +26,29 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponseDto> getOrders() {
-        return List.of();
-//        return orderRepository.findAll()
-//                .stream()
-//                .filter(order -> order.getDeletedAt() == null)
-//                .map(this::orderToOrderResponseDto)
-//                .toList();
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getDeletedAt() == null)
+                .map(OrderResponseDto::from)
+                .toList();
     }
 
     @Override
-    public OrderResponseDto getOrderById(Long orderId) {
-        return null;
+    public OrderResponseDto getOrderResponseDtoById(Long orderId) {
+        Order findOrder = getOrderEntityById(orderId);
+        return OrderResponseDto.from(findOrder);
     }
 
     @Override
     public Order getOrderEntityById(Long orderId) {
-        return null;
+        return orderRepository.findById(orderId).filter(order -> order.getDeletedAt() == null)
+                .orElseThrow(() -> new NotFoundException("Order " + orderId + " not found"));
+    }
+
+    @Override
+    public Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order " + orderId + " not found"));
     }
 
     @Override
@@ -50,21 +57,27 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(Long orderId) {
+    public void cancelOrder(Long orderId) {
+        Order order = getOrderEntityById(orderId);
+        if (order.getStatus().orderCanBeDeleted()) {
+            order.cancelOrder();
+        } else {
+            throw new OrderReadyForShippingException(order.getStatus(), order.getOrderNumber());
+        }
     }
 
-//    public OrderResponseDto orderToOrderResponseDto(Order order) {
-//        return new OrderResponseDto(
-//                order.getOrderNumber(),
-//                order.getPayment(),
-//                order.getMessage(),
-//                order.getStatus(),
-//                order.getTotalPrice(),
-//                order.getCreatedAt(),
-//                order.getReceiver(),
-//                order.getProductOrders()
-//        )
-//    }
-//
-//    public List<OrderResponseDto> to()
+    @Override
+    public void deleteOrder(Long orderId) {
+        /** TODO
+         * 역할 필요: ADMIN
+         * 직권 취소도 고려해야 함
+         */
+
+        Order order = getOrderEntityByIdIncludeDeletedAtIsNotNull(orderId);
+        if (order.getDeletedAt() != null) {
+            orderRepository.deleteById(orderId);
+        } else {
+            throw new OrderNotCanceledException(orderId);
+        }
+    }
 }

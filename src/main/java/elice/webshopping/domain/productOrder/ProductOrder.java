@@ -29,11 +29,4 @@ public class ProductOrder {
 
     @Column(nullable = false)
     private int price;
-
-    public static ProductOrderResponseDto to(ProductOrder productOrder) {
-        return new ProductOrderResponseDto(
-                productOrder.getProductOrderId(),
-                productOrder.getQuantity()
-        );
-    }
 }
