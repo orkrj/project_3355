@@ -3,8 +3,10 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
+import elice.webshopping.domain.order.OrderStatus;
 import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.user.User;
+import elice.webshopping.exception.order.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(Long orderId) {
+        Order order = getOrderEntityById(orderId);
+        if (order.getStatus() == OrderStatus.PENDING || order.getStatus() == OrderStatus.ORDERED) {
+            order.deleteOrder();
+        } else {
+            throw new OrderReadyForShippingException(order.getStatus(), order.getOrderNumber());
+        }
     }
 
 //    public List<OrderResponseDto> to()

@@ -90,7 +90,7 @@ public class Order {
                 .orderNumber(generateOrderNumber())
                 .payment(orderRequestDto.payment())
                 .message(orderRequestDto.message())
-                .status(OrderStatus.ORDER_COMPLETED)
+                .status(OrderStatus.ORDERED)
                 .totalPrice(orderRequestDto.totalPrice())
                 .user(user)
                 .receiver(receiver)
@@ -107,5 +107,9 @@ public class Order {
     private static String generateOrderNumber() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
                 + (int) (Math.random() * 1000);
+    }
+
+    public void deleteOrder() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
