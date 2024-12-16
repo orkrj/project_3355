@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDto getOrderById(Long orderId) {
+    public OrderResponseDto getOrderResponseDtoById(Long orderId) {
         Order findOrder = getOrderEntityById(orderId);
         return OrderResponseDto.from(findOrder);
     }

@@ -16,7 +16,7 @@ public interface OrderService {
     public List<OrderResponseDto> getOrders();
 
     //== 주문 단건 조회 ==//
-    public OrderResponseDto getOrderById(Long orderId);
+    public OrderResponseDto getOrderResponseDtoById(Long orderId);
 
     //== 비즈니스 로직 내 사용할 단건 조회 ==//
     public Order getOrderEntityById(Long orderId);
