@@ -8,6 +8,7 @@ import elice.webshopping.domain.user.User;
 import elice.webshopping.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +36,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseDto getOrderById(Long orderId) {
-        return null;
+        Order findOrder = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+
+        if (findOrder.getDeletedAt() == null) {
+            return OrderResponseDto.from(findOrder);
+        } else {
+            throw new NotFoundException("Order not found");
+        }
     }
 
     @Override
