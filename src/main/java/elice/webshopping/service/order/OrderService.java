@@ -21,6 +21,9 @@ public interface OrderService {
     //== 비즈니스 로직 내 사용할 단건 조회 ==//
     public Order getOrderEntityById(Long orderId);
 
+    //== 관리자 삭제를 위해 deletedAt != null 인 주문까지 조회 ==//
+    public Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId);
+
     //== 주문 수정 ==//
     public OrderResponseDto updateOrder(Long orderId, OrderRequestDto orderRequestDto);
 

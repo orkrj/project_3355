@@ -46,6 +46,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order " + orderId + " not found"));
+    }
+
+    @Override
     public OrderResponseDto updateOrder(Long orderId, OrderRequestDto orderRequestDto) {
         return null;
     }
@@ -54,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
     public void cancelOrder(Long orderId) {
         Order order = getOrderEntityById(orderId);
         if (order.getStatus().orderCanBeDeleted()) {
-            order.deleteOrder();
+            order.cancelOrder();
         } else {
             throw new OrderReadyForShippingException(order.getStatus(), order.getOrderNumber());
         }
@@ -67,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
          * 직권 취소도 고려해야 함
          */
 
-        Order order = getOrderEntityById(orderId);
+        Order order = getOrderEntityByIdIncludeDeletedAtIsNotNull(orderId);
         if (order.getDeletedAt() != null) {
             orderRepository.deleteById(orderId);
         } else {
