@@ -1,7 +1,9 @@
 package elice.webshopping.service.category;
 
 import elice.webshopping.domain.category.Category;
+import elice.webshopping.domain.product.Product;
 import elice.webshopping.repository.category.CategoryRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,4 +43,7 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
+    public List<Product> findProductBy(String categoryName) {
+        return categoryRepository.findProductBy(categoryName);
+    }
 }
