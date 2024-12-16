@@ -36,20 +36,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseDto getOrderById(Long orderId) {
-        Order findOrder = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundException("Order not found"));
-
-        if (findOrder.getDeletedAt() == null) {
-            return OrderResponseDto.from(findOrder);
-        } else {
-            throw new NotFoundException("Order not found");
-        }
+        Order findOrder = getOrderEntityById(orderId);
+        return OrderResponseDto.from(findOrder);
     }
 
     @Override
     public Order getOrderEntityById(Long orderId) {
         return orderRepository.findById(orderId).filter(order -> order.getDeletedAt() == null)
-                .orElseThrow(() -> new NotFoundException("Order not found"));
+                .orElseThrow(() -> new NotFoundException("Order " + orderId + " not found"));
     }
 
     @Override
