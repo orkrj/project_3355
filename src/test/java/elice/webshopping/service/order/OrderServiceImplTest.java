@@ -7,6 +7,7 @@ import elice.webshopping.domain.order.Receiver;
 import elice.webshopping.domain.product.Product;
 import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.user.User;
+import elice.webshopping.exception.order.admin.OrderNotCanceledException;
 import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -111,6 +112,35 @@ class OrderServiceImplTest {
         // when, then
         assertThrows(OrderReadyForShippingException.class, () -> orderService.cancelOrder(1L));
         verify(orderRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("주문 삭제: 주문 삭제 가능")
+    void shouldBeDeleted_whenDeleteOrder() {
+
+        // given
+        Order mockOrder = givenMockOrder(true, true);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+
+        // when
+        orderService.deleteOrder(1L);
+
+        // then
+        assertThrows(NotFoundException.class, () -> orderService.getOrderEntityById(1L));
+        verify(orderRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("주문 삭제: 주문 취소 전, 주문 삭제 불가능")
+    void shouldThrowException_whenDeletedAtIsNull() {
+
+        // given
+        Order mockOrder = givenMockOrder(false, true);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+
+        // when, then
+        assertThrows(OrderNotCanceledException.class, () -> orderService.deleteOrder(1L));
+        verify(orderRepository, times(0)).deleteById(1L);
     }
 
     private User givenMockUser() {
