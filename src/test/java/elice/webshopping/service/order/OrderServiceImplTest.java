@@ -37,9 +37,8 @@ class OrderServiceImplTest {
     @DisplayName("주문 전체 조회")
     void getOrdersReturnNonDeletedOrders_WhenGetOrdersIsCalled() {
 
-        // given
+        // givenß
         List<Order> mockOrders = givenMockOrders();
-
         given(orderRepository.findAll()).willReturn(mockOrders);
 
         // when
