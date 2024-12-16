@@ -1,5 +1,6 @@
 package elice.webshopping.domain.category;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.domain.product.Product;
 import jakarta.persistence.CascadeType;
@@ -41,6 +42,7 @@ public class Category {
     private Category parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Category> children = new ArrayList<>();
 
 

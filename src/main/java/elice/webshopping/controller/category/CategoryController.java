@@ -1,49 +1,77 @@
 package elice.webshopping.controller.category;
 
+import elice.webshopping.domain.category.Category;
+import elice.webshopping.domain.category.CategoryRequestDto;
 import elice.webshopping.domain.product.Product;
 import elice.webshopping.service.category.CategoryService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/category")
+@RestController
+@RequestMapping("/category")
 @RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    // /category/코트/개수
+    //사용자 :user
     //카테고리 조회
     @GetMapping("{categoryName}")
-    public void findProductBy(String categoryName){
+    public ResponseEntity<List<Product>> findProductBy(String categoryName){
 
         List<Product> product = categoryService.findProductBy(categoryName);
-
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
+
+    //사용자 :admin
     //카테고리 생성
     @PostMapping("create")
-    public void createCategory(){
+    public String create(@Valid CategoryRequestDto categoryRequestDto, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            //오류발생 및 ControllerAdvice로 처리할 예정
+        }
+        categoryService.save(categoryRequestDto.getName(), categoryRequestDto.getParentId());
 
+        //리다이렉트가 맞나? 비동기 처리해야하지 않나?
+        return "redirect:/category/detail";
     }
+
+    //카테고리 상세페이지
+    @GetMapping ("detail")
+    public ResponseEntity<List<Category>> detail(){
+        List<Category> categories = categoryService.findAll();
+
+        //categorieResponseDto 생성해야함
+        return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
+
 
     //카테고리 수정
     @PutMapping("update/{id}")
-    public void updateCategory(){
+    public void update(){
 
     }
 
     //카테고리 삭제
     @DeleteMapping("delete/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteCategory(@PathVariable long categoryId){
+    @ResponseStatus(HttpStatus.OK) //본문이 필요하지 않으니 ResponseStatus 사용
+    public void delete(@PathVariable long categoryId){
         categoryService.delete(categoryId);
     }
 }
