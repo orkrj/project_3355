@@ -15,9 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
@@ -34,8 +36,8 @@ class OrderServiceImplTest {
     private OrderServiceImpl orderService;
 
     @Test
-    @DisplayName("주문 전체 조회")
-    void getOrdersReturnNonDeletedOrders_WhenGetOrdersIsCalled() {
+    @DisplayName("주문 전체 조회: 삭제되지 않은 주문만")
+    void shouldReturnAllNonDeletedOrders() {
 
         // given
         List<Order> mockOrders = givenMockOrders();
@@ -49,6 +51,37 @@ class OrderServiceImplTest {
         assertEquals("202412161200000001", orders.get(0).orderNumber());
         assertEquals("CASH", orders.get(1).payment());
         verify(orderRepository, times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("주문 단건 조회: 삭제되지 않은 경우")
+    void shouldReturnNonDeletedOrderEntityById() {
+
+        // given
+        Order mockOrder = givenMockOrder(false);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+
+        // when
+        Order order = orderService.getOrderEntityById(1L);
+
+        // then
+        assertEquals(1, order.getOrderId());
+        assertEquals("202412161200000001", order.getOrderNumber());
+        assertEquals("CARD", order.getPayment());
+        verify(orderRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("주문 단건 조회: 삭제된 경우 예외 발생")
+    void shouldThrowException_whenGetDeletedOrderEntityById() {
+
+        // given
+        Order mockOrder = givenMockOrder(true);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+
+        // when, then
+        assertThrows(NotFoundException.class, () -> orderService.getOrderEntityById(1L));
+        verify(orderRepository, times(1)).findById(1L);
     }
 
     private User givenMockUser() {
@@ -68,7 +101,6 @@ class OrderServiceImplTest {
 
     private ProductOrder givenMockProductOrder() {
         ProductOrder mockProductOrder = Mockito.mock(ProductOrder.class);
-
         Product mockProduct = Mockito.mock(Product.class);
 
         Mockito.when(mockProduct.getProductId()).thenReturn(1L);
@@ -88,7 +120,7 @@ class OrderServiceImplTest {
                         .orderId(1L)
                         .orderNumber("202412161200000001")
                         .payment("CARD")
-                        .message("Test 1")
+                        .message("getOrders 1")
                         .status(OrderStatus.ORDER_COMPLETED)
                         .totalPrice(5000)
                         .user(mockUser)
@@ -102,7 +134,7 @@ class OrderServiceImplTest {
                         .orderId(2L)
                         .orderNumber("202412161200000002")
                         .payment("CASH")
-                        .message("Test 2")
+                        .message("getOrders 2")
                         .status(OrderStatus.ORDER_COMPLETED)
                         .totalPrice(10000)
                         .user(mockUser)
@@ -116,7 +148,7 @@ class OrderServiceImplTest {
                         .orderId(3L)
                         .orderNumber("202412161200000003")
                         .payment("CASH")
-                        .message("Test 3")
+                        .message("getOrders 3")
                         .status(OrderStatus.ORDER_COMPLETED)
                         .totalPrice(10000)
                         .user(mockUser)
@@ -127,5 +159,22 @@ class OrderServiceImplTest {
                         .deletedAt(LocalDateTime.now())
                         .build()
         );
+    }
+
+    private Order givenMockOrder(boolean isDeleted) {
+        return Order.builder()
+                .orderId(1L)
+                .orderNumber("202412161200000001")
+                .payment("CARD")
+                .message("getOrderEntityById")
+                .status(OrderStatus.ORDER_COMPLETED)
+                .totalPrice(10000)
+                .user(Mockito.mock(User.class))
+                .receiver(Mockito.mock(Receiver.class))
+                .productOrders(List.of(Mockito.mock(ProductOrder.class)))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .deletedAt(isDeleted ? LocalDateTime.now() : null)
+                .build();
     }
 }
