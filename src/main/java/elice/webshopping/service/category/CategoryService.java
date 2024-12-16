@@ -37,6 +37,7 @@ public class CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID가 없습니다."));
 
         category.update(name);
+        categoryRepository.save(category);
     }
 
     public void delete(Long id){
