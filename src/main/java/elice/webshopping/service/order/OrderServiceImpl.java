@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrder(Long orderId) {
         Order order = getOrderEntityById(orderId);
-        if (order.getStatus() == OrderStatus.PENDING || order.getStatus() == OrderStatus.ORDERED) {
+        if (order.getStatus().orderCanBeDeleted()) {
             order.deleteOrder();
         } else {
             throw new OrderReadyForShippingException(order.getStatus(), order.getOrderNumber());
