@@ -1,8 +1,9 @@
 package elice.webshopping.domain.order;
 
 public enum OrderStatus {
-    ORDER_COMPLETED,
+    PENDING,
+    ORDERED,
     SHIPPING,
     DELIVERED,
-    ORDER_CANCELED
+    CANCELED
 }
