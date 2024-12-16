@@ -7,6 +7,7 @@ import elice.webshopping.domain.order.Receiver;
 import elice.webshopping.domain.product.Product;
 import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.user.User;
+import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ class OrderServiceImplTest {
     void shouldReturnNonDeletedOrderEntityById() {
 
         // given
-        Order mockOrder = givenMockOrder(false);
+        Order mockOrder = givenMockOrder(false, true);
         given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
 
         // when
@@ -76,7 +77,7 @@ class OrderServiceImplTest {
     void shouldThrowException_whenGetDeletedOrderEntityById() {
 
         // given
-        Order mockOrder = givenMockOrder(true);
+        Order mockOrder = givenMockOrder(true, false);
         given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
 
         // when, then
@@ -84,6 +85,33 @@ class OrderServiceImplTest {
         verify(orderRepository, times(1)).findById(1L);
     }
 
+    @Test
+    @DisplayName("주문 취소: 주문 취소 가능, 조회시 예외 발생")
+    void shouldSetDeletedAt_whenCancelOrder() {
+
+        // given
+        Order mockOrder = givenMockOrder(false, true);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+
+        // when
+        orderService.cancelOrder(1L);
+
+        // then
+        assertNotNull(mockOrder.getDeletedAt());
+        verify(orderRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("주문 취소: 주문 취소 불가능, 예외 발생")
+    void shouldThrowException_whenOrderCanNotBeDeleted() {
+        // given
+        Order mockOrder = givenMockOrder(false, false);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+
+        // when, then
+        assertThrows(OrderReadyForShippingException.class, () -> orderService.cancelOrder(1L));
+        verify(orderRepository, times(1)).findById(1L);
+    }
 
     private User givenMockUser() {
         return Mockito.mock(User.class);
@@ -162,13 +190,13 @@ class OrderServiceImplTest {
         );
     }
 
-    private Order givenMockOrder(boolean isDeleted) {
+    private Order givenMockOrder(boolean isDeleted, boolean canBeCanceled) {
         return Order.builder()
                 .orderId(1L)
                 .orderNumber("202412161200000001")
                 .payment("CARD")
                 .message("getOrderEntityById")
-                .status(OrderStatus.ORDERED)
+                .status(canBeCanceled ? OrderStatus.ORDERED : OrderStatus.SHIPPING)
                 .totalPrice(10000)
                 .user(Mockito.mock(User.class))
                 .receiver(Mockito.mock(Receiver.class))
