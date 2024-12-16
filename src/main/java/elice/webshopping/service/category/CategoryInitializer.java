@@ -14,8 +14,7 @@ import java.util.List;
 @Slf4j
 public class CategoryInitializer implements CommandLineRunner {
 
-    private final CategoryRepository categoryRepository;
-
+    private final CategoryService categoryService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -29,17 +28,12 @@ public class CategoryInitializer implements CommandLineRunner {
 
         // 카테고리 저장
         for (CategoryData categoryData : categories) {
-            Category parent = Category.from(categoryData.getParentName());
-            categoryRepository.save(parent);
+            Category parent = categoryService.save(categoryData.getParentName(), null);
+
 
             for (String childName : categoryData.getChildNames()) {
-                Category child = Category.from(childName);
-
-                child.linkToParent(parent);
-                parent.addChild(child);
-                categoryRepository.save(child);
+                categoryService.save(childName, parent.getId());
             }
-            log.info("부모 테이블 :{}, 자식 개수 {}",parent.getName(),parent.getChildren().size());
         }
     }
 
