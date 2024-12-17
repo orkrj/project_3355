@@ -28,7 +28,17 @@ public class ReceiverServiceImpl implements ReceiverService {
 
     @Override
     public ReceiverResponseDto updateReceiver(Long receiverId, ReceiverRequestDto receiverRequestDto) {
-        return null;
+        Receiver findReceiver = findReceiverById(receiverId);
+        return ReceiverResponseDto.from(applyUpdate(receiverRequestDto, findReceiver));
     }
 
+    private Receiver applyUpdate(ReceiverRequestDto receiverRequestDto, Receiver targetReceiver) {
+        targetReceiver.setName(receiverRequestDto.name());
+        targetReceiver.setPhoneNumber(receiverRequestDto.phoneNumber());
+        targetReceiver.setZipCode(receiverRequestDto.zipCode());
+        targetReceiver.setStreetAddress(receiverRequestDto.streetAddress());
+        targetReceiver.setDetailAddress(receiverRequestDto.detailAddress());
+
+        return targetReceiver;
+    }
 }
