@@ -29,5 +29,16 @@ public class Receiver {
     private String detailAddress;
 
     // 주문에서 받는 사람을 불러오는 것만 필요하니 단방향으로 설계
-    // 받는 사람에서 주문 조회 x
+    // 받는 사람으로 주문 조회 불가
+
+    public static Receiver from(ReceiverRequestDto receiverRequestDto) {
+        Receiver receiver = new Receiver();
+        receiver.setName(receiver.getName());
+        receiver.setPhoneNumber(receiver.getPhoneNumber());
+        receiver.setZipCode(receiver.getZipCode());
+        receiver.setStreetAddress(receiver.getStreetAddress());
+        receiver.setDetailAddress(receiver.getDetailAddress());
+
+        return receiver;
+    }
 }
