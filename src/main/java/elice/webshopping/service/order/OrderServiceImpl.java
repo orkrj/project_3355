@@ -50,15 +50,11 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new NotFoundException("Order " + orderId + " not found"));
     }
 
-    @Override
     /**
      * 주문 수정 - 사용자는 주문 완료 후 배송이 시작되기 전까지 주문 정보를 수정할 수 있다.
      * -> 결제 기능이 들어가면 주문 수정이 불가능함 -> 환불(주문 취소) => 재구매 시스템임
      * 따라서, 배송 전이라면 배송 정보만 수정하는 게 좋아보임
      */
-    public OrderResponseDto updateOrder(Long orderId, OrderRequestDto orderRequestDto) {
-        return null;
-    }
 
     @Override
     public void cancelOrder(Long orderId) {
