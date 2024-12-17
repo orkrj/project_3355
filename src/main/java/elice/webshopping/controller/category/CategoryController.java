@@ -35,6 +35,8 @@ public class CategoryController {
     public ResponseEntity<List<Product>> findProductBy(String categoryName){
 
         List<Product> product = categoryService.findProductBy(categoryName);
+
+        //null 조회시 null을 반환하는게 아닌 빈리스트 배열을 반환하도록
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
@@ -46,7 +48,7 @@ public class CategoryController {
     public ResponseEntity<List<CategoryDto>> detail(){
         List<CategoryDto> CategoryDtos = categoryService.findAll();
 
-        //categorieResponseDto 생성해야함
+        //categorieResponseDto 생성해야함 => CategoryDto으로 요청 및 응답 동시 처리
         return new ResponseEntity<>(CategoryDtos, HttpStatus.OK);
     }
 
