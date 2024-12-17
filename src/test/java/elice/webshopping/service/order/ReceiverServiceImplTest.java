@@ -30,12 +30,11 @@ class ReceiverServiceImplTest {
     void createReceiver() {
 
         // given
-        ReceiverRequestDto receiverRequestDto = givenRequestReceiverDto();
-        Receiver receiver = Receiver.from(receiverRequestDto);
+        Receiver receiver = givenReceiver();
         given(receiverRepository.save(any())).willReturn(receiver);
 
         // when
-        ReceiverResponseDto receiverResponseDto = receiverService.createReceiver(receiverRequestDto);
+        ReceiverResponseDto receiverResponseDto = receiverService.createReceiver(givenRequestReceiverDto());
 
         // then
         assertEquals("test", receiverResponseDto.name());
@@ -51,8 +50,7 @@ class ReceiverServiceImplTest {
     void findReceiverById() {
 
         // given
-        ReceiverRequestDto receiverRequestDto = givenRequestReceiverDto();
-        Receiver receiver = Receiver.from(receiverRequestDto);
+        Receiver receiver = givenReceiver();
         receiver.setReceiverId(1L);
         given(receiverRepository.findById(receiver.getReceiverId())).willReturn(Optional.of(receiver));
 
@@ -87,5 +85,9 @@ class ReceiverServiceImplTest {
                 "Seonggyungwan-ro",
                 "25-2"
         );
+    }
+
+    private Receiver givenReceiver() {
+        return Receiver.from(givenRequestReceiverDto());
     }
 }
