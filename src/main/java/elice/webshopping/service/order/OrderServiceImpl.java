@@ -3,8 +3,8 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
-import elice.webshopping.exception.order.admin.OrderNotCanceledException;
-import elice.webshopping.exception.order.user.OrderReadyForShippingException;
+import elice.webshopping.exception.order.admin.OrderNotCanceledExceptionService;
+import elice.webshopping.exception.order.user.OrderReadyForShippingExceptionService;
 import elice.webshopping.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -62,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus().canBeCanceled()) {
             order.cancelOrder();
         } else {
-            throw new OrderReadyForShippingException(order.getStatus(), order.getOrderNumber());
+            throw new OrderReadyForShippingExceptionService(order.getStatus(), order.getOrderNumber());
         }
     }
 
@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getDeletedAt() != null) {
             orderRepository.deleteById(orderId);
         } else {
-            throw new OrderNotCanceledException(orderId);
+            throw new OrderNotCanceledExceptionService(orderId);
         }
     }
 }

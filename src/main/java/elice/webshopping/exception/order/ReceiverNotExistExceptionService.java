@@ -1,11 +1,11 @@
 package elice.webshopping.exception.order;
 
-import elice.webshopping.exception.common.CustomException;
+import elice.webshopping.exception.common.ServiceCustomException;
 import org.springframework.http.HttpStatus;
 
-public class ReceiverNotExistException extends CustomException {
+public class ReceiverNotExistExceptionService extends ServiceCustomException {
 
-    public ReceiverNotExistException(Long receiverId) {
+    public ReceiverNotExistExceptionService(Long receiverId) {
         super("Receiver " + receiverId + " not exist", HttpStatus.BAD_REQUEST);
     }
 }
