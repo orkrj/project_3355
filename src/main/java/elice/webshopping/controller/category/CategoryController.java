@@ -43,6 +43,12 @@ public class CategoryController {
 
 
     //사용자 :admin
+
+    @GetMapping("/out")
+    public String showCategoryAddPage() {
+        return "redirect:/category/categoryDetail.html";
+    }
+
     //카테고리 상세페이지 => 여기서 생성/수정/삭제 처리
     @GetMapping ("detail")
     public ResponseEntity<List<CategoryDto>> detail(){
