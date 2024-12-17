@@ -76,4 +76,13 @@ public class Category {
     public void update(String name) {
         this.name = name;
     }
+
+    public CategoryDto toDto() {
+
+        return CategoryDto.builder()
+                .id(this.id)
+                .parentId(this.parent != null ? this.parent.getId() : null)
+                .name(this.name)
+                .build();
+    }
 }
