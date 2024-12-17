@@ -15,11 +15,12 @@ public class ReceiverServiceImpl implements ReceiverService {
 
     @Override
     public ReceiverResponseDto createReceiver(ReceiverRequestDto receiverRequestDto) {
-        return null;
+        Receiver savedReceiver = receiverRepository.save(Receiver.from(receiverRequestDto));
+        return ReceiverResponseDto.from(savedReceiver);
     }
 
     @Override
-    public ReceiverResponseDto findReceiverById(Long receiverId) {
+    public Receiver findReceiverById(Long receiverId) {
         return null;
     }
 
