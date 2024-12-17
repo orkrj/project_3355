@@ -5,7 +5,8 @@ public record ReceiverResponseDto(
         String phoneNumber,
         String zipCode,
         String streetAddress,
-        String detailAddress
+        String detailAddress,
+        String message
 ) {
 
     public static ReceiverResponseDto from(Receiver receiver) {
@@ -14,7 +15,8 @@ public record ReceiverResponseDto(
                 receiver.getPhoneNumber(),
                 receiver.getZipCode(),
                 receiver.getStreetAddress(),
-                receiver.getDetailAddress()
+                receiver.getDetailAddress(),
+                receiver.getMessage()
         );
     }
 
@@ -24,7 +26,8 @@ public record ReceiverResponseDto(
                 order.getReceiver().getPhoneNumber(),
                 order.getReceiver().getZipCode(),
                 order.getReceiver().getStreetAddress(),
-                order.getReceiver().getDetailAddress()
+                order.getReceiver().getDetailAddress(),
+                order.getReceiver().getMessage()
         );
     }
 }

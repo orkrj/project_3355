@@ -8,7 +8,6 @@ import java.util.List;
 public record OrderResponseDto (
         String orderNumber,
         String payment,
-        String message,
         OrderStatus status,
         int totalPrice,
         LocalDateTime createdAt,
@@ -20,7 +19,6 @@ public record OrderResponseDto (
         return new OrderResponseDto(
                 order.getOrderNumber(),
                 order.getPayment(),
-                order.getMessage(),
                 order.getStatus(),
                 order.getTotalPrice(),
                 order.getCreatedAt(),
