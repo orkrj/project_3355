@@ -51,8 +51,7 @@ class ReceiverServiceImplTest {
 
         // given
         Receiver receiver = givenReceiver();
-        receiver.setReceiverId(1L);
-        given(receiverRepository.findById(receiver.getReceiverId())).willReturn(Optional.of(receiver));
+        given(receiverRepository.findById(1L)).willReturn(Optional.of(receiver));
 
         // when
         Receiver findReceiver = receiverService.findReceiverById(1L);
@@ -71,10 +70,26 @@ class ReceiverServiceImplTest {
     void updateReceiver() {
 
         // given
+        Receiver receiver = givenReceiver();
+        ReceiverRequestDto receiverRequestDtoForUpdate = givenReceiverRequestDtoForUpdate();
+        given(receiverRepository.findById(1L)).willAnswer(result -> {
+            if (receiver.getName().equals("test")) {
+                return Optional.of(receiver);
+            } else {
+                return Optional.of(receiver);
+            }
+        });
 
         // when
+        receiverService.updateReceiver(1L, receiverRequestDtoForUpdate);
 
         // then
+        assertEquals("update", receiver.getName());
+        assertEquals("01012345678", receiver.getPhoneNumber());
+        assertEquals("54321", receiver.getZipCode());
+        assertEquals("Seonggyungwan-ro", receiver.getStreetAddress());
+        assertEquals("25-2", receiver.getDetailAddress());
+        verify(receiverRepository, times(1)).findById(1L);
     }
 
     private ReceiverRequestDto givenRequestReceiverDto() {
@@ -89,5 +104,15 @@ class ReceiverServiceImplTest {
 
     private Receiver givenReceiver() {
         return Receiver.from(givenRequestReceiverDto());
+    }
+
+    private ReceiverRequestDto givenReceiverRequestDtoForUpdate() {
+        return new ReceiverRequestDto (
+                "update",
+                "01012345678",
+                "54321",
+                "Seonggyungwan-ro",
+                "25-2"
+        );
     }
 }
