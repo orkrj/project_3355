@@ -28,6 +28,8 @@ public class Receiver {
 
     private String detailAddress;
 
+    private String message;
+
     // 주문에서 받는 사람을 불러오는 것만 필요하니 단방향으로 설계
     // 받는 사람으로 주문 조회 불가
 

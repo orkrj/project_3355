@@ -98,7 +98,8 @@ class ReceiverServiceImplTest {
                 "01000000000",
                 "12345",
                 "Seonggyungwan-ro",
-                "25-2"
+                "25-2",
+                "test"
         );
     }
 
@@ -112,7 +113,8 @@ class ReceiverServiceImplTest {
                 "01012345678",
                 "54321",
                 "Seonggyungwan-ro",
-                "25-2"
+                "25-2",
+                "test"
         );
     }
 }

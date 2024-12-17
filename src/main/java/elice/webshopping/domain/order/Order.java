@@ -29,8 +29,6 @@ public class Order {
     @Column(nullable = false)
     private String payment;
 
-    private String message;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
@@ -85,7 +83,6 @@ public class Order {
         Order order = Order.builder()
                 .orderNumber(generateOrderNumber())
                 .payment(orderRequestDto.payment())
-                .message(orderRequestDto.message())
                 .status(OrderStatus.ORDERED)
                 .totalPrice(orderRequestDto.totalPrice())
                 .user(user)

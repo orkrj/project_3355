@@ -8,5 +8,6 @@ public record ReceiverRequestDto (
         @NotNull @NotEmpty String phoneNumber,
         @NotNull @NotEmpty String zipCode,
         @NotNull @NotEmpty String streetAddress,
-        @NotNull @NotEmpty String detailAddress
+        @NotNull @NotEmpty String detailAddress,
+        String message
 ) {}
