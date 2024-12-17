@@ -7,7 +7,7 @@ public enum OrderStatus {
     DELIVERED,
     CANCELED;
 
-    public boolean orderCanBeDeleted() {
+    public boolean canBeCanceled() {
         return this == PENDING || this == ORDERED;
     }
 }
