@@ -42,16 +42,16 @@ class OrderServiceImplTest {
     void shouldReturnAllNonDeletedOrders() {
 
         // given
-        List<Order> mockOrders = givenMockOrders();
-        given(orderRepository.findAll()).willReturn(mockOrders);
+        List<Order> orders = givenOrders();
+        given(orderRepository.findAll()).willReturn(orders);
 
         // when
-        List<OrderResponseDto> orders = orderService.getOrders();
+        List<OrderResponseDto> findOrders = orderService.getOrders();
 
         // then
-        assertEquals(2, orders.size(), "소프트 딜리트된 test 3 은 조회되면 안 됨");
-        assertEquals("202412161200000001", orders.get(0).orderNumber());
-        assertEquals("CASH", orders.get(1).payment());
+        assertEquals(2, findOrders.size(), "소프트 딜리트된 test 3 은 조회되면 안 됨");
+        assertEquals("202412161200000001", findOrders.get(0).orderNumber());
+        assertEquals("CASH", findOrders.get(1).payment());
         verify(orderRepository, times(1)).findAll();
     }
 
@@ -60,16 +60,16 @@ class OrderServiceImplTest {
     void shouldReturnNonDeletedOrderEntityById() {
 
         // given
-        Order mockOrder = givenMockOrder(false, true);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+        Order order = givenOrder(false, true);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
 
         // when
-        Order order = orderService.getOrderEntityById(1L);
+        Order findOrder = orderService.getOrderEntityById(1L);
 
         // then
-        assertEquals(1, order.getOrderId());
-        assertEquals("202412161200000001", order.getOrderNumber());
-        assertEquals("CARD", order.getPayment());
+        assertEquals(1, findOrder.getOrderId());
+        assertEquals("202412161200000001", findOrder.getOrderNumber());
+        assertEquals("CARD", findOrder.getPayment());
         verify(orderRepository, times(1)).findById(1L);
     }
 
@@ -78,8 +78,8 @@ class OrderServiceImplTest {
     void shouldThrowException_whenGetDeletedOrderEntityById() {
 
         // given
-        Order mockOrder = givenMockOrder(true, false);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+        Order order = givenOrder(true, false);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
 
         // when, then
         assertThrows(NotFoundException.class, () -> orderService.getOrderEntityById(1L));
@@ -91,14 +91,14 @@ class OrderServiceImplTest {
     void shouldSetDeletedAt_whenCancelOrder() {
 
         // given
-        Order mockOrder = givenMockOrder(false, true);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+        Order order = givenOrder(false, true);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
 
         // when
         orderService.cancelOrder(1L);
 
         // then
-        assertNotNull(mockOrder.getDeletedAt());
+        assertNotNull(order.getDeletedAt());
         verify(orderRepository, times(1)).findById(1L);
     }
 
@@ -106,8 +106,8 @@ class OrderServiceImplTest {
     @DisplayName("주문 취소: 주문 취소 불가능, 예외 발생")
     void shouldThrowException_whenOrderCanNotBeDeleted() {
         // given
-        Order mockOrder = givenMockOrder(false, false);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+        Order order = givenOrder(false, false);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
 
         // when, then
         assertThrows(OrderReadyForShippingException.class, () -> orderService.cancelOrder(1L));
@@ -119,8 +119,8 @@ class OrderServiceImplTest {
     void shouldBeDeleted_whenDeleteOrder() {
 
         // given
-        Order mockOrder = givenMockOrder(true, true);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+        Order order = givenOrder(true, true);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
 
         // when
         orderService.deleteOrder(1L);
@@ -135,8 +135,8 @@ class OrderServiceImplTest {
     void shouldThrowException_whenDeletedAtIsNull() {
 
         // given
-        Order mockOrder = givenMockOrder(false, true);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(mockOrder));
+        Order order = givenOrder(false, true);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
 
         // when, then
         assertThrows(OrderNotCanceledException.class, () -> orderService.deleteOrder(1L));
@@ -169,7 +169,7 @@ class OrderServiceImplTest {
         return mockProductOrder;
     }
 
-    private List<Order> givenMockOrders() {
+    private List<Order> givenOrders() {
         User mockUser = givenMockUser();
         Receiver mockReceiver = givenMockReceiver();
         ProductOrder mockProductOrder = givenMockProductOrder();
@@ -220,7 +220,7 @@ class OrderServiceImplTest {
         );
     }
 
-    private Order givenMockOrder(boolean isCanceled, boolean canBeCanceled) {
+    private Order givenOrder(boolean isCanceled, boolean canBeCanceled) {
         return Order.builder()
                 .orderId(1L)
                 .orderNumber("202412161200000001")
