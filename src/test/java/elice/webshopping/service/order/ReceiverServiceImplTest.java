@@ -9,11 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReceiverServiceImplTest {
@@ -31,7 +32,7 @@ class ReceiverServiceImplTest {
         // given
         ReceiverRequestDto receiverRequestDto = givenRequestReceiverDto();
         Receiver receiver = Receiver.from(receiverRequestDto);
-        when(receiverRepository.save(any())).thenReturn(receiver);
+        given(receiverRepository.save(any())).willReturn(receiver);
 
         // when
         ReceiverResponseDto receiverResponseDto = receiverService.createReceiver(receiverRequestDto);
@@ -50,10 +51,21 @@ class ReceiverServiceImplTest {
     void findReceiverById() {
 
         // given
+        ReceiverRequestDto receiverRequestDto = givenRequestReceiverDto();
+        Receiver receiver = Receiver.from(receiverRequestDto);
+        receiver.setReceiverId(1L);
+        given(receiverRepository.findById(receiver.getReceiverId())).willReturn(Optional.of(receiver));
 
         // when
+        Receiver findReceiver = receiverService.findReceiverById(1L);
 
         // then
+        assertEquals("test", findReceiver.getName());
+        assertEquals("01000000000", findReceiver.getPhoneNumber());
+        assertEquals("12345", findReceiver.getZipCode());
+        assertEquals("Seonggyungwan-ro", findReceiver.getStreetAddress());
+        assertEquals("25-2", findReceiver.getDetailAddress());
+        verify(receiverRepository, times(1)).findById(1L);
     }
 
     @Test
