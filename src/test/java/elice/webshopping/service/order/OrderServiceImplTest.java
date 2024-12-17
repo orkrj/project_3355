@@ -220,7 +220,7 @@ class OrderServiceImplTest {
         );
     }
 
-    private Order givenMockOrder(boolean isDeleted, boolean canBeCanceled) {
+    private Order givenMockOrder(boolean isCanceled, boolean canBeCanceled) {
         return Order.builder()
                 .orderId(1L)
                 .orderNumber("202412161200000001")
@@ -233,7 +233,7 @@ class OrderServiceImplTest {
                 .productOrders(List.of(Mockito.mock(ProductOrder.class)))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
-                .deletedAt(isDeleted ? LocalDateTime.now() : null)
+                .deletedAt(isCanceled ? LocalDateTime.now() : null)
                 .build();
     }
 }

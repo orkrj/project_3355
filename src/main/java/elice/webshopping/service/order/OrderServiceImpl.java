@@ -59,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(Long orderId) {
         Order order = getOrderEntityById(orderId);
-        if (order.getStatus().orderCanBeDeleted()) {
+        if (order.getStatus().canBeCanceled()) {
             order.cancelOrder();
         } else {
             throw new OrderReadyForShippingException(order.getStatus(), order.getOrderNumber());
