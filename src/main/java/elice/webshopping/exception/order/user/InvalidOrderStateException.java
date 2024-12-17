@@ -5,9 +5,9 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class InvalidOrderStateExceptionService extends ServiceCustomException {
+public class InvalidOrderStateException extends ServiceCustomException {
 
-    public InvalidOrderStateExceptionService(String message, HttpStatus httpStatus) {
+    public InvalidOrderStateException(String message, HttpStatus httpStatus) {
         super(message, httpStatus);
     }
 }

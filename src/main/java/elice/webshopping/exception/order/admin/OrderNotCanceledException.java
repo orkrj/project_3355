@@ -4,9 +4,9 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class OrderNotCanceledExceptionService extends InvalidAdminActionExceptionService {
+public class OrderNotCanceledException extends InvalidAdminActionException {
 
-    public OrderNotCanceledExceptionService(Long orderId) {
+    public OrderNotCanceledException(Long orderId) {
         super("Order " + orderId + " not canceled yet", HttpStatus.BAD_REQUEST);
     }
 }

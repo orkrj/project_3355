@@ -3,7 +3,7 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Receiver;
 import elice.webshopping.domain.order.ReceiverRequestDto;
 import elice.webshopping.domain.order.ReceiverResponseDto;
-import elice.webshopping.exception.order.ReceiverNotExistExceptionService;
+import elice.webshopping.exception.order.ReceiverNotExistException;
 import elice.webshopping.repository.order.ReceiverRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class ReceiverServiceImpl implements ReceiverService {
     @Override
     public Receiver findReceiverById(Long receiverId) {
         return receiverRepository.findById(receiverId)
-                .orElseThrow(() -> new ReceiverNotExistExceptionService(receiverId));
+                .orElseThrow(() -> new ReceiverNotExistException(receiverId));
     }
 
     @Override
