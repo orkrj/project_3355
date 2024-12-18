@@ -5,10 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
+@EnableJpaAuditing
 public class WebshoppingApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(WebshoppingApplication.class, args);
+         SpringApplication.run(WebshoppingApplication.class, args);
     }
 
 }

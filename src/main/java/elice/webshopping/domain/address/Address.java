@@ -1,26 +1,24 @@
 package elice.webshopping.domain.address;
 
+//import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import elice.webshopping.domain.user.User;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "addresses")
-//@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Getter
-public class Address {
+public class Address extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
     private Long addressId;
 
-    @Column(length = 255)
+    @Column(length = 255, name = "zip_code")
     private String zipCode;
 
     @Column(length = 255, name = "street_address")
@@ -29,28 +27,48 @@ public class Address {
     @Column(length = 255, name = "detail_address")
     private String detailAddress;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(length = 50, name = "address_target")
+    private String addressTarget;
+
+    @Column(nullable = false, name = "is_base_address")
+    private Boolean isBaseAddress;
+
+    @Column(nullable = false, name = "is_deleted")
+    private Boolean isDeleted = false;
+
 
     @Builder
-    public Address(String zipCode, String streetAddress, String detailAddress, User user) {
+    public Address(String zipCode, String streetAddress, String detailAddress,String addressTarget,
+                   Boolean isBaseAddress, Boolean isDeleted, User user) {
         this.zipCode = zipCode;
         this.streetAddress = streetAddress;
         this.detailAddress = detailAddress;
+        this.addressTarget = addressTarget;
+        this.isBaseAddress = isBaseAddress;
+        this.isDeleted = isDeleted;
+        this.user = user;
     }
 
-    public void update(String zipCode, String streetAddress, String detailAddress) {
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public String getUsername() {
+        return user.getUsername();
+    }
+
+    public void update(String zipCode, String streetAddress, String detailAddress,
+                       String addressTarget, Boolean isBaseAddress) {
         this.zipCode = zipCode;
         this.streetAddress = streetAddress;
         this.detailAddress = detailAddress;
+        this.addressTarget = addressTarget;
+        this.isBaseAddress = isBaseAddress;
     }
 
-//    @Embedded
-//    private BaseEntity baseEntity;
-
-
-
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
 
 
 }
