@@ -1,10 +1,6 @@
 package elice.webshopping.service.product;
 
-import elice.webshopping.domain.product.Product;
-import elice.webshopping.domain.product.ProductImage;
-import elice.webshopping.domain.product.ProductRequestDto;
-import elice.webshopping.domain.product.ProductResponseDto;
-import elice.webshopping.repository.product.ProductImageRepository;
+import elice.webshopping.domain.product.*;
 import elice.webshopping.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,12 +15,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-    private final ProductImageRepository productImageRepository;
+    private final ProductImageService productImageService;
 
     // 1. 상품 목록 조회 (Read All)
     @Transactional(readOnly = true)
     public List<ProductResponseDto> getAllProducts() {
-        List<Product> products = productRepository.findByDeletedAtIsNull(); // 삭제된 상품 제외
+        List<Product> products = productRepository.findByDeletedAtIsNull();
         return products.stream()
                 .map(this::convertToProductResponseDto)
                 .collect(Collectors.toList());
@@ -33,13 +29,13 @@ public class ProductService {
     // 2. 상품 단건 조회 (Read)
     @Transactional(readOnly = true)
     public ProductResponseDto getProductById(Long productId) {
-        Product product = productRepository.findByproductIdAndDeletedAtIsNull(productId) // 삭제된 상품 제외
+        Product product = productRepository.findByProductIdAndDeletedAtIsNull(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
         return convertToProductResponseDto(product);
     }
 
     // 3. 상품 등록 (Create)
-    public void createProduct(ProductRequestDto request) {
+    public void createProduct(ProductRequestDto request, ProductImageRequestDto imageRequestDto) {
         Product product = Product.builder()
                 .name(request.getName())
                 .price(request.getPrice())
@@ -47,40 +43,23 @@ public class ProductService {
                 .stockQuantity(request.getStockQuantity())
                 .build();
 
-        // 메인 이미지 추가
-        for (String url : request.getMainImageUrls()) {
-            ProductImage mainImage = ProductImage.createWithProduct(product, url, ProductImage.ImageType.MAIN);
-            product.addImage(mainImage);
-        }
-
-        // 상세 이미지 추가
-        for (String url : request.getDescriptionImageUrls()) {
-            ProductImage descriptionImage = ProductImage.createWithProduct(product, url, ProductImage.ImageType.DESCRIPTION);
-            product.addImage(descriptionImage);
-        }
-
+        //이미지 파일 처리
+        productImageService.addProductImagesWithFiles(product, imageRequestDto);
         productRepository.save(product);
     }
 
     // 4. 상품 수정 (Update)
-    public void updateProduct(Long productId, ProductRequestDto request) {
+    public void updateProduct(Long productId, ProductRequestDto request, ProductImageRequestDto imageRequestDto) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
+        // 상품 정보 업데이트
         product.update(request.getName(), request.getPrice(), request.getDescription(), request.getStockQuantity());
 
-        // 기존 이미지 제거 및 새로운 이미지 추가
-        product.getImages().clear();
-        for (String url : request.getMainImageUrls()) {
-            ProductImage mainImage = ProductImage.createWithProduct(product, url, ProductImage.ImageType.MAIN);
-            product.addImage(mainImage);
-        }
+        // 기존 이미지 대체
+        productImageService.updateProductImages(product, imageRequestDto);
 
-        for (String url : request.getDescriptionImageUrls()) {
-            ProductImage descriptionImage = ProductImage.createWithProduct(product, url, ProductImage.ImageType.DESCRIPTION);
-            product.addImage(descriptionImage);
-        }
-
+        // 상품 저장
         productRepository.save(product);
     }
 
