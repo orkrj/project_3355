@@ -7,9 +7,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Collections;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+
+    @ExceptionHandler(NoContentsException.class)
+    public ResponseEntity<Object> handleNoContentsException(NoContentsException e) {
+        log.error("NoContentsException: {}", e.getMessage());
+        return ResponseEntity.ok(Collections.emptyList());
+    }
 
     @ExceptionHandler(ServiceCustomException.class)
     public ResponseEntity<ErrorResponseDto> handleCustomException(ServiceCustomException e) {
@@ -21,7 +30,6 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponseDto, e.getHttpStatus());
     }
-
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorResponseDto> handleNullPointerException(NullPointerException e) {
