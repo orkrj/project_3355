@@ -7,7 +7,9 @@ import elice.webshopping.domain.order.Receiver;
 import elice.webshopping.domain.product.Product;
 import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.user.User;
+import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.exception.order.admin.OrderNotCanceledException;
+import elice.webshopping.exception.order.admin.OrderNotFoundException;
 import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -82,7 +84,7 @@ class OrderServiceImplTest {
         given(orderRepository.findById(1L)).willReturn(Optional.of(order));
 
         // when, then
-        assertThrows(NotFoundException.class, () -> orderService.getOrderEntityById(1L));
+        assertThrows(NoContentsException.class, () -> orderService.getOrderEntityById(1L));
         verify(orderRepository, times(1)).findById(1L);
     }
 
@@ -126,7 +128,7 @@ class OrderServiceImplTest {
         orderService.deleteOrder(1L);
 
         // then
-        assertThrows(NotFoundException.class, () -> orderService.getOrderEntityById(1L));
+        assertThrows(NoContentsException.class, () -> orderService.getOrderEntityById(1L));
         verify(orderRepository, times(1)).deleteById(1L);
     }
 
