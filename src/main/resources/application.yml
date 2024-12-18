@@ -20,3 +20,14 @@ spring:
     user:
       name: admin
       password: 1234
+
+  cloud:
+    aws:
+      s3:
+        bucket: elice5-project2-bucket
+      credentials:
+        access-key: AKIAS2VS4P24L7I4LHM7
+        secret-key: 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
+      region:
+        static: ap-northeast-2
+
