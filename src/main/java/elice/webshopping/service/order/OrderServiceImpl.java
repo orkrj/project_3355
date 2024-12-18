@@ -3,12 +3,13 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
+import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.exception.order.admin.OrderNotCanceledException;
+import elice.webshopping.exception.order.admin.OrderNotFoundException;
 import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.webjars.NotFoundException;
 
 import java.util.List;
 
@@ -41,13 +42,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order getOrderEntityById(Long orderId) {
         return orderRepository.findById(orderId).filter(order -> order.getDeletedAt() == null)
-                .orElseThrow(() -> new NotFoundException("Order " + orderId + " not found"));
+                .orElseThrow(() -> new NoContentsException("Order " + orderId + " not found"));
     }
 
     @Override
     public Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundException("Order " + orderId + " not found"));
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
     }
 
     /**

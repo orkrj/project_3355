@@ -6,7 +6,7 @@ public class NoContentsException extends ServiceCustomException {
 
     public NoContentsException(String message) {
         super(
-                "조회 결과 없음",
+                message,
                 HttpStatus.NO_CONTENT
         );
     }
