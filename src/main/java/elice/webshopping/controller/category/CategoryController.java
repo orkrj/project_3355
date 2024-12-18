@@ -1,7 +1,7 @@
 package elice.webshopping.controller.category;
 
 import elice.webshopping.domain.category.Category;
-import elice.webshopping.domain.category.CategoryRequestDto;
+import elice.webshopping.domain.category.CategoryDto;
 import elice.webshopping.domain.product.Product;
 import elice.webshopping.service.category.CategoryService;
 import jakarta.validation.Valid;
@@ -19,9 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 @RequestMapping("/category")
@@ -37,29 +35,37 @@ public class CategoryController {
     public ResponseEntity<List<Product>> findProductBy(String categoryName){
 
         List<Product> product = categoryService.findProductBy(categoryName);
+
+        //null 조회시 null을 반환하는게 아닌 빈리스트 배열을 반환하도록
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
 
 
     //사용자 :admin
+
+    @GetMapping("/out")
+    public String showCategoryAddPage() {
+        return "redirect:/category/categoryDetail.html";
+    }
+
     //카테고리 상세페이지 => 여기서 생성/수정/삭제 처리
     @GetMapping ("detail")
-    public ResponseEntity<List<Category>> detail(){
-        List<Category> categories = categoryService.findAll();
+    public ResponseEntity<List<CategoryDto>> detail(){
+        List<CategoryDto> CategoryDtos = categoryService.findAll();
 
-        //categorieResponseDto 생성해야함
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+        //categorieResponseDto 생성해야함 => CategoryDto으로 요청 및 응답 동시 처리
+        return new ResponseEntity<>(CategoryDtos, HttpStatus.OK);
     }
 
 
     //카테고리 생성
     @PostMapping("create")
-    public String create(@Valid @RequestBody CategoryRequestDto categoryRequestDto, BindingResult bindingResult){
+    public String create(@Valid @RequestBody CategoryDto categoryDto, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             //오류발생 및 ControllerAdvice로 처리할 예정
         }
-        categoryService.save(categoryRequestDto.getName(), categoryRequestDto.getParentId());
+        categoryService.save(categoryDto.getName(), categoryDto.getParentId());
 
         //리다이렉트가 맞나? 비동기 처리해야하지 않나?
         return "redirect:/category/detail";
@@ -68,13 +74,13 @@ public class CategoryController {
 
     //카테고리 수정
     @PutMapping("update")
-    public String update(@Valid @RequestBody CategoryRequestDto categoryRequestDto, BindingResult bindingResult){
+    public String update(@Valid @RequestBody CategoryDto categoryDto, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             //오류발생 및 ControllerAdvice로 처리할 예정
         }
 
-        log.info("이름:{}, id:{}",categoryRequestDto.getName(), categoryRequestDto.getId());
-        categoryService.update(categoryRequestDto.getName(), categoryRequestDto.getId());
+        log.info("이름:{}, id:{}", categoryDto.getName(), categoryDto.getId());
+        categoryService.update(categoryDto.getName(), categoryDto.getId());
 
         //리다이렉트가 맞나? 비동기 처리해야하지 않나?
         return "redirect:/category/detail";

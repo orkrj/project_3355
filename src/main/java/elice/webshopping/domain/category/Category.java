@@ -51,13 +51,18 @@ public class Category {
 
     //    @Embedded
 //    private BaseEntity baseEntity;
-    public Category(String name) {
+    private Category(String name) {
         this.name = name;
     }
 
-    public Category(String name, Long parentId) {
+
+    private Category(String name, Long parentId) {
         this.name = name;
         this.id = parentId;
+    }
+
+    public static Category of(String name, Long parentId) {
+        return new Category(name,parentId);
     }
 
     public static Category from(String name){
@@ -75,5 +80,14 @@ public class Category {
 
     public void update(String name) {
         this.name = name;
+    }
+
+    public CategoryDto toDto() {
+
+        return CategoryDto.builder()
+                .id(this.id)
+                .parentId(this.parent != null ? this.parent.getId() : null)
+                .name(this.name)
+                .build();
     }
 }

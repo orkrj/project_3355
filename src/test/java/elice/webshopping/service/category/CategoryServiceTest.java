@@ -42,7 +42,7 @@ class CategoryServiceTest {
         // Given
         Long parentId = 1L;
         String childName = "Child Category";
-        Category parentCategory = new Category("Parent Category",parentId);
+        Category parentCategory =  Category.of("Parent Category",parentId);
 
         when(categoryRepository.findById(parentId)).thenReturn(Optional.of(parentCategory));
         when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -84,7 +84,7 @@ class CategoryServiceTest {
         Long categoryId = 1L;
         String oldName = "Old Category Name";
         String newName = "New Category Name";
-        Category category = new Category(oldName,categoryId);
+        Category category = Category.of(oldName,categoryId);
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
 

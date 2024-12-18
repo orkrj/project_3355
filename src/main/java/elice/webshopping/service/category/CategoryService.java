@@ -1,6 +1,7 @@
 package elice.webshopping.service.category;
 
 import elice.webshopping.domain.category.Category;
+import elice.webshopping.domain.category.CategoryDto;
 import elice.webshopping.domain.product.Product;
 import elice.webshopping.repository.category.CategoryRepository;
 import java.util.List;
@@ -44,11 +45,17 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<Product> findProductBy(String categoryName) {
         return categoryRepository.findProductBy(categoryName);
     }
 
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<CategoryDto> findAll() {
+
+        List<Category> categories = categoryRepository.findAll();
+        List<CategoryDto> categoryDtos = categories.stream()
+                                        .map(Category::toDto).toList();
+        return categoryDtos;
     }
 }
