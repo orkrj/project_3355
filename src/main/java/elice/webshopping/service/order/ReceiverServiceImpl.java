@@ -21,14 +21,19 @@ public class ReceiverServiceImpl implements ReceiverService {
     }
 
     @Override
-    public Receiver findReceiverById(Long receiverId) {
+    public ReceiverResponseDto findReceiverResponseDto(Long receiverId) {
+        return ReceiverResponseDto.from(findReceiverEntityById(receiverId));
+    }
+
+    @Override
+    public Receiver findReceiverEntityById(Long receiverId) {
         return receiverRepository.findById(receiverId)
                 .orElseThrow(() -> new ReceiverNotExistException(receiverId));
     }
 
     @Override
     public ReceiverResponseDto updateReceiver(Long receiverId, ReceiverRequestDto receiverRequestDto) {
-        Receiver findReceiver = findReceiverById(receiverId);
+        Receiver findReceiver = findReceiverEntityById(receiverId);
         return ReceiverResponseDto.from(updateReceiverFields(receiverRequestDto, findReceiver));
     }
 

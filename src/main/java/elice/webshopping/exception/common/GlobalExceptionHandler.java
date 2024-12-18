@@ -13,7 +13,6 @@ import java.util.Collections;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
     @ExceptionHandler(NoContentsException.class)
     public ResponseEntity<Object> handleNoContentsException(NoContentsException e) {
         log.error("NoContentsException: {}", e.getMessage());

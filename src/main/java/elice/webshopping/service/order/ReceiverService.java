@@ -9,8 +9,11 @@ public interface ReceiverService {
     //== 받는 사람 생성 ==//
     ReceiverResponseDto createReceiver(ReceiverRequestDto receiverRequestDto);
 
+    //== 받는 사람 조회 ==//
+    ReceiverResponseDto findReceiverResponseDto(Long receiverId);
+
     //== 비즈니스 로직 내 사용할 받는 사람 조회 ==//
-    Receiver findReceiverById(Long receiverId);
+    Receiver findReceiverEntityById(Long receiverId);
 
     //== 받는 사람 수정 ==//
     ReceiverResponseDto updateReceiver(Long receiverId, ReceiverRequestDto receiverRequestDto);
