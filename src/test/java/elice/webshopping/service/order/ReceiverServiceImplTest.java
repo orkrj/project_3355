@@ -54,7 +54,7 @@ class ReceiverServiceImplTest {
         given(receiverRepository.findById(1L)).willReturn(Optional.of(receiver));
 
         // when
-        Receiver findReceiver = receiverService.findReceiverById(1L);
+        Receiver findReceiver = receiverService.findReceiverEntityById(1L);
 
         // then
         assertEquals("test", findReceiver.getName());
