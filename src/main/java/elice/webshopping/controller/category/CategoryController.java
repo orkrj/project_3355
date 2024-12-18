@@ -29,7 +29,7 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    ///사용자 :user
+    //사용자 :user
     //카테고리 조회
     @GetMapping("{categoryName}")
     public ResponseEntity<List<Product>> findProductBy(String categoryName){
