@@ -3,14 +3,15 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
-import elice.webshopping.domain.productOrder.ProductOrder;
-import elice.webshopping.domain.user.User;
+import elice.webshopping.exception.common.NoContentsException;
+import elice.webshopping.exception.order.admin.OrderNotCanceledException;
+import elice.webshopping.exception.order.admin.OrderNotFoundException;
+import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,45 +27,58 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponseDto> getOrders() {
-        return List.of();
-//        return orderRepository.findAll()
-//                .stream()
-//                .filter(order -> order.getDeletedAt() == null)
-//                .map(this::orderToOrderResponseDto)
-//                .toList();
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getDeletedAt() == null)
+                .map(OrderResponseDto::from)
+                .toList();
     }
 
     @Override
-    public OrderResponseDto getOrderById(Long orderId) {
-        return null;
+    public OrderResponseDto getOrderResponseDtoById(Long orderId) {
+        return OrderResponseDto.from(getOrderEntityById(orderId));
     }
 
     @Override
     public Order getOrderEntityById(Long orderId) {
-        return null;
+        return orderRepository.findById(orderId).filter(order -> order.getDeletedAt() == null)
+                .orElseThrow(() -> new NoContentsException("Order " + orderId + " not found"));
     }
 
     @Override
-    public OrderResponseDto updateOrder(Long orderId, OrderRequestDto orderRequestDto) {
-        return null;
+    public Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
+    }
+
+    /**
+     * 주문 수정 - 사용자는 주문 완료 후 배송이 시작되기 전까지 주문 정보를 수정할 수 있다.
+     * -> 결제 기능이 들어가면 주문 수정이 불가능함 -> 환불(주문 취소) => 재구매 시스템임
+     * 따라서, 배송 전이라면 배송 정보만 수정하는 게 좋아보임
+     */
+
+    @Override
+    public void cancelOrder(Long orderId) {
+        Order order = getOrderEntityById(orderId);
+        if (order.getStatus().canBeCanceled()) {
+            order.cancelOrder();
+        } else {
+            throw new OrderReadyForShippingException(order.getStatus(), order.getOrderNumber());
+        }
     }
 
     @Override
     public void deleteOrder(Long orderId) {
-    }
+        /** TODO
+         * 역할 필요: ADMIN
+         * 직권 취소도 고려해야 함
+         */
 
-//    public OrderResponseDto orderToOrderResponseDto(Order order) {
-//        return new OrderResponseDto(
-//                order.getOrderNumber(),
-//                order.getPayment(),
-//                order.getMessage(),
-//                order.getStatus(),
-//                order.getTotalPrice(),
-//                order.getCreatedAt(),
-//                order.getReceiver(),
-//                order.getProductOrders()
-//        )
-//    }
-//
-//    public List<OrderResponseDto> to()
+        Order order = getOrderEntityByIdIncludeDeletedAtIsNotNull(orderId);
+        if (order.getDeletedAt() != null) {
+            orderRepository.deleteById(orderId);
+        } else {
+            throw new OrderNotCanceledException(orderId);
+        }
+    }
 }

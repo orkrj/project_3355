@@ -1,7 +1,9 @@
 package elice.webshopping.service.category;
 
 import elice.webshopping.domain.category.Category;
+import elice.webshopping.domain.product.Product;
 import elice.webshopping.repository.category.CategoryRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,20 +28,27 @@ public class CategoryService {
                     .orElseThrow(() -> new IllegalArgumentException("부모 ID가 없습니다."));
 
             parent.addChild(category);
-            category.linkToParent(parent);
         }
         return categoryRepository.save(category);
     }
 
     public void update(String name, Long id){
         Category category = categoryRepository.findById(id)
-                            .orElseThrow(() -> new IllegalArgumentException("해당 ID가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID가 없습니다."));
 
         category.update(name);
+        categoryRepository.save(category);
     }
 
     public void delete(Long id){
         categoryRepository.deleteById(id);
     }
 
+    public List<Product> findProductBy(String categoryName) {
+        return categoryRepository.findProductBy(categoryName);
+    }
+
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
 }

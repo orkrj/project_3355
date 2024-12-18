@@ -1,13 +1,14 @@
 package elice.webshopping.domain.order;
 
-import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,8 +33,6 @@ public class Order {
 
     @Column(nullable = false)
     private String payment;
-
-    private String message;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -89,8 +88,7 @@ public class Order {
         Order order = Order.builder()
                 .orderNumber(generateOrderNumber())
                 .payment(orderRequestDto.payment())
-                .message(orderRequestDto.message())
-                .status(OrderStatus.ORDER_COMPLETED)
+                .status(OrderStatus.ORDERED)
                 .totalPrice(orderRequestDto.totalPrice())
                 .user(user)
                 .receiver(receiver)
@@ -107,5 +105,10 @@ public class Order {
     private static String generateOrderNumber() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
                 + (int) (Math.random() * 1000);
+    }
+
+    public void cancelOrder() {
+        this.deletedAt = LocalDateTime.now();
+        this.status = OrderStatus.CANCELED;
     }
 }

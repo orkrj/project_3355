@@ -5,5 +5,29 @@ public record ReceiverResponseDto(
         String phoneNumber,
         String zipCode,
         String streetAddress,
-        String detailAddress
-) {}
+        String detailAddress,
+        String message
+) {
+
+    public static ReceiverResponseDto from(Receiver receiver) {
+        return new ReceiverResponseDto(
+                receiver.getName(),
+                receiver.getPhoneNumber(),
+                receiver.getZipCode(),
+                receiver.getStreetAddress(),
+                receiver.getDetailAddress(),
+                receiver.getMessage()
+        );
+    }
+
+    public static ReceiverResponseDto from(Order order) {
+        return new ReceiverResponseDto(
+                order.getReceiver().getName(),
+                order.getReceiver().getPhoneNumber(),
+                order.getReceiver().getZipCode(),
+                order.getReceiver().getStreetAddress(),
+                order.getReceiver().getDetailAddress(),
+                order.getReceiver().getMessage()
+        );
+    }
+}

@@ -1,10 +1,91 @@
 package elice.webshopping.controller.category;
 
+import elice.webshopping.domain.category.Category;
+import elice.webshopping.domain.category.CategoryRequestDto;
+import elice.webshopping.domain.product.Product;
+import elice.webshopping.service.category.CategoryService;
+import jakarta.validation.Valid;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @Controller
+@RequestMapping("/category")
+@RequiredArgsConstructor
+@Slf4j
 public class CategoryController {
 
+    private final CategoryService categoryService;
+
+    //사용자 :user
+    //카테고리 조회
+    @GetMapping("{categoryName}")
+    public ResponseEntity<List<Product>> findProductBy(String categoryName){
+
+        List<Product> product = categoryService.findProductBy(categoryName);
+        return new ResponseEntity<>(product, HttpStatus.OK);
+    }
+
+
+
+    //사용자 :admin
+    //카테고리 상세페이지 => 여기서 생성/수정/삭제 처리
+    @GetMapping ("detail")
+    public ResponseEntity<List<Category>> detail(){
+        List<Category> categories = categoryService.findAll();
+
+        //categorieResponseDto 생성해야함
+        return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
+
+
+    //카테고리 생성
+    @PostMapping("create")
+    public String create(@Valid @RequestBody CategoryRequestDto categoryRequestDto, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            //오류발생 및 ControllerAdvice로 처리할 예정
+        }
+        categoryService.save(categoryRequestDto.getName(), categoryRequestDto.getParentId());
+
+        //리다이렉트가 맞나? 비동기 처리해야하지 않나?
+        return "redirect:/category/detail";
+    }
+
+
+    //카테고리 수정
+    @PutMapping("update")
+    public String update(@Valid @RequestBody CategoryRequestDto categoryRequestDto, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            //오류발생 및 ControllerAdvice로 처리할 예정
+        }
+
+        log.info("이름:{}, id:{}",categoryRequestDto.getName(), categoryRequestDto.getId());
+        categoryService.update(categoryRequestDto.getName(), categoryRequestDto.getId());
+
+        //리다이렉트가 맞나? 비동기 처리해야하지 않나?
+        return "redirect:/category/detail";
+    }
+
+    //카테고리 삭제
+    @DeleteMapping("delete/{categoryId}")
+    @ResponseStatus(HttpStatus.OK) //본문이 필요하지 않으니 ResponseStatus 사용
+    public void delete(@PathVariable long categoryId){
+        categoryService.delete(categoryId);
+    }
 }
 
 

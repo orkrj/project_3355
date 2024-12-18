@@ -30,6 +30,7 @@ public class ProductImage {
     @Enumerated(EnumType.STRING)
     private ImageType imageType;
 
+    // 변수로 저장해서 변수에서 뽑아서 저장하도록
     public enum ImageType {
         MAIN, DESCRIPTION
     }
