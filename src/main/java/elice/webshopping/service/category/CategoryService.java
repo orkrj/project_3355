@@ -20,7 +20,7 @@ public class CategoryService {
     //부모를 저장하려면 => 이름, 부모ID
     public CategoryDto save(String name, Long parentId){
 
-        //이미 이름이 있다면 중복예외 발생시키기
+        //이미 이름이 있다면 중복예외 발생
         if(categoryRepository.existsByName(name)){
             throw new IllegalArgumentException(name+"은 이미 존재하는 카테고리 이름입니다");
         }
@@ -33,7 +33,7 @@ public class CategoryService {
             Category parent = categoryRepository.findById(parentId)
                     .orElseThrow(() -> new IllegalArgumentException("부모 ID가 없습니다."));
 
-            // 루트카테고리에서 카테고리를 추가하지 않는경우 오류 발생
+            // 루트카테고리가 아닌 곳에서 카테고리를 추가하는경우 오류 발생
             if (parent.isNotRootCategory()) {
                 throw new IllegalArgumentException("카테고리 추가는 루트카테고리만 할 수 있습니다.");
             }
@@ -47,7 +47,7 @@ public class CategoryService {
 
     public CategoryDto update(String name, Long id){
 
-        //이미 이름이 있다면 중복예외 발생시키기
+        //이미 이름이 있다면 중복예외 발생
         if(categoryRepository.existsByName(name)){
             throw new IllegalArgumentException(name+"은 이미 존재하는 카테고리 이름입니다");
         }
