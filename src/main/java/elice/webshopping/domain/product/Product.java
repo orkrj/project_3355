@@ -48,10 +48,12 @@ public class Product {
     @Column
     private LocalDateTime deletedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)  // 카테고리와 Many-to-One 관계 설정
+    @JoinColumn(name = "category_id")  // 외래 키로 카테고리 ID 연결
     private Category category;
 
+    @Getter
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images = new ArrayList<>();
 
@@ -70,10 +72,12 @@ public class Product {
         }
     }
 
-    public void update(String name, int price, String description, int stockQuantity) {
+    public void update(String name, int price, String description, int stockQuantity, Category category) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.stockQuantity = stockQuantity;
+        this.category = category;
     }
+
 }

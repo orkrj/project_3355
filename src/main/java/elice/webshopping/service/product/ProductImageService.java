@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,39 +22,39 @@ public class ProductImageService {
     private final ProductRepository productRepository;
     private final FileStorageService fileStorageService;
 
-    // 상품 이미지 파일 업로드 및 저장
-    public void addProductImagesWithFiles(Product product, ProductImageRequestDto requestDto) {
-        // 메인 이미지 업로드 및 저장
-        for (MultipartFile file : requestDto.getMainImageFiles()) {
-            String imageUrl = fileStorageService.saveFile(file);
-            ProductImage mainImage = ProductImage.createWithProduct(product, imageUrl, ProductImage.ImageType.MAIN);
-            product.addImage(mainImage);
-        }
 
-        // 상세 이미지 업로드 및 저장
-        for (MultipartFile file : requestDto.getDescriptionImageFiles()) {
-            String imageUrl = fileStorageService.saveFile(file);
-            ProductImage descriptionImage = ProductImage.createWithProduct(product, imageUrl, ProductImage.ImageType.DESCRIPTION);
-            product.addImage(descriptionImage);
-        }
+    // Signed URL을 이용하여 이미지 파일 업로드 처리
+    public List<URL> generateImageUploadUrls(Product product, ProductImageRequestDto requestDto) {
+        List<URL> uploadUrls = new ArrayList<>();
+
+        // main 이미지 타입 처리
+        uploadUrls.addAll(generateUrlsForImages(product.getProductId(), "main", requestDto.getMainImageFiles()));
+        // description 이미지 타입 처리
+        uploadUrls.addAll(generateUrlsForImages(product.getProductId(), "description", requestDto.getDescriptionImageFiles()));
+
+        // 이미지 메타데이터 저장
+        saveImageMetadata(product, uploadUrls);
+
+        return uploadUrls;
     }
 
-    // 상품 이미지 업데이트
-    public void updateProductImages(Product product, ProductImageRequestDto requestDto) {
-        // 기존 이미지 삭제
-        List<ProductImage> existingImages = product.getImages();
-        productImageRepository.deleteAll(existingImages);
-        product.getImages().clear();
-
-        // 새 이미지 추가
-        addProductImagesWithFiles(product, requestDto);
+    private List<URL> generateUrlsForImages(Long productId, String imageType, List<MultipartFile> files) {
+        List<URL> urls = new ArrayList<>();
+        for (MultipartFile file : files) {
+            String key = String.format("products/%d/%s/%s", productId, imageType, file.getOriginalFilename());
+            URL signedUrl = fileStorageService.generateUploadSignedUrl(key, 15);
+            urls.add(signedUrl);
+        }
+        return urls;
     }
 
-    // 상품 이미지 삭제 (이미지 ID로)
-    public void deleteProductImage(Long imageId) {
-        ProductImage productImage = productImageRepository.findById(imageId)
-                .orElseThrow(() -> new IllegalArgumentException("Image not found"));
-
-        productImageRepository.delete(productImage);
+    // 이미지 메타데이터 저장
+    private void saveImageMetadata(Product product, List<URL> imageUrls) {
+        // main과 description 이미지 타입을 구분하여 저장
+        for (int i = 0; i < imageUrls.size(); i++) {
+            ProductImage.ImageType imageType = (i < imageUrls.size() / 2) ? ProductImage.ImageType.MAIN : ProductImage.ImageType.DESCRIPTION;
+            ProductImage image = ProductImage.createWithProduct(product, imageUrls.get(i).toString(), imageType);
+            product.addImage(image);
+        }
     }
 }

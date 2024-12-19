@@ -22,7 +22,7 @@ public class ProductImage {
 
     // setImageUrl 및 setImageType 메서드 추가
     @Setter
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 1024)
     private String imageUrl;
 
     @Setter
