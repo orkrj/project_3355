@@ -22,7 +22,7 @@ public class UserService {
                 .real_name(userRequestDto.getReal_name())
                 .email(userRequestDto.getEmail())
                 .phone(userRequestDto.getPhone())
-                .role(Role.USER)
+                .role(Role.ROLE_USER)
                 .build());
 
         return register.getUsername();  //가입한 유저의 id 반환

@@ -31,3 +31,6 @@ spring:
       region:
         static: ap-northeast-2
 
+
+  jwt:
+    secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
