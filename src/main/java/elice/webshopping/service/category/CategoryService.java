@@ -34,7 +34,7 @@ public class CategoryService {
                     .orElseThrow(() -> new IllegalArgumentException("부모 ID가 없습니다."));
 
             // 루트카테고리에서 카테고리를 추가하지 않는경우 오류 발생
-            if (!parent.isRootCategory()) {
+            if (parent.isNotRootCategory()) {
                 throw new IllegalArgumentException("카테고리 추가는 루트카테고리만 할 수 있습니다.");
             }
 
