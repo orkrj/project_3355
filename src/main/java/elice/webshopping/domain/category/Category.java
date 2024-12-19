@@ -82,6 +82,10 @@ public class Category {
         this.name = name;
     }
 
+    public boolean isRootCategory() {
+        return parent == null;
+    }
+
     public CategoryDto toDto() {
 
         return CategoryDto.builder()

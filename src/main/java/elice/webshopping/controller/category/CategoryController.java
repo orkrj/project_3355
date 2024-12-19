@@ -55,16 +55,14 @@ public class CategoryController {
 
 
     //카테고리 생성
+    //리다이렉트, 비동기 처리?
     @PostMapping("create")
-    public ResponseEntity<Category> create(@Valid @RequestBody CategoryDto categoryDto){
+    public ResponseEntity<CategoryDto> create(@Valid @RequestBody CategoryDto categoryDto){
 
-        //이미 이름이 있다면 중복예외 발생시키기
         //CategoryDto로 받아야하나 ID는 null인데
 
-        Category save = categoryService.save(categoryDto.getName(), categoryDto.getParentId());
-        return new ResponseEntity<>(save, HttpStatus.OK);
-        //리다이렉트가 맞나? 비동기 처리해야하지 않나?
-//        return "redirect:/category/detail";
+        CategoryDto categoryDtoResponse = categoryService.save(categoryDto.getName(), categoryDto.getParentId());
+        return new ResponseEntity<>(categoryDtoResponse, HttpStatus.OK);
     }
 
 
