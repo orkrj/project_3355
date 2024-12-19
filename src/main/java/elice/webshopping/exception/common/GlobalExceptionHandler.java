@@ -20,7 +20,7 @@ import java.util.Collections;
 public class GlobalExceptionHandler {
 
     //@Valid 검증 실패 시 MethodArgumentNotValidException이 발생.
-    //카테고리 생성 및 수정시 유효성 검증
+    ///카테고리 생성 및 수정시 유효성 검증
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
