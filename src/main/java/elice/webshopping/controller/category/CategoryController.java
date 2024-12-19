@@ -55,11 +55,9 @@ public class CategoryController {
 
 
     //카테고리 생성
-    //리다이렉트, 비동기 처리?
     @PostMapping("create")
     public ResponseEntity<CategoryDto> create(@Valid @RequestBody CategoryDto categoryDto){
-
-        //CategoryDto로 받아야하나 ID는 null인데
+        //CategoryDto로 받아야하나 ID는 무조건 null인데. RequestParam으로 해야하나?
 
         CategoryDto categoryDtoResponse = categoryService.save(categoryDto.getName(), categoryDto.getParentId());
         return new ResponseEntity<>(categoryDtoResponse, HttpStatus.OK);
@@ -68,13 +66,10 @@ public class CategoryController {
 
     //카테고리 수정
     @PutMapping("update")
-    public String update(@Valid @RequestBody CategoryDto categoryDto){
+    public ResponseEntity<CategoryDto> update(@Valid @RequestBody CategoryDto categoryDto){
 
-        log.info("이름:{}, id:{}", categoryDto.getName(), categoryDto.getId());
-        categoryService.update(categoryDto.getName(), categoryDto.getId());
-
-        //리다이렉트가 맞나? 비동기 처리해야하지 않나?
-        return "redirect:/category/detail";
+        CategoryDto categoryDtoResponse = categoryService.update(categoryDto.getName(), categoryDto.getId());
+        return new ResponseEntity<>(categoryDtoResponse, HttpStatus.OK);
     }
 
     //카테고리 삭제

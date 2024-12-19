@@ -44,7 +44,8 @@ public class CategoryService {
         return categoryRepository.save(category).toDto();
     }
 
-    public void update(String name, Long id){
+
+    public CategoryDto update(String name, Long id){
 
         //이미 이름이 있다면 중복예외 발생시키기
         if(categoryRepository.existsByName(name)){
@@ -55,7 +56,7 @@ public class CategoryService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID가 없습니다."));
 
         category.update(name);
-        categoryRepository.save(category);
+        return categoryRepository.save(category).toDto();
     }
 
     public void delete(Long id){
