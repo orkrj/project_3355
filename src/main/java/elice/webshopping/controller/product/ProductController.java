@@ -9,10 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api/product")
 public class ProductController {
 
     private final ProductService productService;
@@ -37,49 +38,39 @@ public class ProductController {
 
     // 3. 상품 생성 (POST) - /product
     @PostMapping
-    public ResponseEntity<Void> createProduct(
+    public ResponseEntity<List<URL>> createProduct(
             @RequestParam("name") String name,
             @RequestParam("price") int price,
             @RequestParam("description") String description,
             @RequestParam("stockQuantity") int stockQuantity,
-            @RequestParam("categoryId") Long categoryId,
+            @RequestParam("categoryId") Long categoryId,  // 카테고리 ID 추가
             @RequestParam(value = "mainImageFiles", required = false) List<MultipartFile> mainImageFiles,
             @RequestParam(value = "descriptionImageFiles", required = false) List<MultipartFile> descriptionImageFiles) {
 
-        // ProductRequestDto 객체 생성
         ProductRequestDto request = new ProductRequestDto(name, price, description, stockQuantity, categoryId);
-
-        // 이미지 파일 처리
         ProductImageRequestDto imageRequestDto = new ProductImageRequestDto(mainImageFiles, descriptionImageFiles);
 
-        // 서비스 호출
-        productService.createProduct(request, imageRequestDto);
-
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // HTTP 201 CREATED
+        List<URL> signedUrls = productService.createProduct(request, imageRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(signedUrls);
     }
 
     // 4. 상품 수정 (PUT) - /product/{productId}
     @PutMapping("/{productId}")
-    public ResponseEntity<Void> updateProduct(
+    public ResponseEntity<List<URL>> updateProduct(
             @PathVariable Long productId,
             @RequestParam("name") String name,
             @RequestParam("price") int price,
             @RequestParam("description") String description,
             @RequestParam("stockQuantity") int stockQuantity,
-            @RequestParam("categoryId") Long categoryId,
+            @RequestParam("categoryId") Long categoryId,  // 카테고리 ID 추가
             @RequestParam List<MultipartFile> mainImageFiles,
             @RequestParam List<MultipartFile> descriptionImageFiles) {
 
-        // ProductRequestDto 객체 생성
         ProductRequestDto request = new ProductRequestDto(name, price, description, stockQuantity, categoryId);
-
-        // 이미지 파일 처리
         ProductImageRequestDto imageRequestDto = new ProductImageRequestDto(mainImageFiles, descriptionImageFiles);
 
-        // 서비스 호출
-        productService.updateProduct(productId, request, imageRequestDto);
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // HTTP 204 NO CONTENT
+        List<URL> signedUrls = productService.updateProduct(productId, request, imageRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(signedUrls);
     }
 
     // 5. 상품 삭제 (Soft Delete) (DELETE) - /product/{productId}

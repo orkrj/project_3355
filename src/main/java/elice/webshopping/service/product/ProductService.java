@@ -1,13 +1,19 @@
 package elice.webshopping.service.product;
 
+import elice.webshopping.domain.category.Category;
 import elice.webshopping.domain.product.*;
+import elice.webshopping.exception.common.NoContentsException;
+import elice.webshopping.repository.category.CategoryRepository;
 import elice.webshopping.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,11 +22,16 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductImageService productImageService;
+    private final CategoryRepository categoryRepository;
 
     // 1. 상품 목록 조회 (Read All)
     @Transactional(readOnly = true)
     public List<ProductResponseDto> getAllProducts() {
         List<Product> products = productRepository.findByDeletedAtIsNull();
+
+        if (products.isEmpty()) {
+            throw new NoContentsException("No products found");
+        }
         return products.stream()
                 .map(this::convertToProductResponseDto)
                 .collect(Collectors.toList());
@@ -30,43 +41,84 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductResponseDto getProductById(Long productId) {
         Product product = productRepository.findByProductIdAndDeletedAtIsNull(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+                .orElseThrow(() -> new NoContentsException("Product not found with id: " + productId));
         return convertToProductResponseDto(product);
     }
 
     // 3. 상품 등록 (Create)
-    public void createProduct(ProductRequestDto request, ProductImageRequestDto imageRequestDto) {
+    public List<URL> createProduct(ProductRequestDto request, ProductImageRequestDto imageRequestDto) {
+        // 카테고리 조회
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+
+        // 상품 생성
         Product product = Product.builder()
                 .name(request.getName())
                 .price(request.getPrice())
                 .description(request.getDescription())
                 .stockQuantity(request.getStockQuantity())
+                .category(category)  // 카테고리 연관 설정
                 .build();
 
-        //이미지 파일 처리
-        productImageService.addProductImagesWithFiles(product, imageRequestDto);
         productRepository.save(product);
+
+        // Signed URL 생성 및 반환
+        List<URL> signedUrls = productImageService.generateImageUploadUrls(product, imageRequestDto);
+
+        // 이미지 메타데이터 저장 (DB에 이미지 정보 저장)
+        saveImageMetadataForProduct(product, signedUrls);
+
+        return signedUrls;
     }
 
     // 4. 상품 수정 (Update)
-    public void updateProduct(Long productId, ProductRequestDto request, ProductImageRequestDto imageRequestDto) {
+    public List<URL> updateProduct(Long productId, ProductRequestDto request, ProductImageRequestDto imageRequestDto) {
+        // 상품 조회
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+                .orElseThrow(() -> new NoContentsException("Product not found with id: " + productId));
 
-        // 상품 정보 업데이트
-        product.update(request.getName(), request.getPrice(), request.getDescription(), request.getStockQuantity());
+        // 카테고리 수정
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        product.setCategory(category);  // 카테고리 업데이트
 
-        // 기존 이미지 대체
-        productImageService.updateProductImages(product, imageRequestDto);
+        // 상품 정보 수정
+        product.update(request.getName(), request.getPrice(), request.getDescription(), request.getStockQuantity(), category);
 
-        // 상품 저장
-        productRepository.save(product);
+        // 기존 이미지 메타데이터 삭제 (기존 이미지 제거)
+        product.getImages().clear();
+
+        // Signed URL 생성 및 반환
+        List<URL> signedUrls = productImageService.generateImageUploadUrls(product, imageRequestDto);
+
+        // 새 이미지 메타데이터 저장 (DB에 이미지 정보 저장)
+        saveImageMetadataForProduct(product, signedUrls);
+
+        return signedUrls;
+    }
+
+    // 이미지 메타데이터 저장 (MAIN과 DESCRIPTION 이미지를 구분하여 저장)
+    private void saveImageMetadataForProduct(Product product, List<URL> signedUrls) {
+        // 기존 이미지가 이미 DB에 저장된 상태라면, 다시 저장하지 않도록 해야 함
+        Set<String> existingUrls = new HashSet<>(product.getImages().stream()
+                .map(ProductImage::getImageUrl)
+                .collect(Collectors.toSet()));
+
+        int mainImageCount = signedUrls.size() / 2; // 첫 번째 절반은 MAIN 이미지
+        for (int i = 0; i < signedUrls.size(); i++) {
+            // 이미 DB에 저장된 이미지 URL이라면 저장하지 않음
+            if (!existingUrls.contains(signedUrls.get(i).toString())) {
+                ProductImage.ImageType imageType = (i < mainImageCount) ? ProductImage.ImageType.MAIN : ProductImage.ImageType.DESCRIPTION;
+                ProductImage image = ProductImage.createWithProduct(product, signedUrls.get(i).toString(), imageType);
+                product.addImage(image);
+            }
+        }
     }
 
     // 5. 상품 삭제 (Soft Delete)
     public void deleteProduct(Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+                .orElseThrow(() -> new NoContentsException("Product not found with id: " + productId));
 
         // Soft delete 처리: deletedAt 값을 현재 시간으로 설정
         productRepository.softDeleteProduct(productId, LocalDateTime.now());
@@ -84,17 +136,20 @@ public class ProductService {
                 .map(ProductImage::getImageUrl)
                 .collect(Collectors.toList());
 
+        // 카테고리 이름 가져오기
+        String categoryName = product.getCategory() != null ? product.getCategory().getName() : null;
+
         return ProductResponseDto.builder()
                 .productId(product.getProductId())
                 .name(product.getName())
                 .price(product.getPrice())
                 .description(product.getDescription())
                 .stockQuantity(product.getStockQuantity())
+                .categoryName(categoryName)  // 카테고리 이름 설정
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .mainImageUrls(mainImageUrls)
                 .descriptionImageUrls(descriptionImageUrls)
                 .build();
     }
-
 }
