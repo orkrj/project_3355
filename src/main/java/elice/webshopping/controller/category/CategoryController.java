@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-@RequestMapping("/category")
+@RequestMapping("/api/category")
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryController {
@@ -44,11 +44,6 @@ public class CategoryController {
 
     //사용자 :admin
 
-    @GetMapping("/out")
-    public String showCategoryAddPage() {
-        return "redirect:/category/categoryDetail.html";
-    }
-
     //카테고리 상세페이지 => 여기서 생성/수정/삭제 처리
     @GetMapping ("detail")
     public ResponseEntity<List<CategoryDto>> detail(){
@@ -61,23 +56,21 @@ public class CategoryController {
 
     //카테고리 생성
     @PostMapping("create")
-    public String create(@Valid @RequestBody CategoryDto categoryDto, BindingResult bindingResult){
-        if (bindingResult.hasErrors()) {
-            //오류발생 및 ControllerAdvice로 처리할 예정
-        }
-        categoryService.save(categoryDto.getName(), categoryDto.getParentId());
+    public ResponseEntity<Category> create(@Valid @RequestBody CategoryDto categoryDto){
 
+        //이미 이름이 있다면 중복예외 발생시키기
+        //CategoryDto로 받아야하나 ID는 null인데
+
+        Category save = categoryService.save(categoryDto.getName(), categoryDto.getParentId());
+        return new ResponseEntity<>(save, HttpStatus.OK);
         //리다이렉트가 맞나? 비동기 처리해야하지 않나?
-        return "redirect:/category/detail";
+//        return "redirect:/category/detail";
     }
 
 
     //카테고리 수정
     @PutMapping("update")
-    public String update(@Valid @RequestBody CategoryDto categoryDto, BindingResult bindingResult){
-        if (bindingResult.hasErrors()) {
-            //오류발생 및 ControllerAdvice로 처리할 예정
-        }
+    public String update(@Valid @RequestBody CategoryDto categoryDto){
 
         log.info("이름:{}, id:{}", categoryDto.getName(), categoryDto.getId());
         categoryService.update(categoryDto.getName(), categoryDto.getId());
