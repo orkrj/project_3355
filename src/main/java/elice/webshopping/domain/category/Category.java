@@ -1,11 +1,9 @@
 package elice.webshopping.domain.category;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.domain.product.Product;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
@@ -20,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -80,6 +77,10 @@ public class Category {
 
     public void update(String name) {
         this.name = name;
+    }
+
+    public boolean isNotRootCategory() {
+        return parent != null;
     }
 
     public CategoryDto toDto() {
