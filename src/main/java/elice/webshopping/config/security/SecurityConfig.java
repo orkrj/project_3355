@@ -96,32 +96,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-
-/*
-    @Bean
-    protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-             //   .formLogin(form -> form.disable())
-             //   .httpBasic(httpBasic -> httpBasic.disable())
-                .formLogin(form -> form
-                        .loginProcessingUrl("/admin")
-                        .permitAll())
-                .authorizeHttpRequests(req -> req
-                        .requestMatchers("/admin").hasRole("USER")
-                        .anyRequest().permitAll())
-                //User~Filter를 LoginFilter로 대체 (FormLogin방식을 disable 해서 새로운 로그인 방식이 필요하기 때문)
-                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
-               // .addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), JwtFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)/*
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/home")
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout"));
-
-        return http.build();
-    }
- */

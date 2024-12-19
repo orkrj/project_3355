@@ -6,7 +6,6 @@ import elice.webshopping.repository.user.Role;
 import elice.webshopping.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,7 +25,5 @@ public class UserService {
                 .build());
 
         return register.getUsername();  //가입한 유저의 id 반환
-
     }
-
 }
