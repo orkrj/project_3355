@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +21,7 @@ import java.util.List;
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
+@Setter
 @NoArgsConstructor
 public class User implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
