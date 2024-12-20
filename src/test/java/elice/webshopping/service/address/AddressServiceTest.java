@@ -39,7 +39,8 @@ public class AddressServiceTest {
 
     @BeforeEach
     public void setUp() {
-        user = User.builder()
+        // 첫 번째 사용자
+        User user = User.builder()
                 .username("admin")
                 .password("1234")
                 .real_name("Test User")
@@ -48,34 +49,58 @@ public class AddressServiceTest {
                 .role(Role.USER)
                 .build();
 
-
+        // 두 번째 사용자
+        User user1 = User.builder()
+                .username("user1")
+                .password("abcd")
+                .real_name("Another User")
+                .email("user1@example.com")
+                .phone("987-654-3210")
+                .role(Role.ADMIN)
+                .build();
 
         mockAddresses = Arrays.asList(
                 new Address("12345", "123 Main St", "Apt 101", "Home", true, false, user),
-                new Address("45678", "456 Oak St", "Apt 202", "Work", false, false, user)
+                new Address("67890", "456 Oak St", "Apt 202", "Work", false, false, user),
+                new Address("45678", "456 Oak St", "Apt 202", "Work", true, false, user1)
         );
+
+        addressRepository = mock(AddressRepository.class);
+
+        // 저장 동작을 설정
+        when(addressRepository.saveAll(mockAddresses)).thenReturn(mockAddresses);
+        addressRepository.saveAll(mockAddresses);
+
     }
 
-//    @DisplayName("새로운 기본 배송지가 추가될 때 처리를 테스트")
-//    @Test
-//    void shouldResetBaseAddressesWhenNewBaseAddressAdded() {
-//        // Arrange
-//        long userId = 1;
-//        AddressRequestDto request = new AddressRequestDto(
-//                "345", "Main St","Apt 101", "parent", true, false,"admin"
-//        );
-//
-//        // Act
-//        if (request.getIsBaseAddress() == true) {
-//            addressRepository.resetBaseAddresses(userId);
-//
-//        }
-//
-//        List<Address> nonBaseAddresses = addressRepository.findAll();
-//
-//        // Assert
-//        assertEquals(2, nonBaseAddresses.size(), "비기본 배송지의 개수는 2개여야 합니다.");
-//    }
+
+    @DisplayName("새로운 기본 배송지가 추가될 때 처리를 테스트")
+    @Test
+    void shouldResetBaseAddressesWhenNewBaseAddressAdded() {
+        // Arrange
+        String username = "admin";
+        AddressRequestDto request = new AddressRequestDto(
+                "345", "Main St", "Apt 101", "parent", true, false, "admin"
+        );
+
+        // findAllByUsername 동작 설정
+        when(addressRepository.findAllByUsername(username))
+                .thenReturn(mockAddresses.stream()
+                        .filter(address -> address.getUser().getUsername().equals(username))
+                        .toList());
+
+        // Act
+        if (request.getIsBaseAddress() == true) {
+            List<Address> baseAddress = addressRepository.findAllByUsername(username);
+            System.out.println(baseAddress.size());
+            baseAddress.stream().forEach(address -> address.setBaseAddress(false));
+
+
+        }
+
+        // Assert
+        // assertEquals(2, baseAddress.size(), "비기본 배송지의 개수는 2개여야 합니다.");
+    }
 
     @DisplayName("해당 유저를 찾지 못하면 에러 처리를 하는지 테스트")
     @Test
