@@ -4,6 +4,10 @@ import elice.webshopping.domain.product.ProductImageRequestDto;
 import elice.webshopping.domain.product.ProductRequestDto;
 import elice.webshopping.domain.product.ProductResponseDto;
 import elice.webshopping.service.product.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +31,19 @@ public class ProductController {
     public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
         List<ProductResponseDto> products = productService.getAllProducts();
         return ResponseEntity.ok(products); // HTTP 200 OK
+    }
+
+    // 1-1. 상품 전체 조회 (GET) - /api/product/page
+    @GetMapping("/page")
+    public ResponseEntity<Page<ProductResponseDto>> getPagedProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String direction) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy));
+        Page<ProductResponseDto> pagedProducts = productService.getPagedProducts(pageable);
+        return ResponseEntity.ok(pagedProducts);
     }
 
     // 2. 상품 단건 조회 (GET) - /product/{productId}
