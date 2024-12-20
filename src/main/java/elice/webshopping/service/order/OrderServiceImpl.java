@@ -3,14 +3,21 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
+import elice.webshopping.domain.order.Receiver;
+import elice.webshopping.domain.productOrder.ProductOrder;
+import elice.webshopping.domain.productOrder.ProductOrderRequestDto;
+import elice.webshopping.domain.user.User;
 import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.exception.order.admin.OrderNotCanceledException;
 import elice.webshopping.exception.order.admin.OrderNotFoundException;
 import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
+import elice.webshopping.repository.product.ProductRepository;
+import elice.webshopping.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,11 +25,29 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final ReceiverService receiverService;
+    private final ProductRepository productRepository;
 
     @Override
-    public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
-        // userService 필요
-        return null;
+    public OrderResponseDto createOrder(OrderRequestDto orderRequestDto, User user) {
+
+        Receiver receiver = receiverService.createReceiver(orderRequestDto.receiverRequestDto());
+
+        List<ProductOrder> productOrders = new ArrayList<>();
+        for (ProductOrderRequestDto productOrderRequestDto : orderRequestDto.productOrdersRequestDto()) {
+            ProductOrder productOrder = ProductOrder.of(
+                    productOrderRequestDto,
+                    productRepository.findById(productOrderRequestDto.productId()).orElseThrow(
+                            () -> new NoContentsException("No product found with id: " + productOrderRequestDto.productId())
+                    )
+                    // ProductService 에 서버 내부에서만 호출할 조회 메서드 필요함 -> 팀원에게 리팩토링 요청 필요
+            );
+
+            productOrders.add(productOrder);
+        }
+
+        Order order = orderRepository.save(Order.of(orderRequestDto, user, receiver, productOrders));
+        return OrderResponseDto.from(order);
     }
 
     @Override
