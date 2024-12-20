@@ -25,8 +25,18 @@ public class ProductOrder {
     private Order order;
 
     @Column(nullable = false)
-    private int quantity;
+    private int price;
 
     @Column(nullable = false)
-    private int price;
+    private int quantity;
+
+    public static ProductOrder of(ProductOrderRequestDto productOrderRequestDto, Product product, Order order) {
+        return new ProductOrder(
+                null,
+                product,
+                order,
+                productOrderRequestDto.price(),
+                productOrderRequestDto.quantity()
+        );
+    }
 }
