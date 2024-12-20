@@ -2,11 +2,16 @@ package elice.webshopping.service.user;
 
 import elice.webshopping.domain.user.User;
 import elice.webshopping.domain.user.UserRequestDto;
+import elice.webshopping.domain.user.UserResponseDto;
+import elice.webshopping.domain.user.UserUpdateDto;
 import elice.webshopping.repository.user.Role;
 import elice.webshopping.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,4 +31,46 @@ public class UserService {
 
         return register.getUsername();  //가입한 유저의 id 반환
     }
+
+    //회원 정보 전체 조회(관리자 페이지에서 확인하는 용도)
+    public List<User> findAll(){
+        return userRepository.findAll();
+    }
+
+    //회원정보 단일 조회 (특정 유저-로그인상태일때) ok
+    public UserResponseDto findByUsername(String username){
+        User user = userRepository.findByUsername(username).orElseThrow(()->new UsernameNotFoundException(username));
+
+        UserResponseDto userResponseDto = new UserResponseDto(user);
+
+        return userResponseDto;
+    }
+
+    //회원정보 수정 ok
+    public User update(String username, UserUpdateDto userUpdateDto){
+        //원래 정보 불러오기
+        User user = userRepository.findByUsername(username).orElseThrow(()->new UsernameNotFoundException(username));
+
+        //updateDto로 받은 정보를 원래 정보 대신 저장
+        //username은 변경 불가인데.. html에서 readOnly로 읽을수만 있게하고 저장되는 값은 원래 정보의 username을 그대로??
+
+        user.update(userUpdateDto.getUsername(),
+                bCryptPasswordEncoder.encode(userUpdateDto.getPassword()),
+                userUpdateDto.getReal_name(),
+                userUpdateDto.getEmail(),
+                userUpdateDto.getPhone(),
+                Role.ROLE_USER);
+
+        userRepository.save(user);
+        return user;
+    }
+
+    //회원 정보 삭제
+    public void delete(String username){
+        userRepository.deleteByUsername(username);
+    }
+
+
+
+
 }
