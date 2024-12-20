@@ -57,6 +57,10 @@ public class Address extends BaseEntity {
         return user.getUsername();
     }
 
+//    public long getUserId() {
+//        return user.getUser_id();
+//    }
+
     public void update(String zipCode, String streetAddress, String detailAddress,
                        String addressTarget, Boolean isBaseAddress) {
         this.zipCode = zipCode;
@@ -70,5 +74,7 @@ public class Address extends BaseEntity {
         isDeleted = deleted;
     }
 
-
+    public void setBaseAddress(Boolean baseAddress) {
+        isBaseAddress = baseAddress;
+    }
 }

@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/address")
 @RequiredArgsConstructor
 public class AddressController {
 
     private final AddressService addressService;
 
-    @PostMapping("/address/form")
+    @PostMapping("/form")
     public ResponseEntity<String> addAddress(
             @Valid @RequestBody AddressRequestDto request,
             BindingResult bindingResult
@@ -31,27 +32,27 @@ public class AddressController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/addresses")
+    @GetMapping("/all")
     public ResponseEntity<List<AddressResponseDto>> findAllAddress() {
         List<AddressResponseDto> addresses = addressService.findAll();
         return ResponseEntity.ok()
                 .body(addresses);
     }
 
-    @GetMapping("/address")
+    @GetMapping
     public ResponseEntity<List<AddressResponseDto>> findAddress(@RequestParam("username") String username) {
         List<AddressResponseDto> address = addressService.findAddress(username);
         return ResponseEntity.ok()
                 .body(address);
     }
 
-    @GetMapping("/address/specific")
+    @GetMapping("/specific")
     public ResponseEntity<AddressResponseDto> findBaseAddress(@RequestParam("username") String username) {
         AddressResponseDto baseAddresses = addressService.findBaseAddresses(username);
         return ResponseEntity.ok().body(baseAddresses);
     }
 
-    @PutMapping("/address/specific")
+    @PutMapping("/specific")
     public ResponseEntity<?> updateBaseAddress(
             @Valid @RequestBody AddressRequestDto requestDto, // @RequestBody 하나만 사용
             BindingResult bindingResult // 유효성 검사 결과를 받을 BindingResult
@@ -65,10 +66,10 @@ public class AddressController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/address/specific")
+    @DeleteMapping("/specific")
     public ResponseEntity<Void> deleteBaseAddress(@RequestParam("username") String username,
-                                                  @RequestParam("addaddressTarget") String addaddressTarget) {
-        addressService.delete(username);
+                                                  @RequestParam("addaddressTarget") String addressTarget) {
+        addressService.delete(username, addressTarget);
         return ResponseEntity.ok()
                 .build();
     }
