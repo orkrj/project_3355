@@ -48,6 +48,13 @@ public class ProductService {
         return productPage.map(this::convertToProductResponseDto);
     }
 
+    // 1-2. 상품명으로 상품 조회
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> searchProducts(String name, Pageable pageable) {
+        // 검색 및 정렬 조건으로 상품 검색
+        Page<Product> productPage = productRepository.findByNameContainingAndDeletedAtIsNull(name, pageable);
+        return productPage.map(this::convertToProductResponseDto);
+    }
 
     // 2. 상품 단건 조회 (Read)
     @Transactional(readOnly = true)
