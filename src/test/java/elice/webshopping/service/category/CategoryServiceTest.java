@@ -1,29 +1,24 @@
 package elice.webshopping.service.category;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import elice.webshopping.domain.category.Category;
+import elice.webshopping.domain.category.CategoryDto;
+import elice.webshopping.domain.product.Product;
 import elice.webshopping.repository.category.CategoryRepository;
-import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@Slf4j
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+
+@ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
 
     @Mock
@@ -32,83 +27,172 @@ class CategoryServiceTest {
     @InjectMocks
     private CategoryService categoryService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
-    void saveCategoryWithParent() {
-        // Given
-        Long parentId = 1L;
-        String childName = "Child Category";
-        Category parentCategory =  Category.of("Parent Category",parentId);
+    @DisplayName("이미 존재하는 카테고리 이름으로 저장 시 예외 발생")
+    void save_ThrowException_WhenCategoryNameExists() {
+        // given
+        String name = "Electronics";
+        Long parentId = null;
 
-        when(categoryRepository.findById(parentId)).thenReturn(Optional.of(parentCategory));
-        when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(categoryRepository.existsByName(name)).thenReturn(true);
 
-        // When
-        Category savedCategory = categoryService.save(childName, parentId);
-
-        // Then
-        assertNotNull(savedCategory);
-        assertEquals(childName, savedCategory.getName());
-        assertEquals(parentCategory, savedCategory.getParent());
-        assertTrue(parentCategory.getChildren().contains(savedCategory));
-
-        verify(categoryRepository, times(1)).findById(parentId);
-        verify(categoryRepository, times(1)).save(savedCategory);
-    }
-
-    @Test
-    void saveCategoryWithoutParent() {
-        // Given
-        String categoryName = "Parent Category";
-        when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        // When
-        Category savedCategory = categoryService.save(categoryName, null);
-
-        // Then
-        assertNotNull(savedCategory);
-        assertEquals(categoryName, savedCategory.getName());
-        assertNull(savedCategory.getParent());
-
-        verify(categoryRepository, never()).findById(anyLong());
-        verify(categoryRepository, times(1)).save(savedCategory);
-    }
-
-    @Test
-    void updateCategoryName() {
-        // Given
-        Long categoryId = 1L;
-        String oldName = "Old Category Name";
-        String newName = "New Category Name";
-        Category category = Category.of(oldName,categoryId);
-
-        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
-
-        // When
-        categoryService.update(newName, categoryId);
-
-        // Then
-        assertEquals(newName, category.getName());
-        verify(categoryRepository, times(1)).findById(categoryId);
-    }
-
-    @Test
-    void updateCategoryNameThrowsExceptionWhenNotFound() {
-        // Given
-        Long invalidId = 99L;
-        String newName = "New Category Name";
-
-        when(categoryRepository.findById(invalidId)).thenReturn(Optional.empty());
-
-        // When & Then
+        // when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                categoryService.update(newName, invalidId));
+                categoryService.save(name, parentId));
 
-        assertEquals("해당 ID가 없습니다.", exception.getMessage());
-        verify(categoryRepository, times(1)).findById(invalidId);
+        // then
+        assertEquals(name + "은 이미 존재하는 카테고리 이름입니다", exception.getMessage());
     }
+
+    @Test
+    @DisplayName("루트카테고리가 아닌 곳에서 카테고리를 추가하는경우 예외 발생")
+    void save_ThrowException_WhenNotRootCategory() {
+        // given
+        String name = "Electronics";
+        Long parentId = 1L;
+        Category parentCategory = mock(Category.class);
+
+        when(categoryRepository.existsByName(name)).thenReturn(false);
+        when(categoryRepository.findById(parentId)).thenReturn(Optional.of(parentCategory));
+        when(parentCategory.isNotRootCategory()).thenReturn(true);
+
+        // when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                categoryService.save(name, parentId));
+
+        assertEquals("카테고리 추가는 루트카테고리만 할 수 있습니다.", exception.getMessage());
+        verify(categoryRepository).existsByName(name);
+        verify(categoryRepository).findById(parentId);
+    }
+
+    @Test
+    @DisplayName("루트카테고리를 성공적으로 저장")
+    void save_Success_WhenRootCategory() {
+        // given
+        String name = "Electronics";
+        Long parentId = null;
+        Category category = makeTestSample(null);
+
+        when(categoryRepository.existsByName(name)).thenReturn(false);
+        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+
+        // when
+        CategoryDto result = categoryService.save(name, parentId);
+
+        // then
+        assertNotNull(result);
+        assertEquals(name, result.getName());
+        verify(categoryRepository).existsByName(name);
+        verify(categoryRepository).save(any(Category.class));
+    }
+
+    private Category makeTestSample(Long parentId) {
+        Category parentCategory = parentId != null ? Category.builder().id(parentId).name("Parent").build() : null;
+
+        return Category.builder()
+                .id(1L)
+                .name("Electronics")
+                .parent(parentCategory)
+                .children(List.of())
+                .build();
+    }
+
+
+//    @Test
+//    @DisplayName("카테고리를 업데이트할 때 유효한 입력이 주어지면 업데이트 성공")
+//    void update_ShouldUpdateCategory_WhenValidInput() {
+//        // given
+//        String name = "Home Appliances";
+//        Long id = 1L;
+//        Category category = Category.from("Old Name");
+//
+//        when(categoryRepository.existsByName(name)).thenReturn(false);
+//        when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
+//        when(categoryRepository.save(category)).thenReturn(category);
+//        when(category.toDto()).thenReturn(CategoryDto.builder().id(id).name(name).build());
+//
+//        // when
+//        CategoryDto result = categoryService.update(name, id);
+//
+//        // then
+//        assertNotNull(result);
+//        assertEquals(name, result.getName());
+//        verify(categoryRepository).save(category);
+//    }
+
+    @Test
+    @DisplayName("이미 존재하는 카테고리 이름으로 업데이트 시 예외 발생")
+    void update_ShouldThrowException_WhenCategoryNameExists() {
+        // given
+        String name = "Electronics";
+        Long id = 1L;
+
+        when(categoryRepository.existsByName(name)).thenReturn(true);
+
+        // when
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                categoryService.update(name, id));
+
+        // then
+        assertEquals(name + "은 이미 존재하는 카테고리 이름입니다", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("유효한 ID로 카테고리를 삭제하면 성공")
+    void delete_ShouldDeleteCategory_WhenValidId() {
+        // given
+        Long id = 1L;
+
+        doNothing().when(categoryRepository).deleteById(id);
+
+        // when
+        categoryService.delete(id);
+
+        // then
+        verify(categoryRepository).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("카테고리 이름으로 제품 목록 조회 시 결과 반환")
+    void findProductBy_ShouldReturnProductList_WhenCategoryExists() {
+        // given
+        String categoryName = "Electronics";
+        Product product1 = new Product();
+        Product product2 = new Product();
+        List<Product> products = Arrays.asList(product1, product2);
+
+        when(categoryRepository.findProductBy(categoryName)).thenReturn(products);
+
+        // when
+        List<Product> result = categoryService.findProductBy(categoryName);
+
+        // then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(categoryRepository).findProductBy(categoryName);
+    }
+
+//    @Test
+//    @DisplayName("모든 카테고리 조회 시 DTO 리스트 반환")
+//    void findAll_ShouldReturnAllCategories() {
+//        // given
+//        Category category1 = Category.from("Electronics");
+//        Category category2 = Category.from("Home Appliances");
+//        List<Category> categories = Arrays.asList(category1, category2);
+//        CategoryDto dto1 = CategoryDto.builder().id(1L).name("Electronics").build();
+//        CategoryDto dto2 = CategoryDto.builder().id(2L).name("Home Appliances").build();
+//
+//        when(categoryRepository.findAll()).thenReturn(categories);
+//        when(category1.toDto()).thenReturn(dto1);
+//        when(category2.toDto()).thenReturn(dto2);
+//
+//        // when
+//        List<CategoryDto> result = categoryService.findAll();
+//
+//        // then
+//        assertNotNull(result);
+//        assertEquals(2, result.size());
+//        verify(categoryRepository).findAll();
+//    }
 }

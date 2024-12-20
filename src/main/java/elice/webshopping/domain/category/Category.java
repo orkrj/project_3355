@@ -16,13 +16,18 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@Builder
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "categories")
 @EntityListeners(AuditingEntityListener.class)
 public class Category {
@@ -65,6 +70,8 @@ public class Category {
     public static Category from(String name){
         return new Category(name);
     }
+
+
 
     public void addChild(Category child){
         child.setParent(this);
