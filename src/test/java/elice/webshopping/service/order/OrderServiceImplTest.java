@@ -1,17 +1,17 @@
 package elice.webshopping.service.order;
 
-import elice.webshopping.domain.order.Order;
-import elice.webshopping.domain.order.OrderResponseDto;
-import elice.webshopping.domain.order.OrderStatus;
-import elice.webshopping.domain.order.Receiver;
+import elice.webshopping.domain.category.Category;
+import elice.webshopping.domain.order.*;
 import elice.webshopping.domain.product.Product;
+import elice.webshopping.domain.product.ProductImage;
 import elice.webshopping.domain.productOrder.ProductOrder;
+import elice.webshopping.domain.productOrder.ProductOrderRequestDto;
 import elice.webshopping.domain.user.User;
 import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.exception.order.admin.OrderNotCanceledException;
-import elice.webshopping.exception.order.admin.OrderNotFoundException;
 import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
+import elice.webshopping.repository.product.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,9 +19,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +33,11 @@ import static org.mockito.Mockito.times;
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
 
-    @Mock
-    private OrderRepository orderRepository;
-
     @InjectMocks
     private OrderServiceImpl orderService;
+
+    @Mock
+    private OrderRepository orderRepository;
 
     @Test
     @DisplayName("주문 전체 조회: 삭제되지 않은 주문만")
@@ -160,21 +160,52 @@ class OrderServiceImplTest {
         return mockReceiver;
     }
 
+    private ReceiverRequestDto givenReceiverRequestDto() {
+        return new ReceiverRequestDto (
+                "mockReceiverName",
+                "01012345678",
+                "00000",
+                "Seonggyungwan-ro",
+                "25-2",
+                "test"
+        );
+    }
+
     private ProductOrder givenMockProductOrder() {
+        return Mockito.mock(ProductOrder.class);
+    }
+
+    private ProductOrder givenMockProductOrderWithMockProduct(Long id) {
         ProductOrder mockProductOrder = Mockito.mock(ProductOrder.class);
         Product mockProduct = Mockito.mock(Product.class);
 
-        Mockito.when(mockProduct.getProductId()).thenReturn(1L);
         Mockito.when(mockProductOrder.getProduct()).thenReturn(mockProduct);
-        Mockito.when(mockProductOrder.getQuantity()).thenReturn(1);
+        Mockito.when(mockProduct.getProductId()).thenReturn(id);
 
         return mockProductOrder;
+    }
+
+    private List<ProductOrder> givenMockProductOrders() {
+        List<ProductOrder> mockProductOrders = new ArrayList<>();
+        mockProductOrders.add(givenMockProductOrderWithMockProduct(1L));
+        mockProductOrders.add(givenMockProductOrderWithMockProduct(2L));
+        mockProductOrders.add(givenMockProductOrderWithMockProduct(3L));
+
+        return mockProductOrders;
+    }
+
+    private List<ProductOrderRequestDto> givenProductOrdersRequestDto() {
+        return List.of(
+                new ProductOrderRequestDto(1L, 500000, 1),
+                new ProductOrderRequestDto(2L, 2000, 2),
+                new ProductOrderRequestDto(3L, 3000, 3)
+        );
     }
 
     private List<Order> givenOrders() {
         User mockUser = givenMockUser();
         Receiver mockReceiver = givenMockReceiver();
-        ProductOrder mockProductOrder = givenMockProductOrder();
+        List<ProductOrder> mockProductOrders = givenMockProductOrders();
 
         return List.of(
                 Order.builder()
@@ -185,7 +216,7 @@ class OrderServiceImplTest {
                         .totalPrice(5000)
                         .user(mockUser)
                         .receiver(mockReceiver)
-                        .productOrders(List.of(mockProductOrder))
+                        .productOrders(mockProductOrders)
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
                         .deletedAt(null)
@@ -198,7 +229,7 @@ class OrderServiceImplTest {
                         .totalPrice(10000)
                         .user(mockUser)
                         .receiver(mockReceiver)
-                        .productOrders(List.of(mockProductOrder))
+                        .productOrders(mockProductOrders)
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
                         .deletedAt(null)
@@ -211,7 +242,7 @@ class OrderServiceImplTest {
                         .totalPrice(10000)
                         .user(mockUser)
                         .receiver(mockReceiver)
-                        .productOrders(List.of(mockProductOrder))
+                        .productOrders(mockProductOrders)
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
                         .deletedAt(LocalDateTime.now())
@@ -228,7 +259,7 @@ class OrderServiceImplTest {
                 .totalPrice(10000)
                 .user(Mockito.mock(User.class))
                 .receiver(Mockito.mock(Receiver.class))
-                .productOrders(List.of(Mockito.mock(ProductOrder.class)))
+                .productOrders(List.of(givenMockProductOrder()))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .deletedAt(isCanceled ? LocalDateTime.now() : null)
