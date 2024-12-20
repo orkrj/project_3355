@@ -1,6 +1,8 @@
 package elice.webshopping.repository.product;
 
 import elice.webshopping.domain.product.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +17,13 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     // 삭제되지 않은 상품만 조회 (deletedAt이 null인 상품만)
     List<Product> findByDeletedAtIsNull();
+
+    // 삭제되지 않은 상품만 조회 (deletedAt이 null인 상품만) -- 페이징 o
+    Page<Product> findByDeletedAtIsNull(Pageable pageable);
+
+    // deletedAt이 null인 상품, 상품명으로 검색하고 조회
+    @Query("SELECT p FROM Product p WHERE p.deletedAt IS NULL AND (:name IS NULL OR p.name LIKE %:name%)")
+    Page<Product> findByNameContainingAndDeletedAtIsNull(@Param("name") String name, Pageable pageable);
 
     // 상품 ID와 deletedAt이 null인 상품 조회
     Optional<Product> findByProductIdAndDeletedAtIsNull(Long productId);

@@ -6,6 +6,8 @@ import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.repository.category.CategoryRepository;
 import elice.webshopping.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +37,23 @@ public class ProductService {
         return products.stream()
                 .map(this::convertToProductResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    // 1-1. 상품 목록 조회 (Read All) -- 페이징 o
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> getPagedProducts(Pageable pageable) {
+        Page<Product> productPage = productRepository.findByDeletedAtIsNull(pageable);
+
+        // DTO로 변환하여 반환
+        return productPage.map(this::convertToProductResponseDto);
+    }
+
+    // 1-2. 상품명으로 상품 조회
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> searchProducts(String name, Pageable pageable) {
+        // 검색 및 정렬 조건으로 상품 검색
+        Page<Product> productPage = productRepository.findByNameContainingAndDeletedAtIsNull(name, pageable);
+        return productPage.map(this::convertToProductResponseDto);
     }
 
     // 2. 상품 단건 조회 (Read)
