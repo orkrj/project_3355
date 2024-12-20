@@ -2,6 +2,8 @@ package elice.webshopping.controller.order;
 
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
+import elice.webshopping.domain.order.ReceiverRequestDto;
+import elice.webshopping.domain.product.ProductRequestDto;
 import elice.webshopping.domain.user.User;
 import elice.webshopping.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class OrderController {
             @RequestBody OrderRequestDto orderRequestDto,
             @AuthenticationPrincipal User user
     ) {
-        return ResponseEntity.ok(orderService.createOrder(orderRequestDto));
+        return ResponseEntity.ok(orderService.createOrder(orderRequestDto, user));
     }
 
     @GetMapping
