@@ -15,9 +15,11 @@ public class ReceiverServiceImpl implements ReceiverService {
     private final ReceiverRepository receiverRepository;
 
     @Override
-    public ReceiverResponseDto createReceiver(ReceiverRequestDto receiverRequestDto) {
-        Receiver savedReceiver = receiverRepository.save(Receiver.from(receiverRequestDto));
-        return ReceiverResponseDto.from(savedReceiver);
+    public Receiver createReceiver(ReceiverRequestDto receiverRequestDto) {
+//        Receiver savedReceiver = receiverRepository.save(Receiver.from(receiverRequestDto));
+//        return ReceiverResponseDto.from(savedReceiver);
+
+        return receiverRepository.save(Receiver.from(receiverRequestDto));
     }
 
     @Override

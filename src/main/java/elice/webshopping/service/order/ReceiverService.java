@@ -7,7 +7,7 @@ import elice.webshopping.domain.order.ReceiverResponseDto;
 public interface ReceiverService {
 
     //== 받는 사람 생성 ==//
-    ReceiverResponseDto createReceiver(ReceiverRequestDto receiverRequestDto);
+    Receiver createReceiver(ReceiverRequestDto receiverRequestDto);
 
     //== 받는 사람 조회 ==//
     ReceiverResponseDto findReceiverResponseDto(Long receiverId);
