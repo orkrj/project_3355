@@ -44,7 +44,7 @@ async function fetchRootCategories() {
     }
 }
 
-// Toggle children categories and allow edit/delete for them
+// 자식카테고리 보여주기
 async function toggleChildren(parentId) {
     const childrenListDiv = document.getElementById(`childrenList-${parentId}`);
     if (childrenListDiv.style.display === "none") {
@@ -128,5 +128,5 @@ async function deleteCategory(id) {
     }
 }
 
-// Load root categories on page load
+// DOMContentLoaded 이벤트 발생 시 fetchRootCategories 실행
 document.addEventListener("DOMContentLoaded", fetchRootCategories);

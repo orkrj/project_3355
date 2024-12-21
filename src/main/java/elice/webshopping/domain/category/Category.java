@@ -48,8 +48,8 @@ public class Category {
     private List<Category> children = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "category")
-    private List<Product> products = new ArrayList<>();
+//    @OneToMany(mappedBy = "category")
+//    private List<Product> products = new ArrayList<>();
 
     //    @Embedded
 //    private BaseEntity baseEntity;
