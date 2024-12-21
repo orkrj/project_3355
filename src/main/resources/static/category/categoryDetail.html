@@ -3,12 +3,53 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Mall</title>
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 </head>
+
 <body>
-    <div>카트</div>
-    <div>카트</div>
-    <div>카트</div>
-    <div>카트</div>
+<!-- 헤더 -->
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+            <!--이미지 파일 일단 주석처리 -->
+<!--                <img src="/elice-rabbit.png" width="30" height="30" />-->
+                <span class="has-text-link is-size-5 has-text-weight-bold">Shopping Mall</span>
+            </a>
+
+        </div>
+
+        <div id="navbarMenu" class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item has-text-weight-semibold" href="/cart">Outer</a>
+                <a class="navbar-item has-text-weight-semibold" href="/cart">Top</a>
+                <a class="navbar-item has-text-weight-semibold" href="/cart">Bottom</a>
+                <a class="navbar-item has-text-weight-semibold" href="/cart">ACC</a>
+                <a class="navbar-item has-text-weight-semibold" href="/cart">My Page</a>
+                <a class="navbar-item has-text-weight-semibold has-text-danger" href="/cart">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- 메인 컨텐츠 -->
+<section class="section">
+    <div class="container">
+        <h1 class="title has-text-centered">카테고리 관리</h1>
+
+        <!-- 카테고리 목록 -->
+        <div id="categoryList" class="box">
+            <h2 class="subtitle" id="categoryCount">카테고리 목록</h2>
+            <div id="categoriesContainer"></div>
+        </div>
+    </div>
+</section>
+
+<script src="category.js"></script>
+
+
 </body>
 </html>

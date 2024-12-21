@@ -75,7 +75,7 @@ public class CategoryController {
     //카테고리 삭제
     @DeleteMapping("delete/{categoryId}")
     @ResponseStatus(HttpStatus.OK) //본문이 필요하지 않으니 ResponseStatus 사용
-    public void delete(@PathVariable long categoryId){
+    public void delete(@PathVariable Long categoryId){
         categoryService.delete(categoryId);
     }
 }
