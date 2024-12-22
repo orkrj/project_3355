@@ -6,6 +6,7 @@ import elice.webshopping.domain.user.UserResponseDto;
 import elice.webshopping.domain.user.UserUpdateDto;
 import elice.webshopping.repository.user.Role;
 import elice.webshopping.repository.user.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -65,12 +66,20 @@ public class UserService {
         return user;
     }
 
+    @Transactional
     //회원 정보 삭제
     public void delete(String username){
         userRepository.deleteByUsername(username);
+        //리프레쉬 토큰까지 삭제?
     }
 
-
+    /*
+    //관리자가 회원 삭제
+    @Transactional
+    public void deleteByAdmin(Long id){
+        userRepository.deleteByUser_id(id);
+    }
+*/
 
 
 }

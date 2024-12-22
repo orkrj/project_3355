@@ -56,7 +56,6 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-    /*
     //회원 탈퇴
     @DeleteMapping("/user/delete")
     public ResponseEntity<?> deleteUser() {
@@ -67,5 +66,6 @@ public class UserController {
 
         return ResponseEntity.ok("Deleted");
     }
-    */
+
+
 }
