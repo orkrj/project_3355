@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/receiver")
+@RequestMapping("/api/receiver")
 @RequiredArgsConstructor
 public class ReceiverController {
 
