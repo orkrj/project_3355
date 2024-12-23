@@ -5,6 +5,7 @@ import elice.webshopping.domain.order.ReceiverRequestDto;
 import elice.webshopping.domain.order.ReceiverResponseDto;
 import elice.webshopping.repository.order.ReceiverRepository;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,14 +35,14 @@ class ReceiverServiceImplTest {
         given(receiverRepository.save(any())).willReturn(receiver);
 
         // when
-        ReceiverResponseDto receiverResponseDto = receiverService.createReceiver(givenRequestReceiverDto());
+        Receiver receiverResponseDto = receiverService.createReceiver(givenRequestReceiverDto());
 
         // then
-        assertEquals("test", receiverResponseDto.name());
-        assertEquals("01000000000", receiverResponseDto.phoneNumber());
-        assertEquals("12345", receiverResponseDto.zipCode());
-        assertEquals("Seonggyungwan-ro", receiverResponseDto.streetAddress());
-        assertEquals("25-2", receiverResponseDto.detailAddress());
+        assertEquals("test", receiver.getName());
+        assertEquals("01000000000", receiver.getPhoneNumber());
+        assertEquals("12345", receiver.getZipCode());
+        assertEquals("Seonggyungwan-ro", receiver.getStreetAddress());
+        assertEquals("25-2", receiver.getDetailAddress());
         verify(receiverRepository, times(1)).save(any());
     }
 

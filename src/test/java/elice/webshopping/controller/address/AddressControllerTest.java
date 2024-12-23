@@ -3,7 +3,6 @@ package elice.webshopping.controller.address;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import elice.webshopping.domain.address.Address;
 import elice.webshopping.domain.address.addressDto.AddressRequestDto;
-import elice.webshopping.domain.address.exception.AddressNotFoundException;
 import elice.webshopping.domain.user.User;
 import elice.webshopping.repository.address.AddressRepository;
 import elice.webshopping.repository.user.Role;

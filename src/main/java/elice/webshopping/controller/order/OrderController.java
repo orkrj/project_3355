@@ -2,9 +2,13 @@ package elice.webshopping.controller.order;
 
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
+import elice.webshopping.domain.order.ReceiverRequestDto;
+import elice.webshopping.domain.product.ProductRequestDto;
+import elice.webshopping.domain.user.User;
 import elice.webshopping.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,10 +20,12 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    // TODO 생성 로직 미구현: UserService 필요
     @PostMapping
-    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto orderRequestDto) {
-        return ResponseEntity.ok(orderService.createOrder(orderRequestDto));
+    public ResponseEntity<OrderResponseDto> createOrder(
+            @RequestBody OrderRequestDto orderRequestDto,
+            @AuthenticationPrincipal User user
+    ) {
+        return ResponseEntity.ok(orderService.createOrder(orderRequestDto, user));
     }
 
     @GetMapping

@@ -2,8 +2,9 @@ package elice.webshopping.service.address;
 
 import elice.webshopping.domain.address.addressDto.*;
 import elice.webshopping.domain.address.Address;
-import elice.webshopping.domain.address.exception.AddressNotFoundException;
+
 import elice.webshopping.domain.user.User;
+import elice.webshopping.exception.order.address.AddressNotFoundException;
 import elice.webshopping.repository.address.AddressRepository;
 import elice.webshopping.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +25,21 @@ public class AddressService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with username: " + request.getUsername()));
 
         //기본 배송지를 처리하는 로직
-        if (request.getIsBaseAddress() == true) {
-            addressRepository.resetBaseAddresses(user.getUser_id());
-        } else if(request.getIsBaseAddress() == false && addressRepository.findAllByUsername(user.getUsername()).size() == 0){
-            request.setBaseAddress(true);
+        if (request.getIsBaseAddress() && !addressRepository.findAllByUsername(user.getUsername()).isEmpty()) {
+            List<Address> existingAddresses = addressRepository.findAllByUsername(request.getUsername());
+
+            for (Address address : existingAddresses) {
+                if (address.getIsBaseAddress()) {
+                    address.setBaseAddress(false); // 기존 기본 배송지 해제
+                    addressRepository.save(address);
+                }
+            }
+        } else if (!request.getIsBaseAddress() ) {
+            request.setBaseAddress(true); // 첫 번째 주소는 기본 배송지로 설정
         }
 
         // 동일한 addressTarget이 존재하면 예외 처리
-        if (addressRepository.existsByUserAndAddressTarget(user, request.getAddressTarget())) {
+        if (addressRepository.findByAddressTarget(request.getUsername(), request.getAddressTarget()).isPresent() ) {
             throw new IllegalArgumentException("동잏한 배송지 명인 " + request.getAddressTarget() + "가 존재합니다.");
         }
 
@@ -49,7 +57,7 @@ public class AddressService {
 
     //유저 개인을 위한 용도, 유저가 가지고 있는 모든 주소를 조회
     public List<AddressResponseDto> findAddress(String username) {
-        List<Address> addresses = addressRepository.findAllActiveByUsername(username);
+        List<Address> addresses = addressRepository.findAllByUsername(username);
 
         if (addresses.isEmpty()) {
             throw new AddressNotFoundException("해당 아이디에는 주소가 존재하지 않습니다.");
@@ -61,9 +69,9 @@ public class AddressService {
                 .toList();
     }
 
-    //주문을 위한 용도, 유저가 본인이 가지고 있는 여러 배송주소 중에서 배송하기를 원하는 주소를 불러온다.
+    //주문을 위한 용도, 유저가 본인이 가지고 있는 여러 배송주소 중에서 등록한 기본 배송 주소를 불러온다.
     public AddressResponseDto findBaseAddresses(String username) {
-        Address basicAddress = addressRepository.findByUsernameAndBaseAddress(username)
+        Address basicAddress = addressRepository.findBaseAddress(username)
                             .orElseThrow(() -> new AddressNotFoundException("해당 주소를 찾을 수 없습니다."));
 
 
@@ -72,9 +80,7 @@ public class AddressService {
 
     public AddressResponseDto update(AddressRequestDto request) {
         // username과 addressTarget으로 Address 조회
-        Address address = addressRepository.findByUsernameAndBaseAddress(
-                        request.getUsername()
-                )
+        Address address = addressRepository.findByAddressTarget(request.getUsername(), request.getAddressTarget())
                 .orElseThrow(() -> new AddressNotFoundException("해당 주소를 찾을 수 없습니다."));
 
         // Address 엔티티 업데이트
@@ -85,8 +91,8 @@ public class AddressService {
         return new AddressResponseDto(updatedAddress);
     }
 
-    public void delete(String username) {
-        Address basicAddress = addressRepository.findByUsernameAndAddressTarget(username)
+    public void delete(String username, String addressTarget) {
+        Address basicAddress = addressRepository.findByAddressTarget(username, addressTarget)
                 .orElseThrow(() -> new AddressNotFoundException("해당 주소를 찾을 수 없습니다."));
 
         basicAddress.setDeleted(true);

@@ -3,6 +3,7 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
+import elice.webshopping.domain.user.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface OrderService {
 
     //== 주문 생성 ==//
-    OrderResponseDto createOrder(OrderRequestDto orderRequestDto);
+    OrderResponseDto createOrder(OrderRequestDto orderRequestDto, User user);
 
     //== 주문 전체 조회 ==//
     List<OrderResponseDto> getOrders();

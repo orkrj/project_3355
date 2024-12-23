@@ -56,7 +56,7 @@ public class Order {
     @JoinColumn(name = "receiver_id", nullable = false)
     private Receiver receiver;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOrder> productOrders = new ArrayList<>();
 
     // @CreatedDate
@@ -96,7 +96,6 @@ public class Order {
 
         for (ProductOrder productOrder : productOrders) {
             order.getProductOrders().add(productOrder);
-            productOrder.setOrder(order);
         }
 
         return order;

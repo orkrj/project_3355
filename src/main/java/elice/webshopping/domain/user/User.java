@@ -23,7 +23,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User implements UserDetails {
+public class User /*implements UserDetails */{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long user_id;
 
@@ -60,9 +60,19 @@ public class User implements UserDetails {
         this.role = role;
     }
 
+    public void update(String username, String password, String real_name, String email, String phone, Role role){
+        this.username = username;
+        this.password = password;
+        this.real_name = real_name;
+        this.email = email;
+        this.phone = phone;
+        this.role = role;
+    }
+
     @OneToMany(mappedBy = "user")
     private List<Address> addressList = new ArrayList<>();
 
+    /*
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){  //사용자가 가진 권한 반환
         return List.of(new SimpleGrantedAuthority("USER"));
@@ -97,7 +107,7 @@ public class User implements UserDetails {
     public boolean isEnabled(){ //계정 사용 가능 여부
         return true;
     }
-
+*/
 
 
 }
