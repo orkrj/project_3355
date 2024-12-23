@@ -1,5 +1,9 @@
 const BASE_URL = "/api/category";
 
+fetchRootCategories();
+// document.addEventListener("DOMContentLoaded", fetchRootCategories);
+
+
 // (parentId === null)인 루트 카테고리만 보여주기
 async function fetchRootCategories() {
     const response = await fetch(`${BASE_URL}/detail`);
@@ -18,7 +22,7 @@ async function fetchRootCategories() {
         rootCategories.forEach(category => {
 
             //자식 카테고리 개수
-            const childCount = categories.filter(cat => cat.parentId === category.id).length;
+            const childCount = categories.filter(categ => categ.parentId === category.id).length;
 
             const categoryDiv = document.createElement("div");
             categoryDiv.classList.add("box", "category-card");
@@ -27,7 +31,7 @@ async function fetchRootCategories() {
                     <div>
                         <strong>${category.name}</strong> 
                          <span class="has-text-link" onclick="toggleChildren(${category.id})">
-                            (자식 카테고리 보기: ${childCount}개)
+                            (하위 카테고리 보기: ${childCount}개)
                         </span>
                     </div>
                     <div class="buttons">
@@ -58,7 +62,7 @@ async function toggleChildren(parentId) {
                 children.forEach(child => {
                     const childDiv = document.createElement("div");
 
-                    childDiv.style.backgroundColor = "#dcdada"; // 회색 배경
+                    childDiv.style.backgroundColor = "#dcdada";
                     childDiv.classList.add("box", "child-category");
                     childDiv.innerHTML = `
                         <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -74,12 +78,12 @@ async function toggleChildren(parentId) {
                     childrenListDiv.appendChild(childDiv);
                 });
             } else {
-                childrenListDiv.innerHTML = `<p>자식 카테고리가 없습니다.</p>`;
+                childrenListDiv.innerHTML = `<p>하위 카테고리가 없습니다.</p>`;
             }
 
             childrenListDiv.style.display = "block";
         } else {
-            alert("자식 카테고리를 가져오지 못했습니다.");
+            alert("하위 카테고리를 가져오지 못했습니다.");
         }
     } else {
         childrenListDiv.style.display = "none";
@@ -128,5 +132,4 @@ async function deleteCategory(id) {
     }
 }
 
-// DOMContentLoaded 이벤트 발생 시 fetchRootCategories 실행
-document.addEventListener("DOMContentLoaded", fetchRootCategories);
+
