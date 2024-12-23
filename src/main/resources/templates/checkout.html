@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="/payment/payment.css" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>삼삼오오 결제 시스템</title>
+    <title>토스페이먼츠 샘플 프로젝트</title>
     <!-- 토스페이먼츠 SDK 추가 -->
     <script src="https://js.tosspayments.com/v2/standard"></script>
   </head>
@@ -103,8 +103,8 @@
           await widgets.requestPayment({
             orderId: generateRandomString(),
             orderName: "토스 티셔츠 외 2건",
-            successUrl: window.location.origin + "/success",
-            failUrl: window.location.origin + "/fail",
+            successUrl: window.location.origin + "/api/payment/success",
+            failUrl: window.location.origin + "/api/payment/fail",
             customerEmail: "customer123@gmail.com",
             customerName: "김토스",
             customerMobilePhone: "01012341234",
