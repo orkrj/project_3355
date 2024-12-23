@@ -1,6 +1,5 @@
 package elice.webshopping.controller.category;
 
-import elice.webshopping.domain.category.Category;
 import elice.webshopping.domain.category.CategoryDto;
 import elice.webshopping.domain.product.Product;
 import elice.webshopping.service.category.CategoryService;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,9 +42,9 @@ public class CategoryController {
 
     //사용자 :admin
 
-    //카테고리 상세페이지 => 여기서 생성/수정/삭제 처리
-    @GetMapping ("detail")
-    public ResponseEntity<List<CategoryDto>> detail(){
+    //카테고리 전부 출력 => 여기서 생성/수정/삭제 처리
+    @GetMapping ("findAll")
+    public ResponseEntity<List<CategoryDto>> findAll(){
         List<CategoryDto> CategoryDtos = categoryService.findAll();
 
         //categorieResponseDto 생성해야함 => CategoryDto으로 요청 및 응답 동시 처리
