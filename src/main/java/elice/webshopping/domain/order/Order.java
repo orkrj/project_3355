@@ -7,8 +7,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -103,7 +102,7 @@ public class Order {
 
     private static String generateOrderNumber() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
-                + (int) (Math.random() * 1000);
+                + UUID.randomUUID().toString();
     }
 
     public void cancelOrder() {

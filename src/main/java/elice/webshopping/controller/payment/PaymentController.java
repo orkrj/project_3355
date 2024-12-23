@@ -6,23 +6,21 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Controller
+@RequestMapping("/api/payment")
 public class PaymentController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -37,7 +35,7 @@ public class PaymentController {
         try {
             // 클라이언트에서 받은 JSON 요청 바디입니다.
             JSONObject requestData = (JSONObject) parser.parse(jsonBody);
-            paymentKey = (String) requestData.get("0paymentKey");
+            paymentKey = (String) requestData.get("paymentKey");
             orderId = (String) requestData.get("orderId");
             amount = (String) requestData.get("amount");
         } catch (ParseException e) {
@@ -95,12 +93,12 @@ public class PaymentController {
      */
     @RequestMapping(value = "/success", method = RequestMethod.GET)
     public String paymentRequest(HttpServletRequest request, Model model) throws Exception {
-        return "payment/success.html";
+        return "/success";
     }
 
-    @RequestMapping(value = "/checkout", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public String index(HttpServletRequest request, Model model) throws Exception {
-        return "payment/checkout.html";
+        return "/checkout";
     }
 
     /**
@@ -118,6 +116,7 @@ public class PaymentController {
         model.addAttribute("code", failCode);
         model.addAttribute("message", failMessage);
 
-        return "payment/fail.html";
+        return "/fail";
     }
 }
+
