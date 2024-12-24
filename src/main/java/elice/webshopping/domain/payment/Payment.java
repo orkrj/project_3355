@@ -1,4 +1,4 @@
-package elice.webshopping.domain;
+package elice.webshopping.domain.payment;
 
 import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.domain.order.Order;
@@ -21,9 +21,19 @@ public class Payment extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
+    private int amount;
+
     @OneToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_number")
     private Order order;
 
     private String paymentKey;
+
+    public static Payment from(PaymentRequestDto paymentRequestDto, Order order) {
+        return Payment.builder()
+                .amount(paymentRequestDto.amount())
+                .order(order)
+                .paymentKey(paymentRequestDto.paymentKey())
+                .build();
+    }
 }

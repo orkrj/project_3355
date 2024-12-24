@@ -9,4 +9,8 @@ public class OrderNotFoundException extends InvalidAdminActionException {
     public OrderNotFoundException(Long orderId) {
         super("Order " + orderId + " not found", HttpStatus.BAD_REQUEST);
     }
+
+    public OrderNotFoundException(String orderNumber) {
+        super("Order " + orderNumber + " not found", HttpStatus.BAD_REQUEST);
+    }
 }
