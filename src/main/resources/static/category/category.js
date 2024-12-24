@@ -2,34 +2,34 @@ const BASE_URL = "/api/category";
 
 fetchRootCategories();
 
-
-// (parentId === null)인 루트 카테고리만 보여주기
 async function fetchRootCategories() {
     const response = await fetch(`${BASE_URL}/findAll`);
     if (response.ok) {
         const categories = await response.json();
         const rootCategories = categories.filter(category => !category.parentId); // parentId가 null인 카테고리만
 
+
         // 루트 카테고리 개수 보이기
         const categoryCountElement = document.getElementById("categoryCount");
         categoryCountElement.textContent = `카테고리 목록 (${rootCategories.length})`;
 
-        // 루트 카테고리 출력
+        // 루트 카테고리출력
         const categoriesContainer = document.getElementById("categoriesContainer");
         categoriesContainer.innerHTML = "";
 
         rootCategories.forEach(category => {
-            // 자식 카테고리 개수
-            const childCategories = categories.filter(categ => categ.parentId === category.id);
+
+            //자식 카테고리 개수
+            const childCount = categories.filter(categ => categ.parentId === category.id).length;
 
             const categoryDiv = document.createElement("div");
             categoryDiv.classList.add("box", "category-card");
             categoryDiv.innerHTML = `
                 <div class="parent-category" style="display: flex; align-items: center; justify-content: space-between;">
                     <div>
-                        <strong>${category.name}</strong> 
-                        <span class="has-text-link toggle-children" data-parent-id="${category.id}">
-                            (하위 카테고리 보기: ${childCategories.length}개)
+                        <strong>${category.name}</strong>
+                         <span class="has-text-link" onclick="toggleChildren(${category.id})">
+                            (하위 카테고리 보기: ${childCount}개)
                         </span>
                     </div>
                     <div class="buttons">
@@ -39,158 +39,72 @@ async function fetchRootCategories() {
                 </div>
                 <div id="childrenList-${category.id}" class="mt-3" style="display: none;"></div>
             `;
-
             categoriesContainer.appendChild(categoryDiv);
-        });
-
-        // 이벤트 위임 방식으로 클릭 이벤트 추가
-        categoriesContainer.addEventListener("click", event => {
-            if (event.target.classList.contains("toggle-children")) {
-                const parentId = event.target.dataset.parentId;
-                const childCategories = categories.filter(category => category.parentId === parseInt(parentId, 10));
-                toggleChildren(parentId, childCategories);
-            }
         });
     } else {
         alert("카테고리를 가져오지 못했습니다.");
     }
+
+
 }
 
-async function toggleChildren(parentId, childCategories) {
+// 자식카테고리 보여주기
+async function toggleChildren(parentId) {
     const childrenListDiv = document.getElementById(`childrenList-${parentId}`);
-    if (childrenListDiv) {
-        if (childrenListDiv.style.display === "none" || childrenListDiv.style.display === "") {
-            if (childCategories.length > 0) {
-                childrenListDiv.innerHTML = ""; // 초기화
-                childCategories.forEach(child => {
+    if (childrenListDiv.style.display === "none") {
+        const response = await fetch(`${BASE_URL}/findAll`);
+        if (response.ok) {
+            const categories = await response.json();
+            const children = categories.filter(category => category.parentId === parentId);
+
+            if (children.length > 0) {
+                childrenListDiv.innerHTML = ""; // 이전 내용 초기화
+                children.forEach(child => {
                     const childDiv = document.createElement("div");
+
                     childDiv.style.backgroundColor = "#dcdada";
                     childDiv.classList.add("box", "child-category");
                     childDiv.innerHTML = `
                         <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <div><strong>${child.name}</strong></div>
+                            <div>
+                                <strong>${child.name} </strong>
+                            </div>
                             <div class="buttons">
-                                <button class="button is-primary is-small" onclick="editCategory(${child.id}, '${child.name}')">수정</button>
+                                <button class="button is-primary is-small" onclick="editCategory(${child.id}, '${child.name}', ${parentId})">수정</button>
                                 <button class="button is-danger is-small" onclick="deleteCategory(${child.id})">삭제</button>
                             </div>
                         </div>
                     `;
                     childrenListDiv.appendChild(childDiv);
                 });
-                childrenListDiv.style.display = "block";
             } else {
                 childrenListDiv.innerHTML = `<p>하위 카테고리가 없습니다.</p>`;
-                childrenListDiv.style.display = "block";
             }
+
+            childrenListDiv.style.display = "block";
         } else {
-            childrenListDiv.style.display = "none";
+            alert("하위 카테고리를 가져오지 못했습니다.");
         }
+    } else {
+        childrenListDiv.style.display = "none";
     }
 }
 
 
 
-
-// async function fetchRootCategories() {
-//     const response = await fetch(`${BASE_URL}/findAll`);
-//     if (response.ok) {
-//         const categories = await response.json();
-//         const rootCategories = categories.filter(category => !category.parentId); // parentId가 null인 카테고리만
-//
-//
-//         // 루트 카테고리 개수 보이기
-//         const categoryCountElement = document.getElementById("categoryCount");
-//         categoryCountElement.textContent = `카테고리 목록 (${rootCategories.length})`;
-//
-//         // 루트 카테고리출력
-//         const categoriesContainer = document.getElementById("categoriesContainer");
-//         categoriesContainer.innerHTML = "";
-//
-//         rootCategories.forEach(category => {
-//
-//             //자식 카테고리 개수
-//             const childCount = categories.filter(categ => categ.parentId === category.id).length;
-//
-//             const categoryDiv = document.createElement("div");
-//             categoryDiv.classList.add("box", "category-card");
-//             categoryDiv.innerHTML = `
-//                 <div class="parent-category" style="display: flex; align-items: center; justify-content: space-between;">
-//                     <div>
-//                         <strong>${category.name}</strong>
-//                          <span class="has-text-link" onclick="toggleChildren(${category.id})">
-//                             (하위 카테고리 보기: ${childCount}개)
-//                         </span>
-//                     </div>
-//                     <div class="buttons">
-//                         <button class="button is-primary is-small" onclick="editCategory(${category.id}, '${category.name}')">수정</button>
-//                         <button class="button is-danger is-small" onclick="deleteCategory(${category.id})">삭제</button>
-//                     </div>
-//                 </div>
-//                 <div id="childrenList-${category.id}" class="mt-3" style="display: none;"></div>
-//             `;
-//             categoriesContainer.appendChild(categoryDiv);
-//         });
-//     } else {
-//         alert("카테고리를 가져오지 못했습니다.");
-//     }
-//
-//
-// }
-//
-// // 자식카테고리 보여주기
-// async function toggleChildren(parentId) {
-//     const childrenListDiv = document.getElementById(`childrenList-${parentId}`);
-//     if (childrenListDiv.style.display === "none") {
-//         const response = await fetch(`${BASE_URL}/findAll`);
-//         if (response.ok) {
-//             const categories = await response.json();
-//             const children = categories.filter(category => category.parentId === parentId);
-//
-//             if (children.length > 0) {
-//                 childrenListDiv.innerHTML = ""; // 이전 내용 초기화
-//                 children.forEach(child => {
-//                     const childDiv = document.createElement("div");
-//
-//                     childDiv.style.backgroundColor = "#dcdada";
-//                     childDiv.classList.add("box", "child-category");
-//                     childDiv.innerHTML = `
-//                         <div style="display: flex; align-items: center; justify-content: space-between;">
-//                             <div>
-//                                 <strong>${child.name} </strong>
-//                             </div>
-//                             <div class="buttons">
-//                                 <button class="button is-primary is-small" onclick="editCategory(${child.id}, '${child.name}')">수정</button>
-//                                 <button class="button is-danger is-small" onclick="deleteCategory(${child.id})">삭제</button>
-//                             </div>
-//                         </div>
-//                     `;
-//                     childrenListDiv.appendChild(childDiv);
-//                 });
-//             } else {
-//                 childrenListDiv.innerHTML = `<p>하위 카테고리가 없습니다.</p>`;
-//             }
-//
-//             childrenListDiv.style.display = "block";
-//         } else {
-//             alert("하위 카테고리를 가져오지 못했습니다.");
-//         }
-//     } else {
-//         childrenListDiv.style.display = "none";
-//     }
-// }
 
 
 
 // Edit category
-function editCategory(id, currentName) {
+function editCategory(id, currentName, parentId) {
     const newName = prompt("새로운 카테고리 이름을 입력하세요:", currentName);
     if (newName && newName !== currentName) {
-        updateCategory(id, newName);
+        updateCategory(id, newName, parentId);
     }
 }
 
 // Update category
-async function updateCategory(id, name) {
+async function updateCategory(id, name,parentId) {
     const response = await fetch(`${BASE_URL}/update`, {
         method: "PUT",
         headers: {
@@ -201,7 +115,12 @@ async function updateCategory(id, name) {
 
     if (response.ok) {
         alert("카테고리가 수정되었습니다.");
-        fetchRootCategories();
+        if (parentId !== null) {
+            // 하위 카테고리가 계속 보이도록 유지 => 아직안됨
+            toggleChildren(parentId);
+        } else {
+            fetchRootCategories();
+        }
     } else {
         alert("카테고리 수정에 실패했습니다.");
     }
@@ -225,4 +144,94 @@ async function deleteCategory(id) {
 
 
 // 전역으로 등록
-// window.toggleChildren = toggleChildren;
+window.toggleChildren = toggleChildren;
+window.editCategory = editCategory;
+window.deleteCategory = deleteCategory;
+
+
+// 전역으로 등록하지 않고 해결할 수 있을까?
+
+// (parentId === null)인 루트 카테고리만 보여주기
+// async function fetchRootCategories() {
+//     const response = await fetch(`${BASE_URL}/findAll`);
+//     if (response.ok) {
+//         const categories = await response.json();
+//         const rootCategories = categories.filter(category => !category.parentId); // parentId가 null인 카테고리만
+//
+//         // 루트 카테고리 개수 보이기
+//         const categoryCountElement = document.getElementById("categoryCount");
+//         categoryCountElement.textContent = `카테고리 목록 (${rootCategories.length})`;
+//
+//         // 루트 카테고리 출력
+//         const categoriesContainer = document.getElementById("categoriesContainer");
+//         categoriesContainer.innerHTML = "";
+//
+//         rootCategories.forEach(category => {
+//             // 자식 카테고리 개수
+//             const childCategories = categories.filter(categ => categ.parentId === category.id);
+//
+//             const categoryDiv = document.createElement("div");
+//             categoryDiv.classList.add("box", "category-card");
+//             categoryDiv.innerHTML = `
+//                 <div class="parent-category" style="display: flex; align-items: center; justify-content: space-between;">
+//                     <div>
+//                         <strong>${category.name}</strong>
+//                         <span class="has-text-link toggle-children" data-parent-id="${category.id}">
+//                             (하위 카테고리 보기: ${childCategories.length}개)
+//                         </span>
+//                     </div>
+//                     <div class="buttons">
+//                         <button class="button is-primary is-small" onclick="editCategory(${category.id}, '${category.name}')">수정</button>
+//                         <button class="button is-danger is-small" onclick="deleteCategory(${category.id})">삭제</button>
+//                     </div>
+//                 </div>
+//                 <div id="childrenList-${category.id}" class="mt-3" style="display: none;"></div>
+//             `;
+//
+//             categoriesContainer.appendChild(categoryDiv);
+//         });
+//
+//         // 이벤트 위임 방식으로 클릭 이벤트 추가
+//         categoriesContainer.addEventListener("click", event => {
+//             if (event.target.classList.contains("toggle-children")) {
+//                 const parentId = event.target.dataset.parentId;
+//                 const childCategories = categories.filter(category => category.parentId === parseInt(parentId, 10));
+//                 toggleChildren(parentId, childCategories);
+//             }
+//         });
+//     } else {
+//         alert("카테고리를 가져오지 못했습니다.");
+//     }
+// }
+//
+// async function toggleChildren(parentId, childCategories) {
+//     const childrenListDiv = document.getElementById(`childrenList-${parentId}`);
+//     if (childrenListDiv) {
+//         if (childrenListDiv.style.display === "none" || childrenListDiv.style.display === "") {
+//             if (childCategories.length > 0) {
+//                 childrenListDiv.innerHTML = ""; // 초기화
+//                 childCategories.forEach(child => {
+//                     const childDiv = document.createElement("div");
+//                     childDiv.style.backgroundColor = "#dcdada";
+//                     childDiv.classList.add("box", "child-category");
+//                     childDiv.innerHTML = `
+//                         <div style="display: flex; align-items: center; justify-content: space-between;">
+//                             <div><strong>${child.name}</strong></div>
+//                             <div class="buttons">
+//                                 <button class="button is-primary is-small" onclick="editCategory(${child.id}, '${child.name}')">수정</button>
+//                                 <button class="button is-danger is-small" onclick="deleteCategory(${child.id})">삭제</button>
+//                             </div>
+//                         </div>
+//                     `;
+//                     childrenListDiv.appendChild(childDiv);
+//                 });
+//                 childrenListDiv.style.display = "block";
+//             } else {
+//                 childrenListDiv.innerHTML = `<p>하위 카테고리가 없습니다.</p>`;
+//                 childrenListDiv.style.display = "block";
+//             }
+//         } else {
+//             childrenListDiv.style.display = "none";
+//         }
+//     }
+// }

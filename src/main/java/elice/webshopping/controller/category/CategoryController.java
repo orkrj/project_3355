@@ -66,6 +66,7 @@ public class CategoryController {
     @PutMapping("update")
     public ResponseEntity<CategoryDto> update(@Valid @RequestBody CategoryDto categoryDto){
 
+        log.info("이름:{}, id:{}",categoryDto.getName(), categoryDto.getId());
         CategoryDto categoryDtoResponse = categoryService.update(categoryDto.getName(), categoryDto.getId());
         return new ResponseEntity<>(categoryDtoResponse, HttpStatus.OK);
     }
@@ -74,6 +75,8 @@ public class CategoryController {
     @DeleteMapping("delete/{categoryId}")
     @ResponseStatus(HttpStatus.OK) //본문이 필요하지 않으니 ResponseStatus 사용
     public void delete(@PathVariable Long categoryId){
+
+        log.info("categoryId:{}",categoryId);
         categoryService.delete(categoryId);
     }
 }
