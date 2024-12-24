@@ -7,7 +7,10 @@ async function navFunction() {
     const response = await fetch(`${BASE_URL}/findAll`);
     if (response.ok) {
         const categories = await response.json();
-        const rootCategories = categories.filter(category => !category.parentId); // parentId가 null인 카테고리만
+
+        // parentId가 null인 카테고리 중 id가 5인 '미분류'만 필터링
+        const rootCategories = categories.filter(category => !category.parentId && category.id !== 5);
+
         const childCategoriesMap = categories.reduce((acc, category) => {
             if (category.parentId) {
                 acc[category.parentId] = acc[category.parentId] || [];
