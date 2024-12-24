@@ -1,5 +1,6 @@
 package elice.webshopping.domain.order;
 
+import elice.webshopping.domain.payment.Payment;
 import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.user.User;
 import jakarta.persistence.*;
@@ -30,8 +31,9 @@ public class Order {
     @Column(nullable = false, unique = true)
     private String orderNumber;
 
-    @Column(nullable = false)
-    private String payment;
+    @Setter
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Payment payment;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -86,7 +88,6 @@ public class Order {
     ) {
         Order order = Order.builder()
                 .orderNumber(generateOrderNumber())
-                .payment(orderRequestDto.payment())
                 .status(OrderStatus.ORDERED)
                 .totalPrice(orderRequestDto.totalPrice())
                 .user(user)
@@ -101,8 +102,8 @@ public class Order {
     }
 
     private static String generateOrderNumber() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
-                + UUID.randomUUID().toString();
+        return (LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + UUID.randomUUID())
+                .substring(0, 20);
     }
 
     public void cancelOrder() {

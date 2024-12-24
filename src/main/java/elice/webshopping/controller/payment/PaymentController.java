@@ -1,6 +1,11 @@
 package elice.webshopping.controller.payment;
 
+import elice.webshopping.domain.payment.PaymentRequestDto;
+import elice.webshopping.domain.payment.PaymentResponseDto;
+import elice.webshopping.service.payment.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -8,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +27,10 @@ import java.util.Base64;
 
 @Controller
 @RequestMapping("/api/payment")
+@RequiredArgsConstructor
 public class PaymentController {
+
+    private final PaymentService paymentService;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -117,6 +126,11 @@ public class PaymentController {
         model.addAttribute("message", failMessage);
 
         return "/fail";
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<PaymentResponseDto> savePayment(@RequestBody PaymentRequestDto paymentRequestDto) {
+        return ResponseEntity.ok(paymentService.createPayment(paymentRequestDto));
     }
 }
 
