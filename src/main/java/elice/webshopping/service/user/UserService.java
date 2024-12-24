@@ -33,6 +33,22 @@ public class UserService {
         return register.getUsername();  //가입한 유저의 id 반환
     }
 
+    public String saveAdmin(UserRequestDto userRequestDto){ //관리자 회원가입
+        User register = userRepository.save(User.builder()
+                .username(userRequestDto.getUsername())
+                .password(bCryptPasswordEncoder.encode(userRequestDto.getPassword()))
+                .real_name(userRequestDto.getReal_name())
+                .email(userRequestDto.getEmail())
+                .phone(userRequestDto.getPhone())
+                .role(Role.ROLE_ADMIN)
+                .build());
+
+        return register.getUsername();  //가입한 유저의 id 반환
+    }
+
+
+
+
     //회원 정보 전체 조회(관리자 페이지에서 확인하는 용도)
     public List<User> findAll(){
         return userRepository.findAll();
