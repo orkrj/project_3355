@@ -1,8 +1,8 @@
 package elice.webshopping.domain.payment;
 
 public record PaymentRequestDto(
-        int amount,
-        String orderNumber,
-        String paymentKey
+        int amount, // suppliedAmount
+        String orderNumber, // orderId
+        String paymentKey // paymentKey
 ) {
 }
