@@ -91,16 +91,39 @@ async function toggleChildren(parentId) {
 }
 
 
-
-// Edit category
 function editCategory(id, currentName) {
-    const newName = prompt("새로운 카테고리 이름을 입력하세요:", currentName);
-    if (newName && newName !== currentName) {
-        updateCategory(id, newName);
+    let newName = null;
+
+    // 반복해서 사용자 입력을 확인
+    while (true) {
+        newName = prompt("새로운 카테고리 이름을 입력하세요:", currentName);
+
+        // 취소 버튼을 누른 경우
+        if (newName === null) {
+            alert("카테고리 이름 변경이 취소되었습니다.");
+            return; // 함수 종료
+        }
+
+        // 빈 이름인 경우 (공백만 입력해도 처리)
+        if (!newName.trim()) {
+            alert("카테고리 이름은 공백일 수 없습니다.");
+            continue; // 다시 입력창으로 돌아감
+        }
+
+        // 같은 이름인 경우
+        if (newName === currentName) {
+            alert("새로운 이름은 현재 이름과 다르게 입력해야 합니다.");
+            continue; // 다시 입력창으로 돌아감
+        }
+
+        // 유효한 이름이면 루프 종료
+        break;
     }
+
+    // 유효한 입력인 경우에만 업데이트 함수 호출
+    updateCategory(id, newName);
 }
 
-// Update category
 async function updateCategory(id, name) {
     const response = await fetch(`${BASE_URL}/update`, {
         method: "PUT",
@@ -118,7 +141,6 @@ async function updateCategory(id, name) {
     }
 }
 
-// Delete category
 async function deleteCategory(id) {
     if (confirm("정말로 삭제하시겠습니까?")) {
         const response = await fetch(`${BASE_URL}/delete/${id}`, {
