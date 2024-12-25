@@ -70,7 +70,7 @@ async function toggleChildren(parentId) {
                                 <strong>${child.name} </strong>
                             </div>
                             <div class="buttons">
-                                <button class="button is-primary is-small" onclick="editCategory(${child.id}, '${child.name}', ${parentId})">수정</button>
+                                <button class="button is-primary is-small" onclick="editCategory(${child.id}, '${child.name}')">수정</button>
                                 <button class="button is-danger is-small" onclick="deleteCategory(${child.id})">삭제</button>
                             </div>
                         </div>
@@ -92,19 +92,16 @@ async function toggleChildren(parentId) {
 
 
 
-
-
-
 // Edit category
-function editCategory(id, currentName, parentId) {
+function editCategory(id, currentName) {
     const newName = prompt("새로운 카테고리 이름을 입력하세요:", currentName);
     if (newName && newName !== currentName) {
-        updateCategory(id, newName, parentId);
+        updateCategory(id, newName);
     }
 }
 
 // Update category
-async function updateCategory(id, name,parentId) {
+async function updateCategory(id, name) {
     const response = await fetch(`${BASE_URL}/update`, {
         method: "PUT",
         headers: {
@@ -115,12 +112,7 @@ async function updateCategory(id, name,parentId) {
 
     if (response.ok) {
         alert("카테고리가 수정되었습니다.");
-        if (parentId !== null) {
-            // 하위 카테고리가 계속 보이도록 유지 => 아직안됨
-            toggleChildren(parentId);
-        } else {
-            fetchRootCategories();
-        }
+        fetchRootCategories();
     } else {
         alert("카테고리 수정에 실패했습니다.");
     }
@@ -144,9 +136,9 @@ async function deleteCategory(id) {
 
 
 // 전역으로 등록
-window.toggleChildren = toggleChildren;
-window.editCategory = editCategory;
-window.deleteCategory = deleteCategory;
+// window.toggleChildren = toggleChildren;
+// window.editCategory = editCategory;
+// window.deleteCategory = deleteCategory;
 
 
 // 전역으로 등록하지 않고 해결할 수 있을까?
