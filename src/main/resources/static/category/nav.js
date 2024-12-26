@@ -52,7 +52,7 @@ async function navFunction() {
 
             const categoryLink = document.createElement("a");
             categoryLink.classList.add("navbar-link", "has-text-weight-semibold");
-            categoryLink.href = `/category/${category.id}`;
+            categoryLink.href = `/api/category/${category.name}`;
             categoryLink.textContent = category.name;
 
 
@@ -95,12 +95,35 @@ async function navFunction() {
     myPage.textContent = "My Page";
     navbarEnd.appendChild(myPage);
 
+    // 장바구니 링크 추가
+    const basket = document.createElement("a");
+    basket.classList.add("navbar-item", "has-text-weight-semibold");
+    basket.href = `/basket`;
+    basket.textContent = "장바구니";
+    navbarEnd.appendChild(basket);
+
+
+    // 회원가입 링크 추가
+    const join = document.createElement("a");
+    join.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
+    join.href = `/join`;
+    join.textContent = "회원가입";
+    navbarEnd.appendChild(join);
+
+    // Login 링크 추가
+    const logIn = document.createElement("a");
+    logIn.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
+    logIn.href = `/logIn`;
+    logIn.textContent = "LogIn";
+    navbarEnd.appendChild(logIn);
+
     // LogOut 링크 추가
     const logOut = document.createElement("a");
     logOut.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
     logOut.href = `/logOut`;
     logOut.textContent = "LogOut";
     navbarEnd.appendChild(logOut);
+
 }
 
 // Bulma 화살표 제거 함수
