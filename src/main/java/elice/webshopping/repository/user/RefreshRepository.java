@@ -10,4 +10,6 @@ public interface RefreshRepository extends JpaRepository<RefreshToken, Long> {
     @Transactional
     void deleteByRefresh(String refresh);
 
+    @Transactional
+    void deleteByUsername(String username); //유저아이디로 리프레쉬토큰 삭제
 }
