@@ -80,4 +80,11 @@ public class Product {
         this.category = category;
     }
 
+    // MAIN 이미지의 개수를 반환하는 메서드 추가
+    public int getMainImageCount() {
+        return (int) images.stream()
+                .filter(image -> image.getImageType() == ProductImage.ImageType.MAIN)
+                .count();
+    }
+
 }
