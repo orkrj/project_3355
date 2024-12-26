@@ -102,7 +102,7 @@ public class PaymentController {
      */
     @RequestMapping(value = "/success", method = RequestMethod.GET)
     public String paymentRequest(HttpServletRequest request, Model model) throws Exception {
-        return "/success";
+        return "redirect:/order-complete/order-complete.html";
     }
 
     @RequestMapping(method = RequestMethod.GET)

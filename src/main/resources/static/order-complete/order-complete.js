@@ -4,7 +4,7 @@ import { checkLogin, navigate, createNavbar } from "../../useful-functions.js";
 const orderDetailButton = document.querySelector("#orderDetailButton");
 const shoppingButton = document.querySelector("#shoppingButton");
 
-checkLogin();
+// checkLogin();
 addAllElements();
 addAllEvents();
 
