@@ -46,10 +46,10 @@ public class Category {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Category> children = new ArrayList<>();
-
-
-    @OneToMany(mappedBy = "category")
-    private List<Product> products = new ArrayList<>();
+    
+// 양방향 참조 필요할 때 주석 풀기
+//    @OneToMany(mappedBy = "category")
+//    private List<Product> products = new ArrayList<>();
 
     //    @Embedded
 //    private BaseEntity baseEntity;
@@ -57,21 +57,9 @@ public class Category {
         this.name = name;
     }
 
-
-    private Category(String name, Long parentId) {
-        this.name = name;
-        this.id = parentId;
-    }
-
-    public static Category of(String name, Long parentId) {
-        return new Category(name,parentId);
-    }
-
     public static Category from(String name){
         return new Category(name);
     }
-
-
 
     public void addChild(Category child){
         child.setParent(this);

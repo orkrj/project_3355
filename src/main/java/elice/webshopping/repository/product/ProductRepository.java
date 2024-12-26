@@ -32,4 +32,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Modifying
     @Query("UPDATE Product p SET p.deletedAt = :deletedAt WHERE p.productId = :productId AND p.deletedAt IS NULL")
     int softDeleteProduct(@Param("productId") Long productId, @Param("deletedAt") LocalDateTime deletedAt);
+
+    //Category 이름으로 Product 찾기
+    @Query("select p from Product p where p.category.name = :categoryName")
+    List<Product> findProductBy(@Param("categoryName") String categoryName);
 }

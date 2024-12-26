@@ -171,4 +171,14 @@ public class ProductService {
                 .descriptionImageUrls(descriptionImageUrls)
                 .build();
     }
+
+
+    //Category 이름으로 Product 찾기
+    @Transactional(readOnly = true)
+    public List<ProductResponseDto> findProductBy(String categoryName) {
+        List<Product> products = productRepository.findProductBy(categoryName);
+        return products.stream()
+                .map(this::convertToProductResponseDto)
+                .collect(Collectors.toList());
+    }
 }
