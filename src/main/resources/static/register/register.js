@@ -41,6 +41,7 @@ async function handleSubmit(e) {
   document.getElementById("emailError").innerText = "";
   document.getElementById("passwordError").innerText = "";
   document.getElementById("passwordSameError").innerText = "";
+  document.getElementById("phoneError").innerText = "";
 
   // 잘 입력했는지 확인
   const isRealNameValid = real_name.length >= 2; //이름 2글자 이상
@@ -48,7 +49,11 @@ async function handleSubmit(e) {
   const isPasswordValid = (password.length < 8) || (password.length > 16); //비밀번호 길이가 8~16자
   const isPasswordSame = password === passwordConfirm; //비번 일치하는지
   const isIdValid = id.length >= 2;
-  //const isPhoneValid = phone.length==11 /*&& validatePhone(phone)*/;
+  const isPhoneValid = phone.length===11;
+
+  const phoneRegex = /^[0-9]+$/;
+
+
 
   let isValid = true;
 
@@ -60,7 +65,6 @@ async function handleSubmit(e) {
   if (!isEmailValid) {
     document.getElementById("emailError").innerText = "이메일 형식이 맞지 않습니다.";
     isValid=false;
-
   }
 
   if (!isPasswordSame) {
@@ -77,6 +81,13 @@ async function handleSubmit(e) {
     document.getElementById("realNameError").innerText = "이름을 2글자 이상 입력헤주세요.";
     isValid=false;
   }
+
+  if ((!phoneRegex.test(phone)) && (!isPhoneValid)){
+    document.getElementById("phoneError").innerText = "휴대폰 번호는 숫자만 입력해야합니다.";
+    isValid=false;
+  }
+
+
 
   // 회원가입 api 요청
  // try {
