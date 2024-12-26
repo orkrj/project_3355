@@ -25,6 +25,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.deletedAt IS NULL AND (:name IS NULL OR p.name LIKE %:name%)")
     Page<Product> findByNameContainingAndDeletedAtIsNull(@Param("name") String name, Pageable pageable);
 
+    // 카테고리 ID로 상품 조회 (deletedAt이 null인 상품만)
+    Page<Product> findByCategory_IdAndDeletedAtIsNull(Long categoryId, Pageable pageable);
+
     // 상품 ID와 deletedAt이 null인 상품 조회
     Optional<Product> findByProductIdAndDeletedAtIsNull(Long productId);
 
@@ -32,4 +35,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Modifying
     @Query("UPDATE Product p SET p.deletedAt = :deletedAt WHERE p.productId = :productId AND p.deletedAt IS NULL")
     int softDeleteProduct(@Param("productId") Long productId, @Param("deletedAt") LocalDateTime deletedAt);
+
+    //Category 이름으로 Product 찾기
+    @Query("select p from Product p where p.category.name = :categoryName")
+    List<Product> findProductBy(@Param("categoryName") String categoryName);
 }

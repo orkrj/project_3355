@@ -1,9 +1,9 @@
 import { randomId } from "./useful-functions.js";
 
 // aws-s3 사이트에서의 설정값들
-const s3BucketName = "elice-shoppingmall";
+const s3BucketName = "elice5-3team";
 const bucketRegion = "ap-northeast-2"; // 한국은 항상 ap-northeast-2임.
-const IdentityPoolId = "ap-northeast-2:5e7a5d7d-e6ed-462c-b302-f5663eb5fb0d";
+const IdentityPoolId = "ap-northeast-2:925ac487-06f8-477d-9e53-23d666107b9d";
 
 // aws 공식문서 그대로 가져옴
 AWS.config.update({
@@ -52,13 +52,13 @@ async function addImageToS3(fileInputElement, album) {
     const fileKey = uploadedFile.Key;
     console.log(uploadedFile);
     console.log(
-      `AWS S3에 정상적으로 사진이 업로드되었습니다.\n파일 위치: ${fileKey}`
+        `AWS S3에 정상적으로 사진이 업로드되었습니다.\n파일 위치: ${fileKey}`
     );
 
     return fileKey;
   } catch (err) {
     throw new Error(
-      `S3에 업로드하는 과정에서 에러가 발생하였습니다.\n${err.message}`
+        `S3에 업로드하는 과정에서 에러가 발생하였습니다.\n${err.message}`
     );
   }
 }
@@ -67,19 +67,19 @@ async function addImageToS3(fileInputElement, album) {
 // 권한 인증이 없어서 사진 열람이 불가함.
 // 아래 함수로, 인증코드가 추가된 특별한 url을 만든 후, img 요소의 src로 삽입해야 함.
 function getImageUrl(imageKey) {
-  const imageUrl = new Promise((resolve) => {
-    const params = {
-      Bucket: s3BucketName,
-      Key: imageKey,
-      Expires: 60,
-    };
+  const params = {
+    Bucket: s3BucketName,
+    Key: imageKey,
+    Expires: 60,  // 60초 동안 유효한 서명된 URL
+  };
 
-    s3.getSignedUrl("getObject", params, (_, url) => {
-      resolve(url);
-    });
+  s3.getSignedUrl('getObject', params, function (err, url) {
+    if (err) {
+      console.error('Error generating signed URL', err);
+      return;
+    }
+    console.log('Generated signed URL:', url);
   });
-
-  return imageUrl;
 }
 
 export { addImageToS3, getImageUrl };

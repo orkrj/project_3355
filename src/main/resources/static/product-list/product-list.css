@@ -21,11 +21,11 @@
   height: 200px;
 }
 
-.product-item p.title {
+.product-item p.name {
   margin: 1rem 0;
 }
 
-.product-item p.title .tag {
+.product-item p.name .tag {
   display: inline-block;
   margin-left: 0.5rem;
   margin-bottom: 1rem;

@@ -3,12 +3,29 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Mall</title>
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="/category/nav.js" defer></script>
+    <script src="/category/category.js" defer></script>
 </head>
+
 <body>
-    <div>카트</div>
-    <div>카트</div>
-    <div>카트</div>
-    <div>카트</div>
+    <!--내비게이션바-->
+    <div id="navContainer"></div>
+
+    <!-- 메인 컨텐츠 -->
+    <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered">카테고리 관리</h1>
+
+            <!-- 카테고리 목록 -->
+            <div id="categoryList" class="box">
+                <h2 class="subtitle" id="categoryCount">카테고리 목록</h2>
+                <div id="categoriesContainer"></div>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

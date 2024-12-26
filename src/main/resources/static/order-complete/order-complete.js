@@ -4,7 +4,7 @@ import { checkLogin, navigate, createNavbar } from "../../useful-functions.js";
 const orderDetailButton = document.querySelector("#orderDetailButton");
 const shoppingButton = document.querySelector("#shoppingButton");
 
-checkLogin();
+// checkLogin();
 addAllElements();
 addAllEvents();
 
@@ -15,6 +15,6 @@ function addAllElements() {
 
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
-  orderDetailButton.addEventListener("click", navigate("/account/orders"));
+  orderDetailButton.addEventListener("click", navigate("/account-orders/account-orders.html"));
   shoppingButton.addEventListener("click", navigate("/"));
 }

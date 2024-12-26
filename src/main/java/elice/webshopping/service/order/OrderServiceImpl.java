@@ -47,6 +47,9 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order order = orderRepository.save(Order.of(orderRequestDto, user, receiver, productOrders));
+        // 선 주문 생성 => 후 결제 처리
+        // 결제 실패시 주문 상태 -> PENDING
+        // 결제 성공시 주문 상태 -> ORDERED
         return OrderResponseDto.from(order);
     }
 
@@ -74,6 +77,11 @@ public class OrderServiceImpl implements OrderService {
     public Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
+    }
+
+    public Order getOrderEntityByOrderNumber(String orderNumber) {
+        return orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new OrderNotFoundException(orderNumber));
     }
 
     /**

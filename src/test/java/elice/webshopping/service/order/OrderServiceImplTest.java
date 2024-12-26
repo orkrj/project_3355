@@ -53,7 +53,6 @@ class OrderServiceImplTest {
         // then
         assertEquals(2, findOrders.size(), "소프트 딜리트된 test 3 은 조회되면 안 됨");
         assertEquals("202412161200000001", findOrders.get(0).orderNumber());
-        assertEquals("CASH", findOrders.get(1).payment());
         verify(orderRepository, times(1)).findAll();
     }
 
@@ -71,7 +70,6 @@ class OrderServiceImplTest {
         // then
         assertEquals(1, findOrder.getOrderId());
         assertEquals("202412161200000001", findOrder.getOrderNumber());
-        assertEquals("CARD", findOrder.getPayment());
         verify(orderRepository, times(1)).findById(1L);
     }
 
@@ -211,7 +209,6 @@ class OrderServiceImplTest {
                 Order.builder()
                         .orderId(1L)
                         .orderNumber("202412161200000001")
-                        .payment("CARD")
                         .status(OrderStatus.ORDERED)
                         .totalPrice(5000)
                         .user(mockUser)
@@ -224,7 +221,6 @@ class OrderServiceImplTest {
                 Order.builder()
                         .orderId(2L)
                         .orderNumber("202412161200000002")
-                        .payment("CASH")
                         .status(OrderStatus.ORDERED)
                         .totalPrice(10000)
                         .user(mockUser)
@@ -237,7 +233,6 @@ class OrderServiceImplTest {
                 Order.builder()
                         .orderId(3L)
                         .orderNumber("202412161200000003")
-                        .payment("CASH")
                         .status(OrderStatus.ORDERED)
                         .totalPrice(10000)
                         .user(mockUser)
@@ -254,7 +249,6 @@ class OrderServiceImplTest {
         return Order.builder()
                 .orderId(1L)
                 .orderNumber("202412161200000001")
-                .payment("CARD")
                 .status(canBeCanceled ? OrderStatus.ORDERED : OrderStatus.SHIPPING)
                 .totalPrice(10000)
                 .user(Mockito.mock(User.class))

@@ -6,6 +6,7 @@ import elice.webshopping.domain.user.UserResponseDto;
 import elice.webshopping.domain.user.UserUpdateDto;
 import elice.webshopping.repository.user.Role;
 import elice.webshopping.repository.user.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +32,22 @@ public class UserService {
 
         return register.getUsername();  //가입한 유저의 id 반환
     }
+
+    public String saveAdmin(UserRequestDto userRequestDto){ //관리자 회원가입
+        User register = userRepository.save(User.builder()
+                .username(userRequestDto.getUsername())
+                .password(bCryptPasswordEncoder.encode(userRequestDto.getPassword()))
+                .real_name(userRequestDto.getReal_name())
+                .email(userRequestDto.getEmail())
+                .phone(userRequestDto.getPhone())
+                .role(Role.ROLE_ADMIN)
+                .build());
+
+        return register.getUsername();  //가입한 유저의 id 반환
+    }
+
+
+
 
     //회원 정보 전체 조회(관리자 페이지에서 확인하는 용도)
     public List<User> findAll(){
@@ -65,12 +82,20 @@ public class UserService {
         return user;
     }
 
+    @Transactional
     //회원 정보 삭제
     public void delete(String username){
         userRepository.deleteByUsername(username);
+        //리프레쉬 토큰까지 삭제?
     }
 
-
+    /*
+    //관리자가 회원 삭제
+    @Transactional
+    public void deleteByAdmin(Long id){
+        userRepository.deleteByUser_id(id);
+    }
+*/
 
 
 }

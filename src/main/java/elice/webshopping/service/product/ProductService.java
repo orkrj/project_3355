@@ -56,6 +56,18 @@ public class ProductService {
         return productPage.map(this::convertToProductResponseDto);
     }
 
+    // 1-3. 카테고리 ID로 상품 목록 조회
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> getProductsByCategoryId(Long categoryId, Pageable pageable) {
+        Page<Product> productPage = productRepository.findByCategory_IdAndDeletedAtIsNull(categoryId, pageable);
+
+        if (productPage.isEmpty()) {
+            throw new NoContentsException("No products found for the given category ID");
+        }
+
+        return productPage.map(this::convertToProductResponseDto);
+    }
+
     // 2. 상품 단건 조회 (Read)
     @Transactional(readOnly = true)
     public ProductResponseDto getProductById(Long productId) {
@@ -170,5 +182,15 @@ public class ProductService {
                 .mainImageUrls(mainImageUrls)
                 .descriptionImageUrls(descriptionImageUrls)
                 .build();
+    }
+
+
+    //Category 이름으로 Product 찾기
+    @Transactional(readOnly = true)
+    public List<ProductResponseDto> findProductBy(String categoryName) {
+        List<Product> products = productRepository.findProductBy(categoryName);
+        return products.stream()
+                .map(this::convertToProductResponseDto)
+                .collect(Collectors.toList());
     }
 }

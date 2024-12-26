@@ -2,10 +2,14 @@ import * as Api from "../api.js";
 import { validateEmail, createNavbar } from "../useful-functions.js";
 
 // 요소(element), input 혹은 상수
-const fullNameInput = document.querySelector("#fullNameInput");
-const emailInput = document.querySelector("#emailInput");
-const passwordInput = document.querySelector("#passwordInput");
-const passwordConfirmInput = document.querySelector("#passwordConfirmInput");
+const real_nameInput = document.querySelector("#real_nameInput"); //이름
+const emailInput = document.querySelector("#emailInput"); //이메일
+const passwordInput = document.querySelector("#passwordInput"); //비밀번호
+const passwordConfirmInput = document.querySelector("#passwordConfirmInput"); //비밀번호 확인
+
+const IdInput = document.querySelector("#IdInput"); //아이디
+const PhoneInput = document.querySelector("#PhoneInput"); //휴대폰 번호
+
 const submitButton = document.querySelector("#submitButton");
 
 addAllElements();
@@ -25,40 +29,107 @@ function addAllEvents() {
 async function handleSubmit(e) {
   e.preventDefault();
 
-  const fullName = fullNameInput.value;
+  const real_name = real_nameInput.value;
   const email = emailInput.value;
   const password = passwordInput.value;
   const passwordConfirm = passwordConfirmInput.value;
+  const id = IdInput.value;
+  const phone = PhoneInput.value;
+
+  document.getElementById("usernameError").innerText = "";
+  document.getElementById("realNameError").innerText = "";
+  document.getElementById("emailError").innerText = "";
+  document.getElementById("passwordError").innerText = "";
+  document.getElementById("passwordSameError").innerText = "";
+  document.getElementById("phoneError").innerText = "";
 
   // 잘 입력했는지 확인
-  const isFullNameValid = fullName.length >= 2;
-  const isEmailValid = validateEmail(email);
-  const isPasswordValid = password.length >= 4;
-  const isPasswordSame = password === passwordConfirm;
+  const isRealNameValid = real_name.length >= 2; //이름 2글자 이상
+  const isEmailValid = validateEmail(email); //이메일 형식 체크
+  const isPasswordValid = (password.length < 8) || (password.length > 16); //비밀번호 길이가 8~16자
+  const isPasswordSame = password === passwordConfirm; //비번 일치하는지
+  const isIdValid = id.length >= 2;
+  const isPhoneValid = phone.length===11;
 
-  if (!isFullNameValid || !isPasswordValid) {
-    return alert("이름은 2글자 이상, 비밀번호는 4글자 이상이어야 합니다.");
+  const phoneRegex = /^[0-9]+$/;
+
+
+
+  let isValid = true;
+
+  if (!isRealNameValid) {
+    document.getElementById("usernameError").innerText = "아이디를 2글자 이상 입력해주세요.";
+    isValid=false;
   }
 
   if (!isEmailValid) {
-    return alert("이메일 형식이 맞지 않습니다.");
+    document.getElementById("emailError").innerText = "이메일 형식이 맞지 않습니다.";
+    isValid=false;
   }
 
   if (!isPasswordSame) {
-    return alert("비밀번호가 일치하지 않습니다.");
+    document.getElementById("passwordSameError").innerText = "비밀번호가 일치하지 않습니다.";
+    isValid=false;
   }
+
+  if(isPasswordValid){
+    document.getElementById("passwordError").innerText = "비밀번호는 8자 이상, 16자 이하로 입력해야 합니다.";
+    isValid=false;
+  }
+
+  if (!isIdValid) {
+    document.getElementById("realNameError").innerText = "이름을 2글자 이상 입력헤주세요.";
+    isValid=false;
+  }
+
+  if ((!phoneRegex.test(phone)) && (!isPhoneValid)){
+    document.getElementById("phoneError").innerText = "휴대폰 번호는 숫자만 입력해야합니다.";
+    isValid=false;
+  }
+
+
 
   // 회원가입 api 요청
-  try {
-    const data = { fullName, email, password };
+ // try {
+    /*  const data = { id, password, real_name, email, phone }; //json?
 
-    await Api.post("/users/register", data);
+      await Api.post("/user", data);
 
-    alert(`정상적으로 회원가입되었습니다.`);
-    // 로그인 페이지 이동
-    window.location.href = "/login";
-  } catch (err) {
-    console.error(err.stack);
-    alert(`문제가 발생하였습니다. 확인 후 다시 시도해 주세요: ${err.message}`);
+      alert(`정상적으로 회원가입되었습니다.`);
+      // 로그인 페이지 이동
+      window.location.href = "/login";  //get?
+    } catch (err) {
+      console.error(err.stack);
+      alert(`문제가 발생하였습니다. 확인 후 다시 시도해 주세요: ${err.message}`);
+    }*/
+
+if(isValid){
+  const data = {
+    username: id,
+    password: password,
+    real_name: real_name,
+    email: email,
+    phone: phone
+  };
+
+  const response = await fetch("http://localhost:8080/user", {
+    method : "POST",
+    headers : {
+      "Content-Type" : "application/json",
+    },
+    body : JSON.stringify(data),});
+
+  if(response.ok){
+    alert("회원가입 성공");
+    //window.location.href = "/login"; //경로 수정 필요
   }
+  else {
+    alert("회원가입 실패");
+  }
+}
+else {
+  alert("회원가입 실패");
+}
+
+
 }

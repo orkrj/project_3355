@@ -50,7 +50,7 @@
           amount: urlParams.get("amount"),
         };
 
-        const response = await fetch("/confirm", {
+        const response = await fetch("/api/payment/confirm", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -67,7 +67,19 @@
         }
 
         // TODO: 결제 성공 비즈니스 로직을 구현하세요.
-        // console.log(json);
+        console.log(json);
+        await fetch("/api/payment/create", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: json.orderId,
+            paymentKey: json.paymentKey,
+            suppliedAmount: json.suppliedAmount,
+          })
+        });
+
         return json;
       }
       confirm().then(function (data) {
