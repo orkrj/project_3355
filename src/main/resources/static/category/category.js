@@ -136,6 +136,7 @@ async function updateCategory(id, name) {
     if (response.ok) {
         alert("카테고리가 수정되었습니다.");
         fetchRootCategories();
+
     } else {
         alert("카테고리 수정에 실패했습니다.");
     }

@@ -153,25 +153,25 @@ class CategoryServiceTest {
         verify(categoryRepository).deleteById(id);
     }
 
-    @Test
-    @DisplayName("카테고리 이름으로 제품 목록 조회 시 결과 반환")
-    void findProductBy_ShouldReturnProductList_WhenCategoryExists() {
-        // given
-        String categoryName = "Electronics";
-        Product product1 = new Product();
-        Product product2 = new Product();
-        List<Product> products = Arrays.asList(product1, product2);
-
-        when(categoryRepository.findProductBy(categoryName)).thenReturn(products);
-
-        // when
-        List<Product> result = categoryService.findProductBy(categoryName);
-
-        // then
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        verify(categoryRepository).findProductBy(categoryName);
-    }
+//    @Test
+//    @DisplayName("카테고리 이름으로 제품 목록 조회 시 결과 반환")
+//    void findProductBy_ShouldReturnProductList_WhenCategoryExists() {
+//        // given
+//        String categoryName = "Electronics";
+//        Product product1 = new Product();
+//        Product product2 = new Product();
+//        List<Product> products = Arrays.asList(product1, product2);
+//
+//        when(categoryRepository.findProductBy(categoryName)).thenReturn(products);
+//
+//        // when
+//        List<Product> result = categoryService.findProductBy(categoryName);
+//
+//        // then
+//        assertNotNull(result);
+//        assertEquals(2, result.size());
+//        verify(categoryRepository).findProductBy(categoryName);
+//    }
 
 //    @Test
 //    @DisplayName("모든 카테고리 조회 시 DTO 리스트 반환")

@@ -4,6 +4,7 @@ import elice.webshopping.domain.category.Category;
 import elice.webshopping.domain.category.CategoryDto;
 import elice.webshopping.domain.product.Product;
 import elice.webshopping.repository.category.CategoryRepository;
+import elice.webshopping.repository.product.ProductRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,18 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    @Transactional(readOnly = true)
+    public List<CategoryDto> findAll() {
+
+        List<Category> categories = categoryRepository.findAll();
+        List<CategoryDto> categoryDtos = categories.stream()
+                .map(Category::toDto).toList();
+        return categoryDtos;
+    }
+
     //자식을 저장하려면 => 이름, 부모ID
     //부모를 저장하려면 => 이름, 부모ID
+
     public CategoryDto save(String name, Long parentId){
 
         //이미 이름이 있다면 중복예외 발생
@@ -61,19 +72,5 @@ public class CategoryService {
 
     public void delete(Long id){
         categoryRepository.deleteById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Product> findProductBy(String categoryName) {
-        return categoryRepository.findProductBy(categoryName);
-    }
-
-    @Transactional(readOnly = true)
-    public List<CategoryDto> findAll() {
-
-        List<Category> categories = categoryRepository.findAll();
-        List<CategoryDto> categoryDtos = categories.stream()
-                                        .map(Category::toDto).toList();
-        return categoryDtos;
     }
 }

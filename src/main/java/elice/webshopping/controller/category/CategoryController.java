@@ -2,7 +2,9 @@ package elice.webshopping.controller.category;
 
 import elice.webshopping.domain.category.CategoryDto;
 import elice.webshopping.domain.product.Product;
+import elice.webshopping.domain.product.ProductResponseDto;
 import elice.webshopping.service.category.CategoryService;
+import elice.webshopping.service.product.ProductService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,18 +28,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final ProductService productService;
 
     //사용자 :user
     //카테고리 조회
     @GetMapping("{categoryName}")
-    public ResponseEntity<List<Product>> findProductBy(String categoryName){
+    public ResponseEntity<List<ProductResponseDto>> findProductBy(@PathVariable("categoryName") String categoryName){
 
-        List<Product> product = categoryService.findProductBy(categoryName);
+        log.info("Category name: {}", categoryName);
+        List<ProductResponseDto> product = productService.findProductBy(categoryName);
 
         //null 조회시 null을 반환하는게 아닌 빈리스트 배열을 반환하도록
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
-
 
 
     //사용자 :admin
