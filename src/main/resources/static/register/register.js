@@ -36,29 +36,46 @@ async function handleSubmit(e) {
   const id = IdInput.value;
   const phone = PhoneInput.value;
 
-  // 잘 입력했는지 확인
-  const isRealNameValid = real_name.length >= 2;
-  const isEmailValid = validateEmail(email);
-  const isPasswordValid = (password.length >= 8) && (password.length <= 16);
-  const isPasswordSame = password === passwordConfirm;
+  document.getElementById("usernameError").innerText = "";
+  document.getElementById("realNameError").innerText = "";
+  document.getElementById("emailError").innerText = "";
+  document.getElementById("passwordError").innerText = "";
+  document.getElementById("passwordSameError").innerText = "";
 
-  const isIdValid = (id.length >= 2) && (id.length <= 10);
+  // 잘 입력했는지 확인
+  const isRealNameValid = real_name.length >= 2; //이름 2글자 이상
+  const isEmailValid = validateEmail(email); //이메일 형식 체크
+  const isPasswordValid = (password.length < 8) || (password.length > 16); //비밀번호 길이가 8~16자
+  const isPasswordSame = password === passwordConfirm; //비번 일치하는지
+  const isIdValid = id.length >= 2;
   //const isPhoneValid = phone.length==11 /*&& validatePhone(phone)*/;
 
-  if (!isRealNameValid || !isPasswordValid) {
-    return alert("이름은 2글자 이상이어야 합니다.");
+  let isValid = true;
+
+  if (!isRealNameValid) {
+    document.getElementById("usernameError").innerText = "아이디를 2글자 이상 입력해주세요.";
+    isValid=false;
   }
 
   if (!isEmailValid) {
-    return alert("이메일 형식이 맞지 않습니다.");
+    document.getElementById("emailError").innerText = "이메일 형식이 맞지 않습니다.";
+    isValid=false;
+
   }
 
   if (!isPasswordSame) {
-    return alert("비밀번호가 일치하지 않습니다.");
+    document.getElementById("passwordSameError").innerText = "비밀번호가 일치하지 않습니다.";
+    isValid=false;
+  }
+
+  if(isPasswordValid){
+    document.getElementById("passwordError").innerText = "비밀번호는 8자 이상, 16자 이하로 입력해야 합니다.";
+    isValid=false;
   }
 
   if (!isIdValid) {
-    return alert("아이디는 2글자 이상, 10글자 이하입니다.");
+    document.getElementById("realNameError").innerText = "이름을 2글자 이상 입력헤주세요.";
+    isValid=false;
   }
 
   // 회원가입 api 요청
@@ -75,27 +92,33 @@ async function handleSubmit(e) {
       alert(`문제가 발생하였습니다. 확인 후 다시 시도해 주세요: ${err.message}`);
     }*/
 
-    const data = {
-      username: id,
-      password: password,
-      real_name: real_name,
-      email: email,
-      phone: phone
-    };
+if(isValid){
+  const data = {
+    username: id,
+    password: password,
+    real_name: real_name,
+    email: email,
+    phone: phone
+  };
 
-    const response = await fetch("http://localhost:8080/user", {
-      method : "POST",
-      headers : {
-        "Content-Type" : "application/json",
-      },
-      body : JSON.stringify(data),});
+  const response = await fetch("http://localhost:8080/user", {
+    method : "POST",
+    headers : {
+      "Content-Type" : "application/json",
+    },
+    body : JSON.stringify(data),});
 
-    if(response.ok){
-      alert("회원가입 성공");
-      //window.location.href = "/login"; //경로 수정 필요
-    }
-    else {
-      alert("회원가입 실패");
-    }
+  if(response.ok){
+    alert("회원가입 성공");
+    //window.location.href = "/login"; //경로 수정 필요
+  }
+  else {
+    alert("회원가입 실패");
+  }
+}
+else {
+  alert("회원가입 실패");
+}
+
 
 }
