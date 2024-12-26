@@ -52,7 +52,7 @@ async function addProductItemsToContainer() {
     const random = randomId();
 
     // S3 URL을 비동기적으로 가져옴
-    const imageUrl = await getImageUrl(mainImageUrls[0]);
+    const imageUrl = mainImageUrls[0].split("?")[0]; //await getImageUrl(mainImageUrls[0]);
 
     productItemContainer.insertAdjacentHTML(
         "beforeend",
@@ -68,10 +68,10 @@ async function addProductItemsToContainer() {
         </div>
         <div class="media-content">
           <div class="content">
+            <p class="category">${categoryName}</p>
             <p class="name">${name}</p>
             <p class="description">${description}</p>
             <p class="price">${addCommas(price)}원</p>
-            <p class="category">${categoryName}</p>
           </div>
         </div>
       </div>
