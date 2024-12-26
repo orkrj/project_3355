@@ -6,7 +6,6 @@ import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.repository.category.CategoryRepository;
 import elice.webshopping.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -178,7 +176,6 @@ public class ProductService {
     //Category 이름으로 Product 찾기
     @Transactional(readOnly = true)
     public List<ProductResponseDto> findProductBy(String categoryName) {
-        log.info("Finding products by category name: {}", categoryName);
         List<Product> products = productRepository.findProductBy(categoryName);
         return products.stream()
                 .map(this::convertToProductResponseDto)

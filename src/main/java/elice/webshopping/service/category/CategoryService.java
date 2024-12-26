@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
+
 
     @Transactional(readOnly = true)
     public List<CategoryDto> findAll() {
@@ -71,6 +73,22 @@ public class CategoryService {
     }
 
     public void delete(Long id){
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID가 없습니다."));
+
+        // "미분류" 카테고리 조회
+        Category unclassifiedCategory = categoryRepository.findByName("미분류")
+                .orElseThrow(() -> new IllegalArgumentException("\"미분류\" 카테고리가 없습니다."));
+
+        //카테고리 삭제시 해당 상품 카테고리를 "미분류"로 변경
+        String categoryName = category.getName();
+        List<Product> products = productRepository.findProductBy(categoryName);
+        for (Product product : products) {
+            product.setCategory(unclassifiedCategory);
+            productRepository.save(product);
+        }
+
+
         categoryRepository.deleteById(id);
     }
 }
