@@ -4,7 +4,10 @@ import elice.webshopping.domain.user.User;
 import elice.webshopping.domain.user.UserRequestDto;
 import elice.webshopping.domain.user.UserResponseDto;
 import elice.webshopping.domain.user.UserUpdateDto;
+import elice.webshopping.repository.user.RefreshRepository;
 import elice.webshopping.service.user.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final RefreshRepository refreshRepository;
 
     //회원가입 후 id를 반환
     @PostMapping("/user")
@@ -56,16 +60,26 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-    /*
     //회원 탈퇴
     @DeleteMapping("/user/delete")
-    public ResponseEntity<?> deleteUser() {
+    public ResponseEntity<?> deleteUser(HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
         userService.delete(username);
 
-        return ResponseEntity.ok("Deleted");
+        refreshRepository.deleteByUsername(username);
+
+        //Refresh 토큰 Cookie 값 0
+        Cookie cookie = new Cookie("refresh", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+
+        response.addCookie(cookie);
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        return ResponseEntity.ok("Deleted ok");
     }
-    */
+
+
 }
