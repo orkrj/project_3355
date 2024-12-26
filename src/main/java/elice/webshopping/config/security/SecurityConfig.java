@@ -76,9 +76,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/login", "/", "/user").permitAll() //추후 추가
-                       // .requestMatchers("/RoleTest").permitAll() //test
-                       // .requestMatchers("/userRoleTest").hasRole("USER") //test
-                       // .requestMatchers("/adminRoleTest").hasRole("ADMIN") //test
+                        // .requestMatchers("/RoleTest").permitAll() //test
+                        // .requestMatchers("/logout").authenticated() //test
+                        // .requestMatchers("/adminRoleTest").hasRole("ADMIN") //test
+                        // .requestMatchers("/test").hasRole("USER")
                         .requestMatchers("/reissue").permitAll()
                         .anyRequest().permitAll());
 
