@@ -37,7 +37,7 @@ const requestOption = {
   6: "직접 입력",
 };
 
-checkLogin();
+// checkLogin();
 addAllElements();
 addAllEvents();
 
@@ -185,6 +185,11 @@ function handleRequestChange(e) {
 
 // 결제 진행
 async function doCheckout() {
+
+  // 결제 페이지로 이동
+  const paymentUrl = await Api.getPage("/api/payment")
+  document.write(paymentUrl);
+
   const receiverName = receiverNameInput.value;
   const receiverPhoneNumber = receiverPhoneNumberInput.value;
   const postalCode = postalCodeInput.value;
@@ -223,6 +228,7 @@ async function doCheckout() {
 
   try {
     // 전체 주문을 등록함
+    // TODO 바인딩 필드 변경
     const orderData = await Api.post("/api/order", {
       summaryTitle,
       totalPrice,
@@ -237,6 +243,7 @@ async function doCheckout() {
       const { quantity, price } = await getFromDb("cart", productId);
       const totalPrice = quantity * price;
 
+      // TODO productOrder(orderItem) 에 대한 컨트롤러 필요
       await Api.post("/api/orderitem", {
         orderId,
         productId,
@@ -263,10 +270,13 @@ async function doCheckout() {
         address2,
       },
     };
+    // TODO address 컨트롤러로 전달
     await Api.post("/api/user/deliveryinfo", data);
 
-    alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");
-    window.location.href = "/order/complete";
+    // alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");
+    // window.location.href = "/order/complete";
+
+
   } catch (err) {
     console.log(err);
     alert(`결제 중 문제가 발생하였습니다: ${err.message}`);
