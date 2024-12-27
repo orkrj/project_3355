@@ -43,20 +43,40 @@ async function insertProductsfromCart() {
   const { selectedIds } = await getFromDb("order", "summary");
 
   products.forEach(async (product) => {
-    // 객체 destructuring
-    const { _id, title, quantity, imageKey, price } = product;
-    const imageUrl = await getImageUrl(imageKey);
+    // 객체 destructuring // const { _id, title, quantity, imageKey, price }
+    const {
+      productId: _id, // productId를 _id로 매핑
+      name: title, // name을 title로 매핑
+      mainImageUrls,
+      quantity,
+      price
+    } = product;
+
+    let imageUrl = mainImageUrls; // 블록 외부에서 선언 (let으로 선언해 값을 변경 가능)
+
+    if (Array.isArray(mainImageUrls) && mainImageUrls.length > 0) {
+      imageUrl = mainImageUrls[0].replace(/\?.*$/, ''); // 첫 번째 URL에서 쿼리 파라미터 제거
+      console.log("imageUrl1:", imageUrl);
+    } else {
+      console.error("mainImageUrls가 비어 있거나 배열이 아닙니다:", mainImageUrls);
+    }
+
+    console.log("_id: " +_id);
+    console.log("title: " +title);
+    console.log("imageUrl2: " +imageUrl);
+    console.log("quantity: " +quantity);
+    console.log("price: " +price);
 
     const isSelected = selectedIds.includes(_id);
 
     cartProductsContainer.insertAdjacentHTML(
-      "beforeend",
-      `
+        "beforeend",
+        `
         <div class="cart-product-item" id="productItem-${_id}">
           <label class="checkbox">
             <input type="checkbox" id="checkbox-${_id}" ${
-        isSelected ? "checked" : ""
-      } />
+            isSelected ? "checked" : ""
+        } />
           </label>
           <button class="delete-button" id="delete-${_id}">
             <span class="icon">
@@ -125,32 +145,32 @@ async function insertProductsfromCart() {
 
     // 각종 이벤트 추가
     document
-      .querySelector(`#delete-${_id}`)
-      .addEventListener("click", () => deleteItem(_id));
+        .querySelector(`#delete-${_id}`)
+        .addEventListener("click", () => deleteItem(_id));
 
     document
-      .querySelector(`#checkbox-${_id}`)
-      .addEventListener("change", () => toggleItem(_id));
+        .querySelector(`#checkbox-${_id}`)
+        .addEventListener("change", () => toggleItem(_id));
 
     document
-      .querySelector(`#image-${_id}`)
-      .addEventListener("click", navigate(`/product/detail?id=${_id}`));
+        .querySelector(`#image-${_id}`)
+        .addEventListener("click", navigate(`/product/detail?id=${_id}`));
 
     document
-      .querySelector(`#title-${_id}`)
-      .addEventListener("click", navigate(`/product/detail?id=${_id}`));
+        .querySelector(`#title-${_id}`)
+        .addEventListener("click", navigate(`/product/detail?id=${_id}`));
 
     document
-      .querySelector(`#plus-${_id}`)
-      .addEventListener("click", () => increaseItemQuantity(_id));
+        .querySelector(`#plus-${_id}`)
+        .addEventListener("click", () => increaseItemQuantity(_id));
 
     document
-      .querySelector(`#minus-${_id}`)
-      .addEventListener("click", () => decreaseItemQuantity(_id));
+        .querySelector(`#minus-${_id}`)
+        .addEventListener("click", () => decreaseItemQuantity(_id));
 
     document
-      .querySelector(`#quantityInput-${_id}`)
-      .addEventListener("change", () => handleQuantityInput(_id));
+        .querySelector(`#quantityInput-${_id}`)
+        .addEventListener("change", () => handleQuantityInput(_id));
   });
 }
 
@@ -334,8 +354,14 @@ async function updateAllSelectCheckbox() {
 }
 
 async function deleteItem(id) {
+  const  priceTotal  = convertToNumber(productsTotalElem.innerText);
+  const  productCount = convertToNumber(productsCountElem.innerText);
+
   // indexedDB의 cart 목록에서 id를 key로 가지는 데이터를 삭제함.
   await deleteFromDb("cart", id);
+
+  // 주문 요약 데이터 업데이트
+  await updateOrderProductsTotal(id, productCount, priceTotal);
 
   // 결제정보를 업데이트함.
   await updateOrderSummary(id, "removePermanent-deleteButton");
@@ -346,6 +372,35 @@ async function deleteItem(id) {
   // 전체선택 체크박스를 업데이트함
   updateAllSelectCheckbox();
 }
+
+const updateOrderProductsTotal = async (id, quantity, deletedPrice) => {
+  console.log('10 updateOrderProductsTotal');
+  const key = 'summary'; // IndexedDB의 키
+  const storeName = 'order'; // IndexedDB의 스토어 이름
+
+  // 데이터 수정 함수
+  const dataModifyFunc = (data) => {
+    const newData = { ...data }; // 데이터 복사
+    newData.productsTotal = newData.productsTotal || 0;
+    newData.quantity = newData.quantity || 0;
+
+    if (newData.productsCount === 0) {
+      newData.productsTotal = 0;
+    } else {
+      newData.productsTotal -= deletedPrice;
+    }
+
+
+    if (quantity != newData.quantity) newData.quantity = 0;
+
+    console.log("newData.quantity1: " + newData.quantity);
+
+    return newData;
+  };
+
+  // IndexedDB 업데이트
+  await putToDb(storeName, key, dataModifyFunc);
+};
 
 // 결제정보 카드 업데이트 및, indexedDB 업데이트를 진행함.
 async function updateOrderSummary(id, type) {
@@ -412,7 +467,7 @@ async function updateOrderSummary(id, type) {
   if (!isDeleteWithoutChecked) {
     productsCountElem.innerText = `${currentCount + countUpdate}개`;
     productsTotalElem.innerText = `${addCommas(
-      currentProductsTotal + priceUpdate
+        currentProductsTotal + priceUpdate
     )}원`;
   }
 
@@ -422,13 +477,13 @@ async function updateOrderSummary(id, type) {
   if (isFeeAddRequired) {
     deliveryFeeElem.innerText = `3000원`;
     orderTotalElem.innerText = `${addCommas(
-      currentOrderTotal + priceUpdate + 3000
+        currentOrderTotal + priceUpdate + 3000
     )}원`;
   }
 
   if (!isFeeAddRequired && !isDeleteWithoutChecked) {
     orderTotalElem.innerText = `${addCommas(
-      currentOrderTotal + priceUpdate
+        currentOrderTotal + priceUpdate
     )}원`;
   }
 
@@ -508,18 +563,20 @@ async function updateProductItem(id, type) {
 
 // 페이지 로드 시 실행되며, 결제정보 카드에 값을 삽입함.
 async function insertOrderSummary() {
+  console.log('13 insertOrderSummary');
   const { productsCount, productsTotal } = await getFromDb("order", "summary");
 
   const hasItems = productsCount !== 0;
 
   productsCountElem.innerText = `${productsCount}개`;
-  productsTotalElem.innerText = `${addCommas(productsTotal)}원`;
 
   if (hasItems) {
     deliveryFeeElem.innerText = `3,000원`;
+    productsTotalElem.innerText = `${addCommas(productsTotal)}원`;
     orderTotalElem.innerText = `${addCommas(productsTotal + 3000)}원`;
   } else {
     deliveryFeeElem.innerText = `0원`;
+    productsTotalElem.innerText = `0원`;
     orderTotalElem.innerText = `0원`;
   }
 }
