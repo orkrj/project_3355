@@ -37,7 +37,7 @@ public class ProductOrder {
                 null,
                 product,
                 order,
-                productOrderRequestDto.price(),
+                productOrderRequestDto.totalPrice(),
                 productOrderRequestDto.quantity()
         );
     }
