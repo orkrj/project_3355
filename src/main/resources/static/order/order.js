@@ -201,6 +201,7 @@ async function doCheckout() {
   const totalPrice = convertToNumber(orderTotalElem.innerText);
   const { selectedIds } = await getFromDb("order", "summary");
 
+  // front-side-validation
   if (!receiverName || !receiverPhoneNumber || !postalCode || !address2) {
     return alert("배송지 정보를 모두 입력해 주세요.");
   }
@@ -218,7 +219,7 @@ async function doCheckout() {
     request = requestOption[requestType];
   }
 
-  const address = {
+  const receiver = {
     postalCode,
     address1,
     address2,
@@ -227,15 +228,19 @@ async function doCheckout() {
   };
 
   try {
+    // receiver 등록
+    await Api.post("/api/receiver")
+
     // 전체 주문을 등록함
-    // TODO 바인딩 필드 변경
+    // TODO OrderRequestDto 랑 필드 바인딩해야 함
     const orderData = await Api.post("/api/order", {
       summaryTitle,
       totalPrice,
-      address,
+      receiver,
       request,
     });
 
+    // order 가 먼저 만들어지게 됨
     const orderId = orderData._id;
 
     // 제품별로 주문아이템을 등록함
@@ -243,13 +248,14 @@ async function doCheckout() {
       const { quantity, price } = await getFromDb("cart", productId);
       const totalPrice = quantity * price;
 
-      // TODO productOrder(orderItem) 에 대한 컨트롤러 필요
-      await Api.post("/api/orderitem", {
+      await Api.post("/api/productOrder", {
         orderId,
         productId,
         quantity,
         totalPrice,
       });
+
+      // TODO productOrder 전부 생성되고 나면 Order 에 매핑해주기
 
       // indexedDB에서 해당 제품 관련 데이터를 제거함
       await deleteFromDb("cart", productId);
@@ -270,7 +276,7 @@ async function doCheckout() {
         address2,
       },
     };
-    // TODO address 컨트롤러로 전달
+    // TODO user-address 컨트롤러로 전달
     await Api.post("/api/user/deliveryinfo", data);
 
     // alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");

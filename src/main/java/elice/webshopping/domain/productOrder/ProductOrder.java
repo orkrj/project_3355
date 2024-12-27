@@ -20,17 +20,24 @@ public class ProductOrder {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
     @Column(nullable = false)
     private int price;
 
     @Column(nullable = false)
     private int quantity;
 
-    public static ProductOrder of(ProductOrderRequestDto productOrderRequestDto, Product product) {
+    public static ProductOrder of(
+            ProductOrderRequestDto productOrderRequestDto, Product product, Order order
+    ) {
         return new ProductOrder(
                 null,
                 product,
-                productOrderRequestDto.price(),
+                order,
+                productOrderRequestDto.totalPrice(),
                 productOrderRequestDto.quantity()
         );
     }

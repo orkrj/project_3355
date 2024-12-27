@@ -32,6 +32,7 @@ function addAllEvents() {
 // 페이지 로드 시 실행, 삭제할 주문 id를 전역변수로 관리함
 let orderIdToDelete;
 async function insertOrders() {
+  // TODO 엔드포인트 수정
   const orders = await Api.get("/orders/orderlist/user");
 
   for (const order of orders) {
