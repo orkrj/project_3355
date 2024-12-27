@@ -1,22 +1,25 @@
-import { getImageUrl } from "../../aws-s3.js";
-import * as Api from "../../api.js";
+import { getImageUrl } from "../aws-s3.js";
+import * as Api from "../api.js";
 import {
   getUrlParams,
   addCommas,
   checkUrlParams,
   createNavbar,
-} from "../../useful-functions.js";
-import { addToDb, putToDb } from "../../indexed-db.js";
+} from "../useful-functions.js";
+import { addToDb, putToDb } from "../indexed-db.js";
 
 // 요소(element), input 혹은 상수
-const productImageTag = document.querySelector("#productImageTag");
+const productMainImageTag = document.querySelector("#productMainImageTag");
 const manufacturerTag = document.querySelector("#manufacturerTag");
 const titleTag = document.querySelector("#titleTag");
+const stockTag = document.querySelector("#stockTag");
+const priceTag = document.querySelector("#priceTag");
 const detailDescriptionTag = document.querySelector("#detailDescriptionTag");
 const addToCartButton = document.querySelector("#addToCartButton");
 const purchaseButton = document.querySelector("#purchaseButton");
+const productDesImageContainer = document.querySelector("#productDesImageContainer");
 
-checkUrlParams("id");
+checkUrlParams("productId");
 addAllElements();
 addAllEvents();
 
@@ -30,32 +33,49 @@ function addAllElements() {
 function addAllEvents() {}
 
 async function insertProductData() {
-  const { id } = getUrlParams();
-  const product = await Api.get(`/products/${id}`);
+  const { productId } = getUrlParams();
+  console.log("productId:", productId);
+  //await Api.getpage(`/products/${productId}`);
+  const product = await Api.get(`/api/product/${productId}`);
 
   // 객체 destructuring
   const {
-    title,
-    detailDescription,
-    menufacturer,
-    imageKey,
-    isRecommended,
+    name,
+    description,
+    categoryName,
+    mainImageUrls,
+    stockQuantity,
     price,
+    descriptionImageUrls
   } = product;
-  const imageUrl = await getImageUrl(imageKey);
 
-  productImageTag.src = imageUrl;
-  titleTag.innerText = title;
-  detailDescriptionTag.innerText = detailDescription;
-  manufacturerTag.innerText = menufacturer;
+  const mainImageUrl = mainImageUrls?.[0]?.split("?")[0] || "../elice-rabbit.png";
+
+  productMainImageTag.src = mainImageUrl;
+  titleTag.innerText = name;
+  detailDescriptionTag.innerText = description;
+  manufacturerTag.innerText = categoryName;
+  stockTag.innerText = `${stockQuantity}개`;
   priceTag.innerText = `${addCommas(price)}원`;
 
-  if (isRecommended) {
-    titleTag.insertAdjacentHTML(
-      "beforeend",
-      '<span class="tag is-success is-rounded">추천</span>'
+  const sanitizedDescriptionImageUrls = descriptionImageUrls.map((url) =>
+      url.split("?")[0]
+  );
+
+  productDesImageContainer.innerHTML = ""; // 기존 항목 제거
+
+  // descriptionImageUrls를 순회하며 HTML 요소 추가
+  sanitizedDescriptionImageUrls.forEach((imageUrl) => {
+    productDesImageContainer.insertAdjacentHTML(
+        "beforeend",
+        `
+      <figure class="image is-square">
+        <img src="${imageUrl}" alt="상품 상세 이미지" />
+      </figure>
+      `
     );
-  }
+  });
+
 
   addToCartButton.addEventListener("click", async () => {
     try {
@@ -76,13 +96,13 @@ async function insertProductData() {
     try {
       await insertDb(product);
 
-      window.location.href = "/order";
+      window.location.href = "/order/order.html";
     } catch (err) {
       console.log(err);
 
       //insertDb가 에러가 되는 경우는 이미 제품이 장바구니에 있던 경우임
       //따라서 다시 추가 안 하고 바로 order 페이지로 이동함
-      window.location.href = "/order";
+      window.location.href = "/order/order.html";
     }
   });
 }

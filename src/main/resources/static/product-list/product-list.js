@@ -10,7 +10,7 @@ import {
 } from "../useful-functions.js";
 
 // 요소(element), input 혹은 상수
-const productItemContainer = document.querySelector("#producItemContainer");
+const productItemContainer = document.querySelector("#productItemContainer");
 const paginationContainer = document.querySelector("#pagination");
 
 // 페이징 처리 변수
@@ -52,7 +52,7 @@ async function addProductItemsToContainer() {
     const random = randomId();
 
     // S3 URL을 비동기적으로 가져옴
-    const imageUrl = mainImageUrls[0].split("?")[0]; //await getImageUrl(mainImageUrls[0]);
+    const imageUrl = mainImageUrls?.[0]?.split("?")[0] || "../elice-rabbit.png";
 
     productItemContainer.insertAdjacentHTML(
         "beforeend",
@@ -81,7 +81,7 @@ async function addProductItemsToContainer() {
     const productItem = document.querySelector(`#a${random}`);
     productItem.addEventListener(
         "click",
-        navigate(`/product/detail?productid=${productId}`)
+        navigate(`/product-detail/product-detail.html?productId=${productId}`)
     );
   }
 
