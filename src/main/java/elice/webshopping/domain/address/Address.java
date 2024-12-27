@@ -1,6 +1,5 @@
 package elice.webshopping.domain.address;
 
-//import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.domain.common.BaseEntity;
 import elice.webshopping.domain.user.User;
 import jakarta.persistence.*;
