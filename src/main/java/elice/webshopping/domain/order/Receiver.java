@@ -35,11 +35,11 @@ public class Receiver {
 
     public static Receiver from(ReceiverRequestDto receiverRequestDto) {
         Receiver receiver = new Receiver();
-        receiver.setName(receiverRequestDto.name());
-        receiver.setPhoneNumber(receiverRequestDto.phoneNumber());
-        receiver.setZipCode(receiverRequestDto.zipCode());
-        receiver.setStreetAddress(receiverRequestDto.streetAddress());
-        receiver.setDetailAddress(receiverRequestDto.detailAddress());
+        receiver.setName(receiverRequestDto.receiverName());
+        receiver.setPhoneNumber(receiverRequestDto.receiverPhoneNumber());
+        receiver.setZipCode(receiverRequestDto.postalCode());
+        receiver.setStreetAddress(receiverRequestDto.address1());
+        receiver.setDetailAddress(receiverRequestDto.address2());
 
         return receiver;
     }

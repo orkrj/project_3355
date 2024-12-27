@@ -15,11 +15,10 @@ public class ReceiverController {
 
     private final ReceiverService receiverService;
 
-//    // TODO 생성 로직 미구현: UserService 필요
-//    @PostMapping
-//    public ResponseEntity<ReceiverResponseDto> createOrder(@RequestBody ReceiverRequestDto receiverRequestDto) {
-//        return ResponseEntity.ok(receiverService.createReceiver(receiverRequestDto));
-//    }
+    @PostMapping
+    public ResponseEntity<ReceiverResponseDto> createOrder(@RequestBody ReceiverRequestDto receiverRequestDto) {
+        return ResponseEntity.ok(receiverService.createReceiverResponse(receiverRequestDto));
+    }
 
     @GetMapping("/{receiverId}")
     public ResponseEntity<ReceiverResponseDto> findReceiverById(@PathVariable Long receiverId) {
