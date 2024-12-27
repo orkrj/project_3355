@@ -57,6 +57,7 @@ public class Order {
     @JoinColumn(name = "receiver_id", nullable = false)
     private Receiver receiver;
 
+    @Setter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOrder> productOrders = new ArrayList<>();
 
@@ -83,22 +84,15 @@ public class Order {
     public static Order of(
             OrderRequestDto orderRequestDto,
             User user,
-            Receiver receiver,
-            List<ProductOrder> productOrders
+            Receiver receiver
     ) {
-        Order order = Order.builder()
+        return Order.builder()
                 .orderNumber(generateOrderNumber())
                 .status(OrderStatus.ORDERED)
                 .totalPrice(orderRequestDto.totalPrice())
                 .user(user)
                 .receiver(receiver)
                 .build();
-
-        for (ProductOrder productOrder : productOrders) {
-            order.getProductOrders().add(productOrder);
-        }
-
-        return order;
     }
 
     private static String generateOrderNumber() {
