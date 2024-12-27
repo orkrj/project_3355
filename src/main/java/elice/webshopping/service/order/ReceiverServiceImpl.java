@@ -14,10 +14,13 @@ public class ReceiverServiceImpl implements ReceiverService {
 
     private final ReceiverRepository receiverRepository;
 
+    public ReceiverResponseDto createReceiverResponse(ReceiverRequestDto receiverRequestDto) {
+        Receiver savedReceiver = receiverRepository.save(Receiver.from(receiverRequestDto));
+        return ReceiverResponseDto.from(savedReceiver);
+    }
+
     @Override
-    public Receiver createReceiver(ReceiverRequestDto receiverRequestDto) {
-//        Receiver savedReceiver = receiverRepository.save(Receiver.from(receiverRequestDto));
-//        return ReceiverResponseDto.from(savedReceiver);
+    public Receiver createReceiverEntity(ReceiverRequestDto receiverRequestDto) {
 
         return receiverRepository.save(Receiver.from(receiverRequestDto));
     }
@@ -40,12 +43,12 @@ public class ReceiverServiceImpl implements ReceiverService {
     }
 
     private Receiver updateReceiverFields(ReceiverRequestDto receiverRequestDto, Receiver targetReceiver) {
-        targetReceiver.setName(receiverRequestDto.name());
-        targetReceiver.setPhoneNumber(receiverRequestDto.phoneNumber());
-        targetReceiver.setZipCode(receiverRequestDto.zipCode());
-        targetReceiver.setStreetAddress(receiverRequestDto.streetAddress());
-        targetReceiver.setDetailAddress(receiverRequestDto.detailAddress());
-        targetReceiver.setMessage(receiverRequestDto.message());
+        targetReceiver.setName(receiverRequestDto.receiverName());
+        targetReceiver.setPhoneNumber(receiverRequestDto.receiverPhoneNumber());
+        targetReceiver.setZipCode(receiverRequestDto.postalCode());
+        targetReceiver.setStreetAddress(receiverRequestDto.address1());
+        targetReceiver.setDetailAddress(receiverRequestDto.address2());
+        targetReceiver.setMessage(receiverRequestDto.request());
 
         return targetReceiver;
     }
