@@ -81,7 +81,7 @@ async function addProductItemsToContainer() {
     const productItem = document.querySelector(`#a${random}`);
     productItem.addEventListener(
         "click",
-        navigate(`/product/{productId}`)
+        navigate(`/product-detail/product-detail.html?productId=${productId}`)
     );
   }
 

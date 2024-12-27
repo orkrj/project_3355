@@ -1,12 +1,12 @@
-import { getImageUrl } from "../../aws-s3.js";
-import * as Api from "../../api.js";
+import { getImageUrl } from "../aws-s3.js";
+import * as Api from "../api.js";
 import {
   getUrlParams,
   addCommas,
   checkUrlParams,
   createNavbar,
-} from "../../useful-functions.js";
-import { addToDb, putToDb } from "../../indexed-db.js";
+} from "../useful-functions.js";
+import { addToDb, putToDb } from "../indexed-db.js";
 
 // 요소(element), input 혹은 상수
 const productMainImageTag = document.querySelector("#productMainImageTag");
@@ -34,8 +34,9 @@ function addAllEvents() {}
 
 async function insertProductData() {
   const { productId } = getUrlParams();
-  await Api.getpage(`/products/${productId}`);
-  const product = await Api.get(`/api/products/${productId}`);
+  console.log("productId:", productId);
+  //await Api.getpage(`/products/${productId}`);
+  const product = await Api.get(`/api/product/${productId}`);
 
   // 객체 destructuring
   const {

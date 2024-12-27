@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class ProductPageController {
     // 2. 상품 단건 조회 (GET) - /product/{productId}
     @GetMapping("/product/{productId}")
-    public String getProductById() throws Exception{
+    public String getProductById(@PathVariable Long productId) throws Exception{
         return "redirect:/product-detail/product-detail.html";
     }
 
