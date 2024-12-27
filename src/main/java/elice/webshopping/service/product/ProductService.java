@@ -76,6 +76,11 @@ public class ProductService {
         return convertToProductResponseDto(product);
     }
 
+    public Product getProductEntityById(Long productId) {
+        return productRepository.findByProductIdAndDeletedAtIsNull(productId)
+                .orElseThrow(() -> new NoContentsException("Product not found with id: " + productId));
+    }
+
     // 3. 상품 등록 (Create)
     public List<URL> createProduct(ProductRequestDto request, ProductImageRequestDto imageRequestDto) {
         // 카테고리 조회
