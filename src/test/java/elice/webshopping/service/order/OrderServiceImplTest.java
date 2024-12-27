@@ -194,9 +194,9 @@ class OrderServiceImplTest {
 
     private List<ProductOrderRequestDto> givenProductOrdersRequestDto() {
         return List.of(
-                new ProductOrderRequestDto(1L, 500000, 1),
-                new ProductOrderRequestDto(2L, 2000, 2),
-                new ProductOrderRequestDto(3L, 3000, 3)
+                new ProductOrderRequestDto(1L, 1L, 500000, 1),
+                new ProductOrderRequestDto(2L, 2L, 2000, 2),
+                new ProductOrderRequestDto(3L, 3L, 3000, 3)
         );
     }
 

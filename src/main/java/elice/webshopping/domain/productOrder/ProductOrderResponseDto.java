@@ -4,7 +4,7 @@ import elice.webshopping.domain.order.Order;
 
 import java.util.List;
 
-
+// TODO 화면에 Product 내 어떤 필드가 필요한지 확인해야 함
 public record ProductOrderResponseDto (
         Long productId,
         int quantity

@@ -201,6 +201,7 @@ async function doCheckout() {
   const totalPrice = convertToNumber(orderTotalElem.innerText);
   const { selectedIds } = await getFromDb("order", "summary");
 
+  // front-side-validation
   if (!receiverName || !receiverPhoneNumber || !postalCode || !address2) {
     return alert("배송지 정보를 모두 입력해 주세요.");
   }
