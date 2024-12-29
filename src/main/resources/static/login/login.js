@@ -52,7 +52,8 @@ async function handleSubmit(e) {
   if(response.ok){
     const token = response.headers.get("access"); //헤더에서 access token 꺼내오기
 
-    sessionStorage.setItem("token", token); //session storage에 access 토큰 저장
+    sessionStorage.setItem("Authorization", token); //session storage에 access 토큰 저장 /////
+   // console.log(token);
 
     alert("Login success");
     //window.location.href="/" //메인 페이지로 이동 -> 안 됨 추후 수정
