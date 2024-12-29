@@ -72,7 +72,7 @@ async function deleteUserData(e) {
           credentials : "include",
           headers: {
             "Authorization" : sessionStorage.getItem("Authorization"),
-            "Content-Type" : "application/json",
+            "Content-Type" : "application/json", //안 쓰면 Content-Type 'text/plain;charset=UTF-8' is not supported 오류
           },
           body : JSON.stringify(password)
       });
