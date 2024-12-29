@@ -2,12 +2,12 @@ import * as Api from "../../api.js";
 import { createNavbar } from "../../useful-functions.js";
 
 // 요소(element), input 혹은 상수
-const passwordInput = document.querySelector("#passwordInput");
-const modal = document.querySelector("#modal");
-const modalBackground = document.querySelector("#modalBackground");
-const modalCloseButton = document.querySelector("#modalCloseButton");
-const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
-const deleteCancelButton = document.querySelector("#deleteCancelButton");
+const passwordInput = document.querySelector("#passwordInput"); //비밀번호 확인
+const modal = document.querySelector("#modal"); //모달 전체?
+const modalBackground = document.querySelector("#modalBackground"); // 모달 전체? 모달과 모달백그라운드의 차이는??
+const modalCloseButton = document.querySelector("#modalCloseButton"); //모달창 닫는 버튼
+const deleteCompleteButton = document.querySelector("#deleteCompleteButton"); //모달창에서 삭제하는 버튼
+const deleteCancelButton = document.querySelector("#deleteCancelButton"); //모달창에서 삭제 취소하는 버튼
 
 addAllElements();
 addAllEvents();
@@ -19,41 +19,12 @@ async function addAllElements() {
 
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
-  submitButton.addEventListener("click", openModal);
+  submitButton.addEventListener("click", openModal); //submit(회원정보 안전하게 삭제하기) 버튼 누르면 모달 열림
   modalBackground.addEventListener("click", closeModal);
   modalCloseButton.addEventListener("click", closeModal);
   document.addEventListener("keydown", keyDownCloseModal);
-  deleteCompleteButton.addEventListener("click", deleteUserData);
+  deleteCompleteButton.addEventListener("click", deleteUserData); //회원 정보 삭제, 얘 빼고는 다 창 닫기
   deleteCancelButton.addEventListener("click", closeModal);
-}
-
-// db에서 회원정보 삭제
-async function deleteUserData(e) {
-  e.preventDefault();
-
-  const password = passwordInput.value;
-  const data = { password };
-
-  try {
-    // 우선 입력된 비밀번호가 맞는지 확인 (틀리면 에러 발생함)
-    const userToDelete = await Api.post("/users/password-check", data);
-    const { id } = userToDelete;
-
-    // 삭제 진행
-    await Api.delete("/users", id);
-
-    // 삭제 성공
-    alert("회원 정보가 안전하게 삭제되었습니다.");
-
-    // 토큰 삭제
-    sessionStorage.removeItem("token");
-
-    window.location.href = "/";
-  } catch (err) {
-    alert(`회원정보 삭제 과정에서 오류가 발생하였습니다: ${err}`);
-
-    closeModal();
-  }
 }
 
 // Modal 창 열기
@@ -79,3 +50,71 @@ function keyDownCloseModal(e) {
     closeModal();
   }
 }
+
+// db에서 회원정보 삭제
+// deleteCompleteButton 누르면 하단의 회원정보 삭제 함수 실행
+async function deleteUserData(e) {
+  e.preventDefault();
+
+  /*
+    1. 비밀번호를 입력한다
+    2. 삭제하기 버튼을 누르면 모달 창이 뜨고, 다시 한 번 삭제할 것인지 물어봄
+    3. '네' 버튼을 누르면 입력한 비밀번호와 db에 저장된 비밀번호가 같은지 확인하고
+    4. 같으면 탈퇴 처리하고
+    5. 다르면 오류메세지 출력
+   */
+
+  const data = passwordInput.value; //입력한 비밀번호
+  const password = {password : data}; // {password: password}와 동일 비번을 객체로 저장함
+
+  const response = await fetch("/user/passwordCheck",{
+          method : "POST",
+          credentials : "include",
+          headers: {
+            "Authorization" : sessionStorage.getItem("Authorization"),
+            "Content-Type" : "application/json",
+          },
+          body : JSON.stringify(password)
+      });
+
+  if(response.ok){ //비밀번호 비교가 되었으면
+    const isPasswordCorrect = await response.json(); //passwordCheck의 리턴값
+
+    if(isPasswordCorrect === true) { //비번이 일치할 경우,
+      const response = await fetch("/user/delete", { //삭제 진행
+        method: "DELETE",
+        credentials: "include", //쿠키 포함?
+        headers: {
+          "Authorization" : sessionStorage.getItem("Authorization"),
+        },
+      });
+
+      if (response.ok) { // 삭제 성공
+        alert("회원 탈퇴가 완료되었습니다.");
+        closeModal();
+
+        // 토큰 삭제
+        sessionStorage.removeItem("Authorization");
+
+        //  window.location.href = "/"; //홈으로 이동
+      } else { //삭제 실패
+        alert("회원정보 삭제 과정에서 오류가 발생하였습니다");
+        closeModal();
+      }
+    } //비번이 일치하지 않으면
+    else{
+      alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
+      closeModal();
+    }
+  }
+  else { //비번 비교가 안 되었음
+    alert("오류 발생");
+  }
+
+
+
+}
+
+
+
+

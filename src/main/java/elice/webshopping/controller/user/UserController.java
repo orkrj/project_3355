@@ -83,20 +83,23 @@ public class UserController {
         return ResponseEntity.ok("Deleted ok");
     }
 
-    @PostMapping("/user/password-check") //비밀번호 일치 확인
-    public String checkPassword(@RequestBody PasswordDto passwordDto){
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+    @PostMapping("/user/passwordCheck") //비밀번호 일치 확인
+    public ResponseEntity<?> checkPassword(@RequestBody PasswordDto passwordDto){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
 
         User currentUser = userRepository.findByUsername(username).orElseThrow(()->new UsernameNotFoundException("로그인한 유저를 찾을 수 없습니다"));
 
         boolean match = bCryptPasswordEncoder.matches(passwordDto.getPassword(), currentUser.getPassword());
 
         if(match){
-            return username;
+            return ResponseEntity.ok(true);
         }
         else {
-            return "false";
+            return ResponseEntity.ok(false);
         }
     }
+
 
 }
