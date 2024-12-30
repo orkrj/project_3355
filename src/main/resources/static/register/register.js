@@ -78,7 +78,7 @@ async function handleSubmit(e) {
   }
 
   if (!isIdValid) {
-    document.getElementById("realNameError").innerText = "이름을 2글자 이상 입력헤주세요.";
+    document.getElementById("realNameError").innerText = "이름을 2글자 이상 입력해주세요.";
     isValid=false;
   }
 
