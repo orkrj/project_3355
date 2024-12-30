@@ -61,6 +61,7 @@ public class Order {
 
     @Setter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ProductOrder> productOrders = new ArrayList<>();
 
     @Setter

@@ -55,6 +55,7 @@ public class Product {
 
     @Getter
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ProductImage> images = new ArrayList<>();
 
     public void addImage(ProductImage image) {
