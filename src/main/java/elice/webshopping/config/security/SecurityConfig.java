@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @RequiredArgsConstructor
@@ -75,13 +76,14 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/user").permitAll() //추후 추가
-                        // .requestMatchers("/RoleTest").permitAll() //test
-                        // .requestMatchers("/logout").authenticated() //test
-                        // .requestMatchers("/adminRoleTest").hasRole("ADMIN") //test
-                        // .requestMatchers("/test").hasRole("USER")
-                        .requestMatchers("/reissue").permitAll()
-                        .anyRequest().permitAll());
+                         .requestMatchers("/login", "/", "/user").permitAll() //추후 추가
+                         //.requestMatchers("/RoleTest").permitAll() //test
+                         .requestMatchers("/logout").authenticated() //test
+                         //.requestMatchers("/adminRoleTest").hasRole("ADMIN") //test
+                         //.requestMatchers("/userRoleTest").hasRole("USER") //test
+                         //.requestMatchers("/test").hasRole("USER")
+                         .requestMatchers("/reissue").permitAll()
+                         .anyRequest().permitAll());
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
@@ -89,7 +91,6 @@ public class SecurityConfig {
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
         http
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
-
 
         //세션 설정
         http
