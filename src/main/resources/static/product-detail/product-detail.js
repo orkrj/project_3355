@@ -79,7 +79,7 @@ async function insertProductData() {
 
   addToCartButton.addEventListener("click", async () => {
     try {
-      await insertDb(product);
+      await insertDb(product, productId);
 
       alert("장바구니에 추가되었습니다.");
     } catch (err) {
@@ -107,13 +107,14 @@ async function insertProductData() {
   });
 }
 
-async function insertDb(product) {
+async function insertDb(product, productId) {
   // 객체 destructuring
-  const { id: id, price } = product;
+  const { price } = product;
+  const id = productId;
 
   // 장바구니 추가 시, indexedDB에 제품 데이터 및
   // 주문수량 (기본값 1)을 저장함.
-  await addToDb("cart", { ...product, quantity: 1 }, id);
+  await addToDb("cart", { id: productId, quantity:1, checked:true }, id);
 
   // 장바구니 요약(=전체 총합)을 업데이트함.
   await putToDb("order", "summary", (data) => {
