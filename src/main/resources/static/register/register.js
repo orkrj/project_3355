@@ -87,6 +87,30 @@ async function handleSubmit(e) {
     isValid=false;
   }
 
+  if(!id){
+    document.getElementById("usernameError").innerText = "아이디를 필수로 입력해주세요.";
+    isValid=false;
+  }
+
+  if(!password){
+    document.getElementById("passwordError").innerText = "비밀번호를 필수로 입력해주세요.";
+    isValid=false;
+  }
+
+  if(!real_name){
+    document.getElementById("realNameError").innerText = "이름을 입력해주세요.";
+    isValid=false;
+  }
+  if(!email){
+    document.getElementById("emailError").innerText = "이메일을 입력해주세요.";
+    isValid=false;
+  }
+  if(!phone){
+    document.getElementById("phoneError").innerText = "휴대폰 번호를 입력해주세요.";
+    isValid=false;
+  }
+
+
 
 
   // 회원가입 api 요청
