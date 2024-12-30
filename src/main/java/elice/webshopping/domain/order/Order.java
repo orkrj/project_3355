@@ -40,7 +40,13 @@ public class Order {
     private OrderStatus status;
 
     @Column(nullable = false)
+    private String summaryTitle;
+
+    @Column(nullable = false)
     private int totalPrice;
+
+    @Column(nullable = false)
+    private String request;
 
     /**
      * TODO
