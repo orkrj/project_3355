@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Controller
+@SuppressWarnings("unchecked")
 @RequestMapping("/api/payment")
 @RequiredArgsConstructor
 public class PaymentController {
