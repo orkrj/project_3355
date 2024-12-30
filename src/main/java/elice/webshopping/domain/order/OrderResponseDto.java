@@ -10,8 +10,9 @@ import java.util.List;
 public record OrderResponseDto (
         String orderNumber,
         OrderStatus status,
+        String summaryTittle,
         int totalPrice,
-        LocalDateTime createdAt,
+        String request,
         ReceiverResponseDto receiver,
         List<ProductOrderResponseDto> productOrdersResponseDto
 ) {
@@ -20,8 +21,9 @@ public record OrderResponseDto (
         return new OrderResponseDto(
                 order.getOrderNumber(),
                 order.getStatus(),
+                order.getSummaryTitle(),
                 order.getTotalPrice(),
-                order.getCreatedAt(),
+                order.getRequest(),
                 ReceiverResponseDto.from(order),
                 ProductOrderResponseDto.from(order)
         );

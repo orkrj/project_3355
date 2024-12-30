@@ -31,16 +31,18 @@ public class Order {
     @Column(nullable = false, unique = true)
     private String orderNumber;
 
-    @Setter
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Payment payment;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
 
     @Column(nullable = false)
+    private String summaryTitle;
+
+    @Column(nullable = false)
     private int totalPrice;
+
+    @Column(nullable = false)
+    private String request;
 
     /**
      * TODO
@@ -60,6 +62,10 @@ public class Order {
     @Setter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOrder> productOrders = new ArrayList<>();
+
+    @Setter
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Payment payment;
 
     // @CreatedDate
     @Column(updatable = false, nullable = false)

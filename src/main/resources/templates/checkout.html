@@ -40,9 +40,15 @@
       async function main() {
         const button = document.getElementById("payment-button");
         const coupon = document.getElementById("coupon-box");
+
+        const orderId = getOrderId();
+        const order = fetchOrder(orderId);
+
+        if (!order) alert("order not found")
+
         const amount = {
           currency: "KRW",
-          value: 50000,
+          value: order.totalPrice,
         };
         // ------  결제위젯 초기화 ------
         // TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
@@ -103,15 +109,33 @@
 
           // TODO 동적으로 받아야 하는 부분
           await widgets.requestPayment({
-            orderId: generateRandomString(),
-            orderName: "토스 티셔츠 외 2건",
+            orderId: order.orderNumber,
+            orderName: order.summaryTitle,
             successUrl: window.location.origin + "/api/payment/success",
             failUrl: window.location.origin + "/api/payment/fail",
-            customerEmail: "customer123@gmail.com",
-            customerName: "김토스",
-            customerMobilePhone: "01012341234",
+            customerEmail: order.user.email,
+            customerName: order.user.real_Name,
+            customerMobilePhone: order.user.phone,
           });
         });
+      }
+
+      // custom method
+      async function fetchOrder(orderId) {
+        try {
+          const resp = await fetch(`/api/order/${orderId}`);
+          if (resp.ok) return resp.json();
+          else throw new Error("Failed to fetch order: " + orderId);
+        } catch (e) {
+          alert("payment failed")
+          return null;
+        }
+      }
+
+      // extract orderId
+      function getOrderId() {
+        const url = new URLSearchParams(window.location.search);
+        return url.get("orderId");
       }
 
       function generateRandomString() {

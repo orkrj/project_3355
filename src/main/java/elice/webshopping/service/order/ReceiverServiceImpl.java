@@ -48,7 +48,6 @@ public class ReceiverServiceImpl implements ReceiverService {
         targetReceiver.setZipCode(receiverRequestDto.postalCode());
         targetReceiver.setStreetAddress(receiverRequestDto.address1());
         targetReceiver.setDetailAddress(receiverRequestDto.address2());
-        targetReceiver.setMessage(receiverRequestDto.request());
 
         return targetReceiver;
     }

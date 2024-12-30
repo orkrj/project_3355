@@ -10,7 +10,6 @@ import jakarta.validation.constraints.NotNull;
  * @param postalCode -> 정규식 패턴 유효성 검증 필요
  * @param address1 -> 정규식 패턴 유효성 검증 필요
  * @param address2 -> 정규식 패턴 유효성 검증 필요
- * @param request -> 길이 제한 필요
  */
 
 public record ReceiverRequestDto (
@@ -18,6 +17,5 @@ public record ReceiverRequestDto (
         @NotNull @NotEmpty String receiverPhoneNumber,
         @NotNull @NotEmpty String postalCode,
         @NotNull @NotEmpty String address1,
-        @NotNull @NotEmpty String address2,
-        String request
+        @NotNull @NotEmpty String address2
 ) {}
