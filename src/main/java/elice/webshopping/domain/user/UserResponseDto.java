@@ -14,7 +14,8 @@ public class UserResponseDto {
 
 
     public UserResponseDto(User user) {
-        this.user_id = user.getUser_id();
+        this.user_id=user.getUserId();
+        //this.user_id = user.getUser_id();
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.real_name = user.getReal_name();

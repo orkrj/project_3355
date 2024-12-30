@@ -25,7 +25,8 @@ import java.util.List;
 @NoArgsConstructor
 public class User /*implements UserDetails */{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long user_id;
+    //private Long user_id;
+    private Long userId;
 
     @Column(nullable = false, unique = true)
     private String username; //아이디
