@@ -186,10 +186,6 @@ function handleRequestChange(e) {
 // 결제 진행
 async function doCheckout() {
 
-  // 결제 페이지로 이동
-  const paymentUrl = await Api.getPage("/api/payment")
-  document.write(paymentUrl);
-
   const receiverName = receiverNameInput.value;
   const receiverPhoneNumber = receiverPhoneNumberInput.value;
   const postalCode = postalCodeInput.value;
@@ -282,6 +278,9 @@ async function doCheckout() {
     // alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");
     // window.location.href = "/order/complete";
 
+    // 결제 페이지로 이동
+    const paymentUrl = await Api.getPage("/api/payment")
+    window.location.href = `/checkout.html?orderId=${orderId}`;
 
   } catch (err) {
     console.log(err);
