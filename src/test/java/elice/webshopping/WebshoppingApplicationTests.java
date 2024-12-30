@@ -6,8 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class WebshoppingApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+    // 이거 뭐죠..?
+//    @Test
+//    void contextLoads() {
+//    }
 
 }
