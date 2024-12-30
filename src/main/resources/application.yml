@@ -5,7 +5,7 @@ spring:
     allow-bean-definition-overriding: true
 
   datasource:
-    url: jdbc:mysql://localhost:3306/project2
+    url: jdbc:mysql://34.64.172.140:5000/project2
     username: master
     password: password
     hikari:
@@ -14,11 +14,11 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always
+#  sql:
+#    init:
+#      mode: always
 
   cloud:
     aws:
