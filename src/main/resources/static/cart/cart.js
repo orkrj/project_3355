@@ -36,6 +36,29 @@ function addAllEvents() {
   purchaseButton.addEventListener("click", navigate("/order"));
 }
 
+
+const getProduct = async function (productId) {
+  try {
+    // 서버에 GET 요청 보내기
+    const response = await fetch(`/api/product/${productId}`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching product (status: ${response.status} - ${response.statusText})`);
+    }
+
+    // JSON 데이터를 파싱
+    const productData = await response.json();
+    console.log("Fetched Product Data:", productData);
+    return productData;
+  } catch (error) {
+    console.error("Failed to fetch product:", error);
+    // 기본값을 반환하거나 에러를 다시 던짐
+    throw error;
+  }
+};
+
 // indexedDB의 cart와 order에서 필요한 정보를 가져온 후
 // 요소(컴포넌트)를 만들어 html에 삽입함.
 async function insertProductsfromCart() {
@@ -44,26 +67,29 @@ async function insertProductsfromCart() {
 
   products.forEach(async (product) => {
     // 객체 destructuring // const { _id, title, quantity, imageKey, price }
-    const {
-      productId: _id, // productId를 _id로 매핑
-      name: title, // name을 title로 매핑
-      mainImageUrls,
-      quantity,
-      price
-    } = product;
+    const {id: _id} = product;
 
-    let imageUrl = mainImageUrls; // 블록 외부에서 선언 (let으로 선언해 값을 변경 가능)
+    let {quantity} = product;
+
+    // 함수 호출
+    const productData = await getProduct(_id);
+    const {  name, mainImageUrls } = productData;
+    let {price} = productData;
+
+    const title = name || "Unknown";
+
+    let imageUrl = ""; // 기본값 설정
 
     if (Array.isArray(mainImageUrls) && mainImageUrls.length > 0) {
       imageUrl = mainImageUrls[0].replace(/\?.*$/, ''); // 첫 번째 URL에서 쿼리 파라미터 제거
-      console.log("imageUrl1:", imageUrl);
     } else {
-      console.error("mainImageUrls가 비어 있거나 배열이 아닙니다:", mainImageUrls);
+      product.quantity = 0;
+      productData.price = 0;
     }
 
     console.log("_id: " +_id);
     console.log("title: " +title);
-    console.log("imageUrl2: " +imageUrl);
+    //console.log("imageUrl2: " +imageUrl);
     console.log("quantity: " +quantity);
     console.log("price: " +price);
 
@@ -93,9 +119,9 @@ async function insertProductsfromCart() {
           <div class="content">
             <p id="title-${_id}">${compressString(title)}</p>
             <div class="quantity">
-              <button 
-                class="button is-rounded" 
-                id="minus-${_id}" 
+              <button
+                class="button is-rounded"
+                id="minus-${_id}"
                 ${quantity <= 1 ? "disabled" : ""}
                 ${isSelected ? "" : "disabled"}
               >
@@ -112,8 +138,8 @@ async function insertProductsfromCart() {
                 value="${quantity}"
                 ${isSelected ? "" : "disabled"}
               />
-              <button 
-                class="button is-rounded" 
+              <button
+                class="button is-rounded"
                 id="plus-${_id}"
                 ${quantity >= 99 ? "disabled" : ""}
                 ${isSelected ? "" : "disabled"}
@@ -143,7 +169,7 @@ async function insertProductsfromCart() {
       `
     );
 
-    // 각종 이벤트 추가
+    //각종 이벤트 추가
     document
         .querySelector(`#delete-${_id}`)
         .addEventListener("click", () => deleteItem(_id));
@@ -173,6 +199,7 @@ async function insertProductsfromCart() {
         .addEventListener("change", () => handleQuantityInput(_id));
   });
 }
+
 
 async function toggleItem(id) {
   const itemCheckbox = document.querySelector(`#checkbox-${id}`);
