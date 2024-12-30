@@ -56,13 +56,13 @@ public class ProductService {
         return productPage.map(this::convertToProductResponseDto);
     }
 
-    // 1-3. 카테고리 ID로 상품 목록 조회
+    // 1-3. 카테고리 이름으로 상품 목록 조회
     @Transactional(readOnly = true)
-    public Page<ProductResponseDto> getProductsByCategoryId(Long categoryId, Pageable pageable) {
-        Page<Product> productPage = productRepository.findByCategory_IdAndDeletedAtIsNull(categoryId, pageable);
+    public Page<ProductResponseDto> getProductsByCategoryName(String categoryName, Pageable pageable) {
+        Page<Product> productPage = productRepository.findByCategory_NameAndDeletedAtIsNull(categoryName, pageable);
 
         if (productPage.isEmpty()) {
-            throw new NoContentsException("No products found for the given category ID");
+            throw new NoContentsException("No products found for the given category name");
         }
 
         return productPage.map(this::convertToProductResponseDto);
@@ -103,6 +103,7 @@ public class ProductService {
 
         // 이미지 메타데이터 저장 (DB에 이미지 정보 저장)
         saveImageMetadataForProduct(product, signedUrls);
+
 
         return signedUrls;
     }
