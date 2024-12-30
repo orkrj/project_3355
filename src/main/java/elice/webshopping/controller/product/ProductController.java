@@ -60,17 +60,17 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    // 1-3. 카테고리 ID로 조회 (GET) - /api/product/category/{categoryId}
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<Page<ProductResponseDto>> getProductsByCategoryId(
-            @PathVariable Long categoryId,
+    // 1-3. 카테고리 이름으로 조회 (GET) - /api/product/category/{categoryName}
+    @GetMapping("/category/{categoryName}")
+    public ResponseEntity<Page<ProductResponseDto>> getProductsByCategoryName(
+            @PathVariable String categoryName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String direction) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sortBy));
-        Page<ProductResponseDto> products = productService.getProductsByCategoryId(categoryId, pageable);
+        Page<ProductResponseDto> products = productService.getProductsByCategoryName(categoryName, pageable);
 
         return ResponseEntity.ok(products);
     }

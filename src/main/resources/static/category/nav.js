@@ -68,7 +68,8 @@ async function navFunction() {
             childCategories.forEach(child => {
                 const childLink = document.createElement("a");
                 childLink.classList.add("navbar-item");
-                childLink.href = `/api/category/${child.name}`;
+                let currentPage = 0;
+                childLink.href = `/product-list/product-list.html?categoryName=${child.name}`;
                 childLink.textContent = child.name;
                 dropdown.appendChild(childLink);
             });

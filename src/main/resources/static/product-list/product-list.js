@@ -18,7 +18,7 @@ let currentPage = 0;
 let totalPages = 1;
 
 // URL 파라미터로 카테고리 확인
-const { category } = getUrlParams();
+const { categoryName } = getUrlParams();
 //checkUrlParams("category");
 addAllElements();
 addAllEvents();
@@ -40,9 +40,11 @@ async function addProductItemsToContainer() {
 
   let products;
 
-  if (category?.id) {
-    products = await Api.get(`/api/product/category/${category.id}?page=${currentPage}`);
+  if (categoryName) {
+    console.log(`API 요청 URL: /api/product/category/${categoryName}?page=${currentPage}`);
+    products = await Api.get(`/api/product/category/${categoryName}?page=${currentPage}`);
   } else {
+    console.log(`API 요청 URL: /api/product/page?page=${currentPage}`);
     products = await Api.get(`/api/product/page?page=${currentPage}`);
   }
 
