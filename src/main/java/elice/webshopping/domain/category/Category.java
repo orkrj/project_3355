@@ -45,6 +45,7 @@ public class Category {
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @Builder.Default
     private List<Category> children = new ArrayList<>();
     
 // 양방향 참조 필요할 때 주석 풀기
