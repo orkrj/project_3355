@@ -143,3 +143,12 @@ input[type="number"]::-webkit-outer-spin-button {
 .modal-content button.delete::after {
   background-color: black;
 }
+
+#IdInput {
+  background-color: #EBE9E9;
+}
+
+.errorMessage {
+  color : red;
+  font-size: 10px;
+}
