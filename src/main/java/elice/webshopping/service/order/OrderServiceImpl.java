@@ -28,7 +28,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto, User user) {
 
-        Receiver receiver = receiverService.createReceiverEntity(orderRequestDto.receiverRequestDto());
+        Receiver receiver = receiverService.createReceiverEntity(orderRequestDto.receiver());
         Order order = orderRepository.saveAndFlush(Order.of(orderRequestDto, user, receiver));
 
 //        List<ProductOrder> productOrders = productOrderService.getProductOrdersByOrderId(order);
