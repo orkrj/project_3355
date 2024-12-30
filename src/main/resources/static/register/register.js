@@ -78,7 +78,7 @@ async function handleSubmit(e) {
   }
 
   if (!isIdValid) {
-    document.getElementById("realNameError").innerText = "이름을 2글자 이상 입력헤주세요.";
+    document.getElementById("realNameError").innerText = "이름을 2글자 이상 입력해주세요.";
     isValid=false;
   }
 
@@ -86,6 +86,30 @@ async function handleSubmit(e) {
     document.getElementById("phoneError").innerText = "휴대폰 번호는 숫자만 입력해야합니다.";
     isValid=false;
   }
+
+  if(!id){
+    document.getElementById("usernameError").innerText = "아이디를 필수로 입력해주세요.";
+    isValid=false;
+  }
+
+  if(!password){
+    document.getElementById("passwordError").innerText = "비밀번호를 필수로 입력해주세요.";
+    isValid=false;
+  }
+
+  if(!real_name){
+    document.getElementById("realNameError").innerText = "이름을 입력해주세요.";
+    isValid=false;
+  }
+  if(!email){
+    document.getElementById("emailError").innerText = "이메일을 입력해주세요.";
+    isValid=false;
+  }
+  if(!phone){
+    document.getElementById("phoneError").innerText = "휴대폰 번호를 입력해주세요.";
+    isValid=false;
+  }
+
 
 
 

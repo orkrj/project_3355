@@ -2,16 +2,16 @@ import { addCommas, checkAdmin, createNavbar } from "../../useful-functions.js";
 import * as Api from "../../api.js";
 
 // 요소(element), input 혹은 상수
-const usersCount = document.querySelector("#usersCount");
-const adminCount = document.querySelector("#adminCount");
-const usersContainer = document.querySelector("#usersContainer");
-const modal = document.querySelector("#modal");
+const usersCount = document.querySelector("#usersCount"); //회원 수
+const adminCount = document.querySelector("#adminCount"); //관리자 수 -> 삭제할예정
+const usersContainer = document.querySelector("#usersContainer"); //가입날짜 이메일 이런거 써있는거..
+const modal = document.querySelector("#modal"); //회원정보 삭제할지 묻는 모달창
 const modalBackground = document.querySelector("#modalBackground");
 const modalCloseButton = document.querySelector("#modalCloseButton");
-const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
-const deleteCancelButton = document.querySelector("#deleteCancelButton");
+const deleteCompleteButton = document.querySelector("#deleteCompleteButton"); //삭제 ok 버튼
+const deleteCancelButton = document.querySelector("#deleteCancelButton"); //삭제 취소 버튼
 
-checkAdmin();
+//checkAdmin();
 addAllElements();
 addAllEvents();
 
@@ -23,25 +23,26 @@ function addAllElements() {
 
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
-  modalBackground.addEventListener("click", closeModal);
-  modalCloseButton.addEventListener("click", closeModal);
-  document.addEventListener("keydown", keyDownCloseModal);
-  deleteCompleteButton.addEventListener("click", deleteUserData);
-  deleteCancelButton.addEventListener("click", cancelDelete);
+  modalBackground.addEventListener("click", closeModal); //모달 창 닫기
+  modalCloseButton.addEventListener("click", closeModal); //모달 창 닫기
+  document.addEventListener("keydown", keyDownCloseModal); //모달 창 닫기
+  deleteCompleteButton.addEventListener("click", deleteUserData); //회원 탈퇴
+  deleteCancelButton.addEventListener("click", cancelDelete); //뭐지이건
 }
 
 // 페이지 로드 시 실행, 삭제할 회원 id를 전역변수로 관리함
 let userIdToDelete;
+
 async function insertUsers() {
   const users = await Api.get("/users/all");
 
   // 총 요약에 활용
   const summary = {
     usersCount: 0,
-    adminCount: 0,
+    adminCount: 0, //없어도됨 삭제 에정
   };
 
-  for (const user of users) {
+  for (const user of users) { //반복?
     const { id, email, fullName, roles, createdAt } = user;
     const date = createdAt;
 
@@ -51,7 +52,7 @@ async function insertUsers() {
       summary.adminCount += 1;
     }
 
-    usersContainer.insertAdjacentHTML(
+    usersContainer.insertAdjacentHTML( //사용자 정보를 html로 변환하여 삽입..
       "beforeend",
       `
         <div class="columns orders-item" id="user-${id}">

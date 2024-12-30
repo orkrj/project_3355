@@ -1,10 +1,8 @@
 package elice.webshopping.controller.user;
 
-import elice.webshopping.domain.user.User;
-import elice.webshopping.domain.user.UserRequestDto;
-import elice.webshopping.domain.user.UserResponseDto;
-import elice.webshopping.domain.user.UserUpdateDto;
+import elice.webshopping.domain.user.*;
 import elice.webshopping.repository.user.RefreshRepository;
+import elice.webshopping.repository.user.UserRepository;
 import elice.webshopping.service.user.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +22,8 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final RefreshRepository refreshRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     //회원가입 후 id를 반환
     @PostMapping("/user")
@@ -79,6 +81,24 @@ public class UserController {
         response.setStatus(HttpServletResponse.SC_OK);
 
         return ResponseEntity.ok("Deleted ok");
+    }
+
+
+    @PostMapping("/user/passwordCheck") //비밀번호 일치 확인
+    public ResponseEntity<?> checkPassword(@RequestBody PasswordDto passwordDto){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        User currentUser = userRepository.findByUsername(username).orElseThrow(()->new UsernameNotFoundException("로그인한 유저를 찾을 수 없습니다"));
+
+        boolean match = bCryptPasswordEncoder.matches(passwordDto.getPassword(), currentUser.getPassword());
+
+        if(match){
+            return ResponseEntity.ok(true);
+        }
+        else {
+            return ResponseEntity.ok(false);
+        }
     }
 
 
