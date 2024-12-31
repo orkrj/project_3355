@@ -10,6 +10,7 @@ import {
 const usernameInput = document.querySelector("#usernameInput");
 const passwordInput = document.querySelector("#passwordInput");
 const submitButton = document.querySelector("#submitButton");
+const registerButton = document.querySelector("#regiButton");
 
 blockIfLogin();
 addAllElements();
@@ -23,6 +24,7 @@ async function addAllElements() {
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
   submitButton.addEventListener("click", handleSubmit);
+  registerButton.addEventListener("click", registerFunction);
 }
 
 // 로그인 진행
@@ -56,11 +58,19 @@ async function handleSubmit(e) {
    // console.log(token);
 
     alert("Login success");
-    //window.location.href="/" //메인 페이지로 이동 -> 안 됨 추후 수정
+    window.location.href=" /home/home.html" //메인 페이지로 이동
   }
   else {
     alert("로그인에 실패하셨습니다. 다시 로그인해주세요.");
   }
+}
+
+
+async function registerFunction(e) {
+  e.preventDefault();
+
+  window.location.href="/register/register.html";
+}
 
   /* 기존 코드
     // 로그인 api 요청
@@ -237,4 +247,4 @@ async function handleSubmit(e) {
   //   alert(`문제가 발생하였습니다. 확인 후 다시 시도해 주세요: ${err.message}`);
   // }
 
-}
+
