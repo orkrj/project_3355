@@ -3,6 +3,9 @@ package elice.webshopping.domain.product;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -37,10 +40,11 @@ public class ProductImage {
 
     // Builder 메서드에서 product를 설정할 수 있도록 @Builder에 추가
     public static ProductImage createWithProduct(Product product, String imageUrl, ImageType imageType) {
+        String decodedUrl = URLDecoder.decode(imageUrl, StandardCharsets.UTF_8);
         return ProductImage.builder()
-                .imageUrl(imageUrl)
+                .imageUrl(decodedUrl) // 디코딩된 URL 저장
                 .imageType(imageType)
-                .product(product)  // product 설정
+                .product(product)
                 .build();
     }
 

@@ -1,190 +1,137 @@
-import { addImageToS3 } from "../../aws-s3.js";
-import * as Api from "../../api.js";
-import { checkLogin, randomId, createNavbar } from "../../useful-functions.js";
+import { addImageToS3 } from "../aws-s3.js";
+import * as Api from "../api.js";
+import { checkLogin, randomId, createNavbar } from "../useful-functions.js";
 
 // 요소(element)들과 상수들
-const titleInput = document.querySelector("#titleInput");
+const nameInput = document.querySelector("#nameInput");
 const categorySelectBox = document.querySelector("#categorySelectBox");
-const manufacturerInput = document.querySelector("#manufacturerInput");
-const shortDescriptionInput = document.querySelector("#shortDescriptionInput");
-const detailDescriptionInput = document.querySelector(
-  "#detailDescriptionInput"
-);
-const imageInput = document.querySelector("#imageInput");
-const inventoryInput = document.querySelector("#inventoryInput");
 const priceInput = document.querySelector("#priceInput");
-const searchKeywordInput = document.querySelector("#searchKeywordInput");
-const addKeywordButton = document.querySelector("#addKeywordButton");
-const keywordsContainer = document.querySelector("#keywordContainer");
+const stockInput = document.querySelector("#stockInput");
+const detailDescriptionInput = document.querySelector("#detailDescriptionInput");
+const mainImageInput = document.querySelector("#mainImageInput");
+const desImageInput = document.querySelector("#desImageInput");
 const submitButton = document.querySelector("#submitButton");
 const registerProductForm = document.querySelector("#registerProductForm");
+const mainFileNameSpan = document.querySelector("#mainFileNameSpan");
+const desFileNameSpan = document.querySelector("#desFileNameSpan");
 
-checkLogin();
 addAllElements();
 addAllEvents();
 
-// html에 요소를 추가하는 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllElements() {
   createNavbar();
   addOptionsToSelectBox();
 }
 
-// addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
-  imageInput.addEventListener("change", handleImageUpload);
+  mainImageInput.addEventListener("change", handleMainImageUpload);
+  desImageInput.addEventListener("change", handleDesImageUpload);
   submitButton.addEventListener("click", handleSubmit);
   categorySelectBox.addEventListener("change", handleCategoryChange);
-  addKeywordButton.addEventListener("click", handleKeywordAdd);
 }
 
-// 제품 추가 - 사진은 AWS S3에 저장, 이후 제품 정보를 백엔드 db에 저장.
 async function handleSubmit(e) {
   e.preventDefault();
 
-  const title = titleInput.value;
+  const name = nameInput.value;
   const categoryId = categorySelectBox.value;
-  const manufacturer = manufacturerInput.value;
-  const shortDescription = shortDescriptionInput.value;
-  const detailDescription = detailDescriptionInput.value;
-  const image = imageInput.files[0];
-  const inventory = parseInt(inventoryInput.value);
   const price = parseInt(priceInput.value);
+  const stockQuantity = parseInt(stockInput.value);
+  const description = detailDescriptionInput.value;
+  const mainImage = mainImageInput.files[0];
+  const desImage = desImageInput.files[0];
 
   // 입력 칸이 비어 있으면 진행 불가
-  if (
-    !title ||
-    !categoryId ||
-    !manufacturer ||
-    !shortDescription ||
-    !detailDescription ||
-    !inventory ||
-    !price
-  ) {
-    return alert("빈 칸 및 0이 없어야 합니다.");
+  if (!name || !categoryId || !price || !stockQuantity || !description) {
+    return alert("빈 칸 없이 입력해 주세요.");
   }
 
-  if (image.size > 3e6) {
-    return alert("사진은 최대 2.5MB 크기까지 가능합니다.");
+  // 카테고리 선택 확인
+  if (!categoryId || categoryId === "undefined") {
+    return alert("카테고리를 선택해 주세요.");
   }
 
-  // S3 에 이미지가 속할 폴더 이름은 카테고리명으로 함.
-  const index = categorySelectBox.selectedIndex;
-  const categoryName = categorySelectBox[index].text;
+  if (mainImage && mainImage.size > 3e6) {
+    return alert("메인 사진은 최대 3MB 크기까지 가능합니다.");
+  }
+
+  if (desImage && desImage.size > 3e6) {
+    return alert("상세 설명 사진은 최대 3MB 크기까지 가능합니다.");
+  }
 
   try {
-    const imageKey = await addImageToS3(imageInput, categoryName);
-    const data = {
-      title,
-      categoryId,
-      manufacturer,
-      shortDescription,
-      detailDescription,
-      imageKey,
-      inventory,
-      price,
-      searchKeywords,
-    };
+    // 이미지 업로드 후, 반환된 S3 파일 경로가 null인 경우를 처리.
+    const mainImageKey = mainImage ? await addImageToS3(mainImageInput, `products/main`) : null;
+    const desImageKey = desImage ? await addImageToS3(desImageInput, `products/description`) : null;
 
-    await Api.post("/products", data);
+    // 데이터 준비
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("categoryId", categoryId);
+    formData.append("price", price);
+    formData.append("stockQuantity", stockQuantity);
+    formData.append("description", description);
 
-    alert(`정상적으로 ${title} 제품이 등록되었습니다.`);
+    // 이미지 파일들 추가
+    if (mainImageKey) {
+      formData.append("mainImageFiles", mainImage); // 파일 추가
+    }
+    if (desImageKey) {
+      formData.append("descriptionImageFiles", desImage); // 파일 추가
+    }
+
+    console.log("보낼 데이터:", formData);
+
+    // 요청 보내기
+    const response = await Api.post("/api/product", formData);
+
+    if (response) {
+      alert(`${name} 제품이 정상적으로 등록되었습니다.`);
+    }
 
     // 폼 초기화
     registerProductForm.reset();
-    fileNameSpan.innerText = "";
-    keywordsContainer.innerHTML = "";
+    mainFileNameSpan.innerText = "메인사진파일 (png, jpg, jpeg)";
+    desFileNameSpan.innerText = "상세사진파일 (png, jpg, jpeg)";
     categorySelectBox.style.color = "black";
     categorySelectBox.style.backgroundColor = "white";
-    searchKeywords = [];
   } catch (err) {
-    console.log(err.stack);
-
+    console.error(err.stack);
     alert(`문제가 발생하였습니다. 확인 후 다시 시도해 주세요: ${err.message}`);
   }
 }
 
 // 사용자가 사진을 업로드했을 때, 파일 이름이 화면에 나타나도록 함.
-function handleImageUpload() {
-  const file = imageInput.files[0];
-  if (file) {
-    fileNameSpan.innerText = file.name;
-  } else {
-    fileNameSpan.innerText = "";
-  }
+function handleMainImageUpload() {
+  const file = mainImageInput.files[0];
+  mainFileNameSpan.innerText = file ? file.name : "메인사진파일 (png, jpg, jpeg)";
+}
+
+function handleDesImageUpload() {
+  const file = desImageInput.files[0];
+  desFileNameSpan.innerText = file ? file.name : "상세사진파일 (png, jpg, jpeg)";
 }
 
 // 선택할 수 있는 카테고리 종류를 api로 가져와서, 옵션 태그를 만들어 삽입함.
 async function addOptionsToSelectBox() {
-  const categorys = await Api.get("/categories");
-  categorys.forEach((category) => {
-    // 객체 destructuring
-    const { _id, title, themeClass } = category;
+  try {
+    const categories = await Api.get("/api/category/findAll");
+    categories.forEach((category) => {
+      const { id, name } = category;
 
-    categorySelectBox.insertAdjacentHTML(
-      "beforeend",
-      `
-      <option value=${_id} class="notification ${themeClass}"> ${title} </option>`
-    );
-  });
+      categorySelectBox.insertAdjacentHTML(
+          "beforeend",
+          `
+      <option value="${id}" class="notification">${name}</option>`
+      );
+    });
+  } catch (err) {
+    console.error("카테고리 목록을 가져오는 데 실패했습니다.", err);
+    alert("카테고리 목록을 불러오는 데 문제가 발생했습니다.");
+  }
 }
 
-// 카테고리 선택 시, 선택박스에 해당 카테고리 테마가 반영되게 함.
 function handleCategoryChange() {
   const index = categorySelectBox.selectedIndex;
-
   categorySelectBox.className = categorySelectBox[index].className;
-}
-
-// 아래 함수는, 검색 키워드 추가 시, 해당 키워드로 만든 태그가 화면에 추가되도록 함.
-// 아래 배열은, 나중에 api 요청 시 사용함.
-let searchKeywords = [];
-function handleKeywordAdd(e) {
-  e.preventDefault();
-
-  const newKeyword = searchKeywordInput.value;
-
-  if (!newKeyword) {
-    return;
-  }
-
-  if (searchKeywords.includes(newKeyword)) {
-    return alert("이미 추가한 검색어입니다.");
-  }
-
-  searchKeywords.push(newKeyword);
-
-  const random = randomId();
-
-  keywordsContainer.insertAdjacentHTML(
-    "beforeend",
-    `
-    <div class="control" id="a${random}">
-      <div class="tags has-addons">
-        <span class="tag is-link is-light">${newKeyword}</span>
-        <a class="tag is-link is-light is-delete"></a>
-      </div>
-    </div>
-  `
-  );
-
-  // x 버튼에 삭제 기능 추가.
-  keywordsContainer
-    .querySelector(`#a${random} .is-delete`)
-    .addEventListener("click", handleKeywordDelete);
-
-  // 초기화 및 사용성 향상
-  searchKeywordInput.value = "";
-  searchKeywordInput.focus();
-}
-
-function handleKeywordDelete(e) {
-  // a 태그 클릭 -> 옆의 span 태그의 inenerText가 키워드임.
-  const keywordToDelete = e.target.previousElementSibling.innerText;
-
-  // 배열에서 삭제
-  const index = searchKeywords.indexOf(keywordToDelete);
-  searchKeywords.splice(index, 1);
-
-  // 요소 삭제
-  e.target.parentElement.parentElement.remove();
 }

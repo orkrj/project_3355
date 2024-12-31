@@ -32,16 +32,13 @@ public class ProductImageService {
         // description 이미지 타입 처리
         uploadUrls.addAll(generateUrlsForImages(product.getProductId(), "description", requestDto.getDescriptionImageFiles()));
 
-        // 이미지 메타데이터 저장
-        saveImageMetadata(product, uploadUrls);
-
         return uploadUrls;
     }
 
     private List<URL> generateUrlsForImages(Long productId, String imageType, List<MultipartFile> files) {
         List<URL> urls = new ArrayList<>();
         for (MultipartFile file : files) {
-            String key = String.format("products/%d/%s/%s", productId, imageType, file.getOriginalFilename());
+            String key = String.format("products/%s/%s", imageType, file.getOriginalFilename());
             URL signedUrl = fileStorageService.generateUploadSignedUrl(key, 15);
             urls.add(signedUrl);
         }
@@ -49,10 +46,10 @@ public class ProductImageService {
     }
 
     // 이미지 메타데이터 저장
-    private void saveImageMetadata(Product product, List<URL> imageUrls) {
-        // main과 description 이미지 타입을 구분하여 저장
+    public void saveImageMetadata(Product product, List<URL> imageUrls) {
+        int mainImageCount = imageUrls.size() / 2;
         for (int i = 0; i < imageUrls.size(); i++) {
-            ProductImage.ImageType imageType = (i < imageUrls.size() / 2) ? ProductImage.ImageType.MAIN : ProductImage.ImageType.DESCRIPTION;
+            ProductImage.ImageType imageType = (i < mainImageCount) ? ProductImage.ImageType.MAIN : ProductImage.ImageType.DESCRIPTION;
             ProductImage image = ProductImage.createWithProduct(product, imageUrls.get(i).toString(), imageType);
             product.addImage(image);
         }

@@ -25,15 +25,15 @@ const s3 = new AWS.S3({
 async function addImageToS3(fileInputElement, album) {
   // 파일 input 요소에, 사용자가 올린 파일이 있는지 여부 확인
   const files = fileInputElement.files;
-  if (!files.length) {
+  if (!files || !files.length) {
     throw new Error("사진 파일을 업로드해 주세요.");
   }
 
   // 파일 input 요소에서 사진파일 추출 등 AWS S3로의 업로드 준비
   const file = files[0];
   // 유니크한 사진파일 주소를 만들 수 있게 함.
-  const fileName = randomId() + "_" + file.name;
-  const albumPhotosKey = encodeURIComponent(album) + "/";
+  const fileName = file.name;
+  const albumPhotosKey = album + "/";
   const photoKey = albumPhotosKey + fileName;
 
   const upload = new AWS.S3.ManagedUpload({
@@ -51,15 +51,12 @@ async function addImageToS3(fileInputElement, album) {
 
     const fileKey = uploadedFile.Key;
     console.log(uploadedFile);
-    console.log(
-        `AWS S3에 정상적으로 사진이 업로드되었습니다.\n파일 위치: ${fileKey}`
-    );
+    console.log(`AWS S3에 정상적으로 사진이 업로드되었습니다.\n파일 위치: ${fileKey}`);
 
-    return fileKey;
+    // 반환되는 파일 경로를 디코딩하여 반환
+    return decodeURIComponent(fileKey);
   } catch (err) {
-    throw new Error(
-        `S3에 업로드하는 과정에서 에러가 발생하였습니다.\n${err.message}`
-    );
+    throw new Error(`S3에 업로드하는 과정에서 에러가 발생하였습니다.\n${err.message}`);
   }
 }
 

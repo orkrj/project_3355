@@ -85,11 +85,11 @@ public class ProductController {
     // 3. 상품 생성 (POST) - /product
     @PostMapping
     public ResponseEntity<List<URL>> createProduct(
-            @RequestParam("name") String name,
-            @RequestParam("price") int price,
-            @RequestParam("description") String description,
-            @RequestParam("stockQuantity") int stockQuantity,
-            @RequestParam("categoryId") Long categoryId,  // 카테고리 ID 추가
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "categoryId") Long categoryId,  // 카테고리 ID 추가
+            @RequestParam(value = "price") int price,
+            @RequestParam(value = "stockQuantity") int stockQuantity,
+            @RequestParam(value = "description") String description,
             @RequestParam(value = "mainImageFiles", required = false) List<MultipartFile> mainImageFiles,
             @RequestParam(value = "descriptionImageFiles", required = false) List<MultipartFile> descriptionImageFiles) {
 
@@ -104,13 +104,13 @@ public class ProductController {
     @PutMapping("/{productId}")
     public ResponseEntity<List<URL>> updateProduct(
             @PathVariable Long productId,
-            @RequestParam("name") String name,
-            @RequestParam("price") int price,
-            @RequestParam("description") String description,
-            @RequestParam("stockQuantity") int stockQuantity,
-            @RequestParam("categoryId") Long categoryId,  // 카테고리 ID 추가
-            @RequestParam List<MultipartFile> mainImageFiles,
-            @RequestParam List<MultipartFile> descriptionImageFiles) {
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "categoryId") Long categoryId,  // 카테고리 ID 추가
+            @RequestParam(value = "price") int price,
+            @RequestParam(value = "stockQuantity") int stockQuantity,
+            @RequestParam(value = "description") String description,
+            @RequestParam(value = "mainImageFiles", required = false) List<MultipartFile> mainImageFiles,
+            @RequestParam(value = "descriptionImageFiles", required = false) List<MultipartFile> descriptionImageFiles) {
 
         ProductRequestDto request = new ProductRequestDto(name, price, description, stockQuantity, categoryId);
         ProductImageRequestDto imageRequestDto = new ProductImageRequestDto(mainImageFiles, descriptionImageFiles);

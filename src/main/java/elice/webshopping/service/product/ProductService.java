@@ -102,8 +102,7 @@ public class ProductService {
         List<URL> signedUrls = productImageService.generateImageUploadUrls(product, imageRequestDto);
 
         // 이미지 메타데이터 저장 (DB에 이미지 정보 저장)
-        saveImageMetadataForProduct(product, signedUrls);
-
+        productImageService.saveImageMetadata(product, signedUrls);
 
         return signedUrls;
     }
@@ -122,34 +121,16 @@ public class ProductService {
         // 상품 정보 수정
         product.update(request.getName(), request.getPrice(), request.getDescription(), request.getStockQuantity(), category);
 
-        // 기존 이미지 메타데이터 삭제 (기존 이미지 제거)
+        // 기존 이미지 메타데이터 삭제
         product.getImages().clear();
 
         // Signed URL 생성 및 반환
         List<URL> signedUrls = productImageService.generateImageUploadUrls(product, imageRequestDto);
 
         // 새 이미지 메타데이터 저장 (DB에 이미지 정보 저장)
-        saveImageMetadataForProduct(product, signedUrls);
+        productImageService.saveImageMetadata(product, signedUrls);
 
         return signedUrls;
-    }
-
-    // 이미지 메타데이터 저장 (MAIN과 DESCRIPTION 이미지를 구분하여 저장)
-    private void saveImageMetadataForProduct(Product product, List<URL> signedUrls) {
-        // 기존 이미지가 이미 DB에 저장된 상태라면, 다시 저장하지 않도록 해야 함
-        Set<String> existingUrls = new HashSet<>(product.getImages().stream()
-                .map(ProductImage::getImageUrl)
-                .collect(Collectors.toSet()));
-
-        int mainImageCount = signedUrls.size() / 2; // 첫 번째 절반은 MAIN 이미지
-        for (int i = 0; i < signedUrls.size(); i++) {
-            // 이미 DB에 저장된 이미지 URL이라면 저장하지 않음
-            if (!existingUrls.contains(signedUrls.get(i).toString())) {
-                ProductImage.ImageType imageType = (i < mainImageCount) ? ProductImage.ImageType.MAIN : ProductImage.ImageType.DESCRIPTION;
-                ProductImage image = ProductImage.createWithProduct(product, signedUrls.get(i).toString(), imageType);
-                product.addImage(image);
-            }
-        }
     }
 
     // 5. 상품 삭제 (Soft Delete)
@@ -189,7 +170,6 @@ public class ProductService {
                 .descriptionImageUrls(descriptionImageUrls)
                 .build();
     }
-
 
     //Category 이름으로 Product 찾기
     @Transactional(readOnly = true)
