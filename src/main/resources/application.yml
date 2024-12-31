@@ -5,6 +5,8 @@ spring:
     allow-bean-definition-overriding: true
 
   datasource:
+    # localhost -> vm 입장
+    # 34.64.172.140 -> 로컬 입장
     url: jdbc:mysql://34.64.172.140:5000/project2
     username: master
     password: password

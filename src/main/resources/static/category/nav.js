@@ -14,7 +14,7 @@ async function navFunction() {
             <nav class="navbar is-light" role="navigation" aria-label="main navigation">
                 <div class="container">
                     <div class="navbar-brand">
-                        <a class="navbar-item" href="/">
+                        <a class="navbar-item" href="/home/home.html">
                             <span class="has-text-link is-size-5 has-text-weight-bold">Shopping Mall</span>
                         </a>
                     </div>
@@ -99,7 +99,7 @@ async function navFunction() {
     // 장바구니 링크 추가
     const basket = document.createElement("a");
     basket.classList.add("navbar-item", "has-text-weight-semibold");
-    basket.href = `/basket`;
+    basket.href = `/cart/cart.html`;
     basket.textContent = "장바구니";
     navbarEnd.appendChild(basket);
 
@@ -107,14 +107,14 @@ async function navFunction() {
     // 회원가입 링크 추가
     const join = document.createElement("a");
     join.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
-    join.href = `/join`;
+    join.href = `/register/register.html`;
     join.textContent = "회원가입";
     navbarEnd.appendChild(join);
 
     // Login 링크 추가
     const logIn = document.createElement("a");
     logIn.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
-    logIn.href = `/logIn`;
+    logIn.href = `/login/login.html`;
     logIn.textContent = "LogIn";
     navbarEnd.appendChild(logIn);
 
