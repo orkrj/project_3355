@@ -34,110 +34,111 @@ function addAllEvents() {
 let userIdToDelete;
 
 async function insertUsers() {
-  const users = await Api.get("/users/all");
 
-  // 총 요약에 활용
-  const summary = {
-    usersCount: 0,
-    adminCount: 0, //없어도됨 삭제 에정
-  };
+  const response = await fetch("/api/user/findAll", {
+    method: "GET",
+    //credentials : "include",
+    headers: {
+      //"Authorization" : sessionStorage.getItem("Authorization"),
+      "Content-Type": "application/json"
+    }
+  });
 
-  for (const user of users) { //반복?
-    const { id, email, fullName, roles, createdAt } = user;
-    const date = createdAt;
+  const users = await response.json();  //json으로 변환을 안 해줘서!!! TypeError: users is not iterable 에러 뜸
+
+
+    // 총 요약에 활용
+    const summary = {
+      usersCount: 0,
+      //adminCount: 0,
+    };
+
+
+  for (const user of users) {
+    const {userId, username, real_name, email, phone} = user;
+    // const date = createdAt;
 
     summary.usersCount += 1;
-
-    if (roles.includes('ADMIN')) {
-      summary.adminCount += 1;
-    }
-
-    usersContainer.insertAdjacentHTML( //사용자 정보를 html로 변환하여 삽입..
-      "beforeend",
-      `
-        <div class="columns orders-item" id="user-${id}">
-          <div class="column is-2">${date}</div>
+    /*
+        if (roles.includes('ADMIN')) {
+          summary.adminCount += 1;
+        }
+    */
+    usersContainer.insertAdjacentHTML( //사용자 정보를 html로 변환하여 삽입..왜안되는거지
+        "beforeend",
+        `
+        <div class="columns orders-item" id="user-${userId}">
+          <div class="column is-2">${username}</div>
+          <div class="column is-2">${real_name}</div>
           <div class="column is-2">${email}</div>
-          <div class="column is-2">${fullName}</div>
-          <div class="column is-2">
-            <div class="select" >
-              <select id="roleSelectBox-${id}">
-                <option 
-                  class="has-background-link-light has-text-link"
-                  ${roles.includes('ADMIN') === false ? "selected" : ""} 
-                  value="USER">
-                  일반사용자
-                </option>
-                <option 
-                  class="has-background-danger-light has-text-danger"
-                  ${roles.includes('ADMIN') === true ? "selected" : ""} 
-                  value="ADMIN">
-                  관리자
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="column is-2">
-            <button class="button" id="deleteButton-${id}" >회원정보 삭제</button>
+          <div class="column is-2">${phone}</div>
+           <div class="column is-2">
+            <button class="button" id="deleteButton-${userId}" >회원 탈퇴</button>
           </div>
         </div>
       `
     );
 
     // 요소 선택
-    const roleSelectBox = document.querySelector(`#roleSelectBox-${id}`);
-    const deleteButton = document.querySelector(`#deleteButton-${id}`);
+    //    const roleSelectBox = document.querySelector(`#roleSelectBox-${id}`);
+        const deleteButton = document.querySelector(`#deleteButton-${userId}`);
 
-    // 권한관리 박스에, 선택되어 있는 옵션의 배경색 반영
-    const index = roleSelectBox.selectedIndex;
-    roleSelectBox.className = roleSelectBox[index].className;
+        /*
+        // 권한관리 박스에, 선택되어 있는 옵션의 배경색 반영
+        const index = roleSelectBox.selectedIndex;
+        roleSelectBox.className = roleSelectBox[index].className;
 
-    // 이벤트 - 권한관리 박스 수정 시 바로 db 반영
-    roleSelectBox.addEventListener("change", async () => {
-      const newRole = roleSelectBox.value;
-      const data = { roles: newRole };
+        // 이벤트 - 권한관리 박스 수정 시 바로 db 반영
+          roleSelectBox.addEventListener("change", async () => {
+          const newRole = roleSelectBox.value;
+          const data = { roles: newRole };
 
-      // 선택한 옵션의 배경색 반영
-      const index = roleSelectBox.selectedIndex;
-      roleSelectBox.className = roleSelectBox[index].className;
+          // 선택한 옵션의 배경색 반영
+          const index = roleSelectBox.selectedIndex;
+          roleSelectBox.className = roleSelectBox[index].className;
 
-      // api 요청
-      await Api.patch("/users", id, data);
-    });
+          // api 요청
+          await Api.patch("/users", id, data);
+        });
+         */
 
-    // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
-    deleteButton.addEventListener("click", () => {
-      userIdToDelete = id;
-      openModal();
-    });
-  }
+        // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
+        deleteButton.addEventListener("click", () => {
+          userIdToDelete = userId;
+          openModal();
+        });
 
-  // 총 요약에 값 삽입
-  usersCount.innerText = addCommas(summary.usersCount);
-  adminCount.innerText = addCommas(summary.adminCount);
+      }
+
+      // 총 요약에 값 삽입
+      usersCount.innerText = addCommas(summary.usersCount);
+     // adminCount.innerText = addCommas(summary.adminCount);
 }
 
 // db에서 회원정보 삭제
 async function deleteUserData(e) {
   e.preventDefault();
 
-  try {
-    await Api.delete("/users", userIdToDelete);
+    const response = await fetch(`/api/user/adminDelete/${userIdToDelete}`, { //삭제 진행
+      method: "DELETE"
+    });
 
-    // 삭제 성공
-    alert("회원 정보가 삭제되었습니다.");
+    if(response.ok){
+      alert("회원 정보가 삭제되었습니다.");
 
-    // 삭제한 아이템 화면에서 지우기
-    const deletedItem = document.querySelector(`#user-${userIdToDelete}`);
-    deletedItem.remove();
+      // 삭제한 아이템 화면에서 지우기
+      const deletedItem = document.querySelector(`#user-${userIdToDelete}`);
+      deletedItem.remove();
 
-    // 전역변수 초기화
-    userIdToDelete = "";
+      // 전역변수 초기화
+      userIdToDelete = "";
 
-    closeModal();
-  } catch (err) {
-    alert(`회원정보 삭제 과정에서 오류가 발생하였습니다: ${err}`);
-  }
+      closeModal();
+    }
+    else{
+      alert("회원정보 삭제 과정에서 오류가 발생하였습니다.");
+    }
+
 }
 
 // Modal 창에서 아니오 클릭할 시, 전역 변수를 다시 초기화함.

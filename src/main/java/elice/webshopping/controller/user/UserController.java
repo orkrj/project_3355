@@ -26,7 +26,7 @@ public class UserController {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     //회원가입 후 id를 반환
-    @PostMapping("/user")
+    @PostMapping("/api/user")
     public ResponseEntity<?> registerUser(@RequestBody UserRequestDto userRequestDto) {
         String register_id = userService.save(userRequestDto);
 
@@ -34,7 +34,7 @@ public class UserController {
     }
 
     //회원 정보 단일 조회
-    @GetMapping("/user/info")
+    @GetMapping("/api/user/info")
     public ResponseEntity<?> getUserInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName(); //현재 로그인한 유저의 id 가져오기
@@ -44,7 +44,7 @@ public class UserController {
     }
 
     //회원 전체 조회
-    @GetMapping("/user/findAll")
+    @GetMapping("/api/user/findAll")
     public ResponseEntity<List<User>> findAllUsers(){
         List<User> Users =userService.findAll();
 
@@ -52,7 +52,7 @@ public class UserController {
     }
 
     //회원 정보 수정
-    @PutMapping("/user/update")
+    @PutMapping("/api/user/update")
     public ResponseEntity<?> updateUser(@RequestBody UserUpdateDto userUpdateDto) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName(); //현재 로그인한 유저의 id 가져와서
@@ -63,7 +63,7 @@ public class UserController {
     }
 
     //회원 탈퇴
-    @DeleteMapping("/user/delete")
+    @DeleteMapping("/api/user/delete")
     public ResponseEntity<?> deleteUser(HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -84,7 +84,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/user/passwordCheck") //비밀번호 일치 확인
+    @PostMapping("/api/user/passwordCheck") //비밀번호 일치 확인
     public ResponseEntity<?> checkPassword(@RequestBody PasswordDto passwordDto){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -101,5 +101,11 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/api/user/adminDelete/{id}")
+    public ResponseEntity<?> deleteUserTest(@PathVariable Long id){
+        userService.deleteByUserId(id);
+
+        return ResponseEntity.ok("deleted");
+    }
 
 }
