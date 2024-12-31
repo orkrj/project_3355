@@ -144,15 +144,15 @@ if(isValid){
     body : JSON.stringify(data),});
 
   if(response.ok){
-    alert("회원가입 성공");
+    alert("회원가입에 성공하셨습니다.");
     window.location.href = "/login/login.html"; //경로 수정 필요
   }
   else {
-    alert("회원가입 실패");
+    alert("회원가입에 실패하셨습니다.");
   }
 }
 else {
-  alert("회원가입 실패");
+  alert("회원가입에 실패하셨습니다.");
 }
 
 

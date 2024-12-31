@@ -43,7 +43,7 @@ async function handleSubmit(e) {
     password : password
   };
 
-  const response = await fetch("http://localhost:8080/login", {
+  const response = await fetch("/login", {
     method : "POST",
     headers : {
       "Content-Type" : "application/json",
@@ -57,7 +57,7 @@ async function handleSubmit(e) {
     sessionStorage.setItem("Authorization", token); //session storage에 access 토큰 저장 /////
    // console.log(token);
 
-    alert("Login success");
+    alert("로그인에 성공하셨습니다.");
     window.location.href=" /home/home.html" //메인 페이지로 이동
   }
   else {
