@@ -91,6 +91,29 @@ function searchAddress() {
   }).open();
 }
 
+
+const getProduct = async function (productId) {
+  try {
+    // 서버에 GET 요청 보내기
+    const response = await fetch(`/api/product/${productId}`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error fetching product (status: ${response.status} - ${response.statusText})`);
+    }
+
+    // JSON 데이터를 파싱
+    const productData = await response.json();
+    console.log("Fetched Product Data:", productData);
+    return productData;
+  } catch (error) {
+    console.error("Failed to fetch product:", error);
+    // 기본값을 반환하거나 에러를 다시 던짐
+    throw error;
+  }
+};
+
 // 페이지 로드 시 실행되며, 결제정보 카드에 값을 삽입함.
 async function insertOrderSummary() {
   const { ids, selectedIds, productsTotal } = await getFromDb(
@@ -121,7 +144,11 @@ async function insertOrderSummary() {
   let productsTitle = "";
 
   for (const id of selectedIds) {
-    const { title, quantity } = await getFromDb("cart", id);
+    const { quantity } = await getFromDb("cart", id);
+    const productData = await getProduct(id);
+    const {  name:title } = productData;
+    console.log("title:"  + title);
+
     // 첫 제품이 아니라면, 다음 줄에 출력되도록 \n을 추가함
     if (productsTitle) {
       productsTitle += "\n";
