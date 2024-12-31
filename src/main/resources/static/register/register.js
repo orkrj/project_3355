@@ -53,8 +53,6 @@ async function handleSubmit(e) {
 
   const phoneRegex = /^[0-9]+$/;
 
-
-
   let isValid = true;
 
   if (!isRealNameValid) {
@@ -110,23 +108,7 @@ async function handleSubmit(e) {
     isValid=false;
   }
 
-
-
-
   // 회원가입 api 요청
- // try {
-    /*  const data = { id, password, real_name, email, phone }; //json?
-
-      await Api.post("/user", data);
-
-      alert(`정상적으로 회원가입되었습니다.`);
-      // 로그인 페이지 이동
-      window.location.href = "/login";  //get?
-    } catch (err) {
-      console.error(err.stack);
-      alert(`문제가 발생하였습니다. 확인 후 다시 시도해 주세요: ${err.message}`);
-    }*/
-
 if(isValid){
   const data = {
     username: id,
@@ -136,7 +118,7 @@ if(isValid){
     phone: phone
   };
 
-  const response = await fetch("http://localhost:8080/user", {
+  const response = await fetch("/api/user", {
     method : "POST",
     headers : {
       "Content-Type" : "application/json",
@@ -145,7 +127,7 @@ if(isValid){
 
   if(response.ok){
     alert("회원가입에 성공하셨습니다.");
-    window.location.href = "/login/login.html"; //경로 수정 필요
+    window.location.href = "/login/login.html";
   }
   else {
     alert("회원가입에 실패하셨습니다.");
@@ -154,6 +136,5 @@ if(isValid){
 else {
   alert("회원가입에 실패하셨습니다.");
 }
-
 
 }

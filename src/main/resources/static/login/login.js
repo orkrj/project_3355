@@ -27,8 +27,7 @@ function addAllEvents() {
   registerButton.addEventListener("click", registerFunction);
 }
 
-// 로그인 진행
-// 로그인하면서 토큰 저장까지 되긴 하는데 한 번 더 확인하기 -> applicationRunner로 저장한 사용자는 로그인이 안 되는 문제 o
+// 로그인
 async function handleSubmit(e) {
   e.preventDefault();
 
@@ -54,7 +53,7 @@ async function handleSubmit(e) {
   if(response.ok){
     const token = response.headers.get("access"); //헤더에서 access token 꺼내오기
 
-    sessionStorage.setItem("Authorization", token); //session storage에 access 토큰 저장 /////
+    sessionStorage.setItem("Authorization", token); //session storage에 access 토큰 저장
    // console.log(token);
 
     alert("로그인에 성공하셨습니다.");
@@ -64,7 +63,6 @@ async function handleSubmit(e) {
     alert("로그인에 실패하셨습니다. 다시 로그인해주세요.");
   }
 }
-
 
 async function registerFunction(e) {
   e.preventDefault();

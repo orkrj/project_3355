@@ -55,7 +55,7 @@ let userData;
 async function insertUserData() {
  // userData = await Api.get("/users");
 
-  const response = await fetch("/user/info", {
+  const response = await fetch("/api/user/info", {
     method : "GET",
     credentials : "include",
     headers : {
@@ -80,7 +80,7 @@ async function saveUserData(e) {
   /*
     1. 변경된 내용이 없는 경우 -> 변경된 내용이 없습니다 -> 굳이?
     2. 유효성 검사
-    3. 이메일이나 휴대폰 번호 중복인지 확인해줘야하나 겠지..
+    3.
    */
 
   const fullName = fullNameInput.value; //이름
@@ -167,7 +167,7 @@ async function saveUserData(e) {
     };
 
 
-    const response = await fetch("/user/update", {
+    const response = await fetch("/api/user/update", {
       method : "PUT",
       credentials : "include",
       headers : {
@@ -179,6 +179,7 @@ async function saveUserData(e) {
 
     if(response.ok){
       alert("회원 정보 수정이 완료되었습니다.");
+      //window.location.href="/"; //마이페이지로?
     }
     else{
       alert("오류 발생");

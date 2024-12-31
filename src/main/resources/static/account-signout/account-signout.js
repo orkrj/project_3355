@@ -67,7 +67,7 @@ async function deleteUserData(e) {
   const data = passwordInput.value; //입력한 비밀번호
   const password = {password : data}; // {password: password}와 동일 비번을 객체로 저장함
 
-  const response = await fetch("/user/passwordCheck",{
+  const response = await fetch("/api/user/passwordCheck",{
           method : "POST",
           credentials : "include",
           headers: {
@@ -81,7 +81,7 @@ async function deleteUserData(e) {
     const isPasswordCorrect = await response.json(); //passwordCheck의 리턴값
 
     if(isPasswordCorrect === true) { //비번이 일치할 경우,
-      const response = await fetch("/user/delete", { //삭제 진행
+      const response = await fetch("/api/user/delete", { //삭제 진행
         method: "DELETE",
         credentials: "include", //쿠키 포함?
         headers: {
@@ -95,14 +95,14 @@ async function deleteUserData(e) {
 
         // 토큰 삭제
         sessionStorage.removeItem("Authorization");
-
-        //  window.location.href = "/"; //홈으로 이동
-      } else { //삭제 실패
+        window.location.href = "/home/home.html"; //홈으로 이동
+      }
+      else { //삭제 실패
         alert("회원정보 삭제 과정에서 오류가 발생하였습니다");
         closeModal();
       }
-    } //비번이 일치하지 않으면
-    else{
+    }
+    else{ //비번이 일치하지 않으면
       alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
       closeModal();
     }
@@ -110,8 +110,6 @@ async function deleteUserData(e) {
   else { //비번 비교가 안 되었음
     alert("오류 발생");
   }
-
-
 
 }
 
