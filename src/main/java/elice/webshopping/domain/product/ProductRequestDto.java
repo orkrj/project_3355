@@ -15,14 +15,4 @@ public class ProductRequestDto {
     private String description;
     private int stockQuantity;
     private Long categoryId;
-    private List<MultipartFile> mainImageFiles; // 메인 이미지 파일
-    private List<MultipartFile> descriptionImageFiles; // 상세 이미지 파일
-
-    public ProductRequestDto(String name, int price, String description, int stockQuantity, Long categoryId) {
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.stockQuantity = stockQuantity;
-        this.categoryId = categoryId;
-    }
 }

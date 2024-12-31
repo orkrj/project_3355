@@ -45,35 +45,38 @@ async function getPage(endpoint, params = "") {
 
 async function post(endpoint, data) {
   const apiUrl = endpoint;
-  const bodyData = JSON.stringify(data);
   console.log(`%cPOST 요청: ${apiUrl}`, "color: #296aba;");
-  console.log(`%cPOST 요청 데이터: ${bodyData}`, "color: #296aba;");
 
   // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
   const token = sessionStorage.getItem("token");
   const headers = {
-    "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
   };
 
-  const res = await fetch(apiUrl, {
-    method: "POST",
-    headers,
-    body: bodyData,
-  });
+  try {
+    // FormData를 사용할 때는 Content-Type을 자동으로 설정하므로, 따로 설정하지 않음
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers,
+      body: data,  // FormData를 직접 body로 전달
+    });
 
-  // 응답 코드가 4XX 계열일 때 (400, 403 등)
-  if (!res.ok) {
-    const errorContent = await res.json();
-    const { reason } = errorContent;
+    // 응답 코드가 4XX 계열일 때 (400, 403 등)
+    if (!res.ok) {
+      const errorContent = await res.json();
+      const { reason } = errorContent;
+      throw new Error(`Error: ${reason}`);
+    }
 
-    throw new Error(reason);
+    const result = await res.json();
+    return result;
+  } catch (err) {
+    // catch 블록에서 에러 로그를 더 상세히 출력
+    console.error("서버에서 오류가 발생했습니다:", err);
+    throw new Error("서버에서 오류가 발생했습니다. 다시 시도해 주세요.");
   }
-
-  const result = await res.json();
-
-  return result;
 }
+
 
 
 // api 로 PATCH 요청 (/endpoint/params 로, JSON 데이터 형태로 요청함)
