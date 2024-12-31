@@ -33,7 +33,7 @@ function addAllElements() {
 function addAllEvents() {
   allSelectCheckbox.addEventListener("change", toggleAll);
   partialDeleteLabel.addEventListener("click", deleteSelectedItems);
-  purchaseButton.addEventListener("click", navigate("/order"));
+  purchaseButton.addEventListener("click", navigate("/order/order.html"));
 }
 
 
