@@ -145,7 +145,7 @@ if(isValid){
 
   if(response.ok){
     alert("회원가입 성공");
-    //window.location.href = "/login"; //경로 수정 필요
+    window.location.href = "/login/login.html"; //경로 수정 필요
   }
   else {
     alert("회원가입 실패");
