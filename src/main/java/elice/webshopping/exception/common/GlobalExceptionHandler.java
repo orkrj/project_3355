@@ -22,16 +22,22 @@ public class GlobalExceptionHandler {
     //@Valid 검증 실패 시 MethodArgumentNotValidException이 발생.
     ///카테고리 생성 및 수정시 유효성 검증
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponseDto> handleValidationExceptions(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
 
-        Map<String, String> errors = new HashMap<>(); //여러 필드 유효성 검사처리
-        bindingResult.getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
+//        Map<String, String> errors = new HashMap<>(); //여러 필드 유효성 검사처리
+//        bindingResult.getFieldErrors().forEach(error ->
+//                errors.put(error.getField(), error.getDefaultMessage())
+//        );
+//         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+
+        // ErrorResponseDto 생성
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                "유효성 검증 실패", // error
+                bindingResult.getFieldError().getDefaultMessage() // errorMessage
         );
 
-
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
     }
 
 
