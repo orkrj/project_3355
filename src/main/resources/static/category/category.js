@@ -33,6 +33,7 @@ async function fetchRootCategories() {
                         </span>
                     </div>
                     <div class="buttons">
+                        <button class="button is-link is-small" onclick="createCategory(${category.parentId}, '${category.name}')">추가</button>
                         <button class="button is-primary is-small" onclick="editCategory(${category.id}, '${category.name}')">수정</button>
                         <button class="button is-danger is-small" onclick="deleteCategory(${category.id})">삭제</button>
                     </div>
@@ -89,6 +90,70 @@ async function toggleChildren(parentId) {
         childrenListDiv.style.display = "none";
     }
 }
+
+function createCategory(parentId, name){
+
+}
+
+// Inline Form 보이기/숨기기
+function toggleInlineForm() {
+    const formContainer = document.getElementById("inlineFormContainer");
+    const inputField = document.getElementById("newCategoryName");
+
+    if (formContainer.style.display === "none" || formContainer.style.display === "") {
+        formContainer.style.display = "flex"; // 폼 표시
+        inputField.focus(); // 입력 필드 포커스
+    } else {
+        formContainer.style.display = "none"; // 폼 숨기기
+        inputField.value = ""; // 입력 필드 초기화
+    }
+}
+
+// 루트 카테고리 생성
+async function createRootCategory() {
+    const rootCategoryName = document.getElementById("newCategoryName").value.trim();
+    const errorTextElement = document.getElementById("errorText");
+
+    // 기존 오류 메시지 초기화
+    errorTextElement.style.display = "none";
+    errorTextElement.textContent = "";
+
+    if (!rootCategoryName) {
+        // 이름이 비어 있는 경우
+        errorTextElement.textContent = "카테고리 이름은 공백일 수 없습니다.";
+        errorTextElement.style.display = "block";
+        return;
+    }
+
+    try {
+        const response = await fetch(`${BASE_URL}/create`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ parentId: null, name: rootCategoryName }),
+        });
+
+        if (response.ok) {
+            // 성공 시 폼 닫기 및 목록 갱신
+            toggleInlineForm();
+            await fetchRootCategories();
+        }
+        else {
+            // 서버에서 반환된 오류 메시지 표시
+            const error = await response.json();
+            errorTextElement.textContent = error.errorMessage || "카테고리 추가에 실패했습니다.";
+            errorTextElement.style.display = "block";
+        }
+    } catch (error) {
+        // 네트워크 오류 또는 기타 예외 처리
+        errorTextElement.textContent = `오류 발생: ${error.message}`;
+        errorTextElement.style.display = "block";
+    }
+}
+
+
+
 
 
 function editCategory(id, currentName) {
