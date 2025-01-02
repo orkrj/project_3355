@@ -23,8 +23,8 @@
           crossorigin="anonymous"
   ></script>
   <!-- 커스텀 css, js -->
-  <link rel="stylesheet" href="/admin-users/admin-users.css" />
-  <script src="/admin-users/admin-users.js" type="module" defer></script>
+  <link rel="stylesheet" href="/admin-products/admin-products.css" />
+  <script src="/admin-products/admin-products.js" type="module" defer></script>
   <script src="/category/nav.js" defer></script>
 </head>
 <body>
@@ -47,7 +47,7 @@
         <div class="select mr-2">
           <select id="searchCategory">
             <option value="name">상품명</option>
-            <option value="category">카테고리명</option>
+            <option value="categoryName">카테고리명</option>
           </select>
         </div>
         <input class="input mr-2" type="text" id="searchInput" placeholder="검색어 입력" style="flex: 1;" />
@@ -58,10 +58,10 @@
         <label class="label mr-2">정렬기준:</label>
         <div class="select mr-2">
           <select id="sortCriteria">
-            <option value="createdDate">생성일</option>
+            <option value="createdAt">생성일</option>
             <option value="name">상품명</option>
             <option value="price">가격</option>
-            <option value="stock">재고</option>
+            <option value="stockQuantity">재고</option>
           </select>
         </div>
         <label class="label mr-2">정렬방향:</label>
@@ -89,6 +89,8 @@
         <div class="column">정보수정</div>
         <div class="column">삭제</div>
       </div>
+    </div>
+    <div class="container products-container" id="productsContainer1">
     </div>
 
     <!-- 페이징 -->
