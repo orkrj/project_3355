@@ -12,6 +12,8 @@ const deleteCancelButton = document.querySelector("#deleteCancelButton"); //모�
 addAllElements();
 addAllEvents();
 
+const token = sessionStorage.getItem("Authorization");
+
 // html에 요소를 추가하는 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 async function addAllElements() {
   createNavbar();
@@ -71,7 +73,7 @@ async function deleteUserData(e) {
           method : "POST",
           credentials : "include",
           headers: {
-            "Authorization" : sessionStorage.getItem("Authorization"),
+            Authorization: `Bearer ${token}`,
             "Content-Type" : "application/json", //안 쓰면 Content-Type 'text/plain;charset=UTF-8' is not supported 오류
           },
           body : JSON.stringify(password)
@@ -85,7 +87,7 @@ async function deleteUserData(e) {
         method: "DELETE",
         credentials: "include", //쿠키 포함?
         headers: {
-          "Authorization" : sessionStorage.getItem("Authorization"),
+          Authorization: `Bearer ${token}`,
         },
       });
 
