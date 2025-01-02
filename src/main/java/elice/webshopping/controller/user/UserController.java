@@ -7,6 +7,7 @@ import elice.webshopping.service.user.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -83,8 +86,8 @@ public class UserController {
         return ResponseEntity.ok("Deleted ok");
     }
 
-
-    @PostMapping("/api/user/passwordCheck") //비밀번호 일치 확인
+    //비밀번호 일치 확인
+    @PostMapping("/api/user/passwordCheck")
     public ResponseEntity<?> checkPassword(@RequestBody PasswordDto passwordDto){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -101,6 +104,7 @@ public class UserController {
         }
     }
 
+    //관리자 - 회원 강제 탈퇴
     @DeleteMapping("/api/user/adminDelete/{id}")
     public ResponseEntity<?> deleteUserTest(@PathVariable Long id){
         userService.deleteByUserId(id);
@@ -108,4 +112,35 @@ public class UserController {
         return ResponseEntity.ok("deleted");
     }
 
+    //관리자 회원가입
+    @PostMapping("/api/admin")
+    public ResponseEntity<?> registerAdmin(@RequestBody UserRequestDto userRequestDto) {
+        String register_id = userService.saveAdmin(userRequestDto);
+
+        return ResponseEntity.ok(register_id);
+    }
+
+    //관리자 계정인지 확인
+    @PostMapping("/api/user/admin-check")
+    public ResponseEntity<?> checkAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = auth.getName();
+
+        UserResponseDto user = userService.findByUsername(username);
+
+        //log.info(String.valueOf(user.getRole()));
+
+        Map<String, String> response = new HashMap<>();
+        if (String.valueOf(user.getRole()).equals("ROLE_ADMIN")) {
+            response.put("result", "success"); // JSON key-value로 반환
+            return ResponseEntity.ok(response);
+        } else {
+            /*
+            response.put("result", "denied"); // JSON key-value로 반환
+            return ResponseEntity.ok(response);
+            */
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("denied");
+        }
+    }
 }
