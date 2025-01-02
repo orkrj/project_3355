@@ -11,7 +11,7 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton"); //삭제 ok 버튼
 const deleteCancelButton = document.querySelector("#deleteCancelButton"); //삭제 취소 버튼
 
-//checkAdmin();
+checkAdmin();
 addAllElements();
 addAllEvents();
 
@@ -55,8 +55,10 @@ async function insertUsers() {
 
 
   for (const user of users) {
-    const {userId, username, real_name, email, phone} = user;
+    const {userId, username, real_name, email, phone, role} = user;
     // const date = createdAt;
+
+    const isAdmin = role.includes("ADMIN");
 
     summary.usersCount += 1;
     /*
@@ -73,7 +75,7 @@ async function insertUsers() {
           <div class="column is-2">${email}</div>
           <div class="column is-2">${phone}</div>
            <div class="column is-2">
-            <button class="button" id="deleteButton-${userId}" >회원 탈퇴</button>
+            ${isAdmin ? "관리자 계정은 강제로 탈퇴시킬 수 없습니다." : `<button class="button" id="deleteButton-${userId}">회원 탈퇴</button>`}
           </div>
         </div>
       `
