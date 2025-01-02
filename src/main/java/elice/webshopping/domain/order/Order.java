@@ -81,6 +81,7 @@ public class Order {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        updatedAt = createdAt;
     }
 
     @PreUpdate
@@ -96,7 +97,9 @@ public class Order {
         return Order.builder()
                 .orderNumber(generateOrderNumber())
                 .status(OrderStatus.ORDERED)
+                .summaryTitle(orderRequestDto.summaryTitle())
                 .totalPrice(orderRequestDto.totalPrice())
+                .request(orderRequestDto.request())
                 .user(user)
                 .receiver(receiver)
                 .build();
