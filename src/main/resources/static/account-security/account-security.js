@@ -25,6 +25,8 @@ const saveCompleteButton = document.querySelector("#saveCompleteButton"); //찐 
 const idInput = document.querySelector("#IdInput"); //아이디
 const emailInput = document.querySelector("#emailInput"); //이메일
 
+const token = sessionStorage.getItem("Authorization");
+
 //checkLogin();
 addAllElements();
 addAllEvents();
@@ -59,7 +61,7 @@ async function insertUserData() {
     method : "GET",
     credentials : "include",
     headers : {
-      "Authorization" : sessionStorage.getItem("Authorization"),
+      Authorization: `Bearer ${token}`,
       "Content-Type" : "application/json"
     }
   });
@@ -171,7 +173,7 @@ async function saveUserData(e) {
       method : "PUT",
       credentials : "include",
       headers : {
-        "Authorization": sessionStorage.getItem("Authorization"),
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body : JSON.stringify(data1)
@@ -179,7 +181,7 @@ async function saveUserData(e) {
 
     if(response.ok){
       alert("회원 정보 수정이 완료되었습니다.");
-      //window.location.href="/"; //마이페이지로?
+      window.location.href="/account/account.html"; //마이페이지로?
     }
     else{
       alert("오류 발생");

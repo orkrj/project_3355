@@ -1,5 +1,5 @@
 import * as Api from "../../api.js";
-import { createNavbar } from "../../useful-functions.js";
+import { checkLogin, createNavbar } from "../../useful-functions.js";
 
 // 요소(element), input 혹은 상수
 const passwordInput = document.querySelector("#passwordInput"); //비밀번호 확인
@@ -9,8 +9,11 @@ const modalCloseButton = document.querySelector("#modalCloseButton"); //모달�
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton"); //모달창에서 삭제하는 버튼
 const deleteCancelButton = document.querySelector("#deleteCancelButton"); //모달창에서 삭제 취소하는 버튼
 
+//checkLogin();
 addAllElements();
 addAllEvents();
+
+const token = sessionStorage.getItem("Authorization");
 
 // html에 요소를 추가하는 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 async function addAllElements() {
@@ -71,7 +74,7 @@ async function deleteUserData(e) {
           method : "POST",
           credentials : "include",
           headers: {
-            "Authorization" : sessionStorage.getItem("Authorization"),
+            Authorization: `Bearer ${token}`,
             "Content-Type" : "application/json", //안 쓰면 Content-Type 'text/plain;charset=UTF-8' is not supported 오류
           },
           body : JSON.stringify(password)
@@ -85,7 +88,7 @@ async function deleteUserData(e) {
         method: "DELETE",
         credentials: "include", //쿠키 포함?
         headers: {
-          "Authorization" : sessionStorage.getItem("Authorization"),
+          Authorization: `Bearer ${token}`,
         },
       });
 

@@ -1,5 +1,6 @@
 package elice.webshopping.domain.user;
 
+import elice.webshopping.repository.user.Role;
 import lombok.Getter;
 
 @Getter
@@ -12,6 +13,8 @@ public class UserResponseDto {
     private String email;
     private String phone;
 
+    private Role role;
+
 
     public UserResponseDto(User user) {
         this.user_id=user.getUserId();
@@ -21,6 +24,8 @@ public class UserResponseDto {
         this.real_name = user.getReal_name();
         this.email = user.getEmail();
         this.phone = user.getPhone();
+
+        this.role = user.getRole();
     }
 
 

@@ -18,8 +18,6 @@ INSERT INTO categories (category_id, parent_id, name) VALUES (12, 3, '슬랙스'
 
 INSERT INTO categories (category_id, parent_id, name) VALUES (13, 4, '신발');
 
--- 코트 상품 임시값 삽입
-데이터
 
 -- 코트 6
 INSERT INTO products (product_id, name, price, description, stock_quantity, created_at, updated_at, category_id)
