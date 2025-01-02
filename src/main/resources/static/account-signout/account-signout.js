@@ -1,5 +1,5 @@
 import * as Api from "../../api.js";
-import { createNavbar } from "../../useful-functions.js";
+import { checkLogin, createNavbar } from "../../useful-functions.js";
 
 // 요소(element), input 혹은 상수
 const passwordInput = document.querySelector("#passwordInput"); //비밀번호 확인
@@ -9,6 +9,7 @@ const modalCloseButton = document.querySelector("#modalCloseButton"); //모달�
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton"); //모달창에서 삭제하는 버튼
 const deleteCancelButton = document.querySelector("#deleteCancelButton"); //모달창에서 삭제 취소하는 버튼
 
+checkLogin();
 addAllElements();
 addAllEvents();
 
