@@ -6,10 +6,10 @@ export const randomId = () => {
 // 이메일 형식인지 확인 (true 혹은 false 반환)
 export const validateEmail = (email) => {
   return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
+      .toLowerCase()
+      .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
 };
 
 // 주소창의 url로부터 params를 얻어 객체로 만듦
@@ -33,14 +33,15 @@ export const addCommas = (n) => {
 
 // 로그인 여부(토큰 존재 여부) 확인
 export const checkLogin = () => {
-  const token = sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("Authorization");
   if (!token) {
     // 현재 페이지의 url 주소 추출하기
     const pathname = window.location.pathname;
     const search = window.location.search;
 
     // 로그인 후 다시 지금 페이지로 자동으로 돌아가도록 하기 위한 준비작업임.
-    window.location.replace(`/login?previouspage=${pathname + search}`);
+    alert("로그인이 필요합니다.");
+    window.location.replace(`/login/login.html`); // 일단 /login/login.html로 변경, previous 안 먹힘..?
   }
 };
 
@@ -49,7 +50,7 @@ export const checkAdmin = async () => {
   // 우선 화면을 가리고 시작함 -> 화면 번쩍거림으로 인해 일단 미적용
   //window.document.body.style.display = 'none';
 
-  const token = sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("Authorization");
 
   // 우선 토큰 존재 여부 확인
   if (!token) {
@@ -58,36 +59,44 @@ export const checkAdmin = async () => {
     const search = window.location.search;
 
     // 로그인 후 다시 지금 페이지로 자동으로 돌아가도록 하기 위한 준비작업임.
-    window.location.replace(`/login?previouspage=${pathname + search}`);
+    alert("로그인이 필요합니다.");
+    window.location.replace(`/login/login.html`); // 일단 /login/login.html로 변경, previous 안 먹힘..?
   }
 
   // 관리자 토큰 여부 확인
-  const res = await fetch("/users/admin-check", {
+  const res = await fetch("/api/user/admin-check", {
+    method : "POST",
     headers: {
+      "Content-Type" : "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
 
-  const { result } = await res.json();
+  if(!res.ok){
+    alert("관리자 전용 페이지입니다.");
+    window.location.replace("/home/home.html");
+  }
 
-  if (result === "success") {
+  const { result } = await res.json();
+  console.log(result);
+
+  if (result === "success") { // 관리자 체크 후 가져온 값이 success여야함
     window.document.body.style.display = "block";
 
     return;
   } else {
     alert("관리자 전용 페이지입니다.");
-
-    window.location.replace("/");
+    window.location.replace("/home/home.html");
   }
 };
 
 // 로그인 상태일 때에는 접근 불가한 페이지로 만듦. (회원가입 페이지 등)
 export const blockIfLogin = () => {
-  const token = sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("Authorization");
 
   if (token) {
     alert("로그인 상태에서는 접근할 수 없는 페이지입니다.");
-    window.location.replace("/");
+    window.location.replace("/home/home.html");
   }
 };
 
