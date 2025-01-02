@@ -280,7 +280,7 @@ async function doCheckout() {
 
       // TODO productOrder 전부 생성되고 나면 Order 에 매핑해주기
 
-      // indexedDB에서 해당 제품 관련 데이터를 제거함
+      // indexedDB에서 해당 제품 관련 데이터를 제거함 -> 필요함?
       await deleteFromDb("cart", productId);
       await putToDb("order", "summary", (data) => {
         data.ids = data.ids.filter((id) => id !== productId);
@@ -290,16 +290,17 @@ async function doCheckout() {
       });
     }
 
-    // 입력된 배송지정보를 유저db에 등록함
-    const data = {
-      phoneNumber: receiverPhoneNumber,
-      address: {
-        postalCode,
-        address1,
-        address2,
-      },
-    };
-    // TODO user-address 컨트롤러로 전달
+    // 입력된 배송지정보를 유저db에 등록함 -> 필요함?
+    // const data = {
+    //   phoneNumber: receiverPhoneNumber,
+    //   address: {
+    //     postalCode,
+    //     address1,
+    //     address2,
+    //   },
+    // };
+
+    // TODO user-address 컨트롤러로 전달 -> 필요함?
     // await Api.post("/api/user/deliveryinfo", data);
 
     // alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");
