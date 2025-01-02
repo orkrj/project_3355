@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +47,12 @@ public class UserService {
         return register.getUsername();  //가입한 유저의 id 반환
     }
 
+
+    public List<UserResponseDto> find(){
+        List<UserResponseDto> users = userRepository.findAll().stream().map(UserResponseDto::new).collect(Collectors.toList());
+
+        return users;
+    }
 
 
 

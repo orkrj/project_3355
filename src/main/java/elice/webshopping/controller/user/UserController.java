@@ -54,6 +54,13 @@ public class UserController {
         return ResponseEntity.ok(Users);
     }
 
+    @GetMapping("/api/user/findAllDto")
+    public ResponseEntity<List<UserResponseDto>> findAllUsersDto(){
+        List<UserResponseDto> users = userService.find();
+        return ResponseEntity.ok(users);
+    }
+
+
     //회원 정보 수정
     @PutMapping("/api/user/update")
     public ResponseEntity<?> updateUser(@RequestBody UserUpdateDto userUpdateDto) {

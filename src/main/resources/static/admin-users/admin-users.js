@@ -35,7 +35,7 @@ let userIdToDelete;
 
 async function insertUsers() {
 
-  const response = await fetch("/api/user/findAll", {
+  const response = await fetch("/api/user/findAllDto", {
     method: "GET",
     //credentials : "include",
     headers: {
@@ -44,7 +44,7 @@ async function insertUsers() {
     }
   });
 
-  const users = await response.json();  //json으로 변환을 안 해줘서!!! TypeError: users is not iterable 에러 뜸
+  const users = await response.json();  //json으로 변환을 안 해줘서 TypeError: users is not iterable 에러 뜸
 
 
     // 총 요약에 활용
@@ -55,7 +55,7 @@ async function insertUsers() {
 
 
   for (const user of users) {
-    const {userId, username, real_name, email, phone, role} = user;
+    const {userId, username, real_name, email, phone} = user;
     // const date = createdAt;
 
     //const isAdmin = role.includes("ADMIN");
@@ -66,7 +66,7 @@ async function insertUsers() {
           summary.adminCount += 1;
         }
     */
-    usersContainer.insertAdjacentHTML( //사용자 정보를 html로 변환하여 삽입..왜안되는거지
+    usersContainer.insertAdjacentHTML( //사용자 정보를 html로 변환하여 삽입..
         "beforeend",
         `
         <div class="columns orders-item" id="user-${userId}">
