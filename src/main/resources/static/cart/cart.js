@@ -76,6 +76,10 @@ async function insertProductsfromCart() {
     const {  name, mainImageUrls } = productData;
     let {price} = productData;
 
+    await putToDb("cart", _id, (data) => {
+      data.price = price;
+    });
+
     const title = name || "Unknown";
 
     let imageUrl = ""; // 기본값 설정

@@ -4,19 +4,20 @@ import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
 import elice.webshopping.domain.order.Receiver;
-import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.user.User;
 import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.exception.order.admin.OrderNotCanceledException;
 import elice.webshopping.exception.order.admin.OrderNotFoundException;
 import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
-import elice.webshopping.service.productOrder.ProductOrderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -26,6 +27,7 @@ public class OrderServiceImpl implements OrderService {
     // private final ProductOrderService productOrderService;
 
     @Override
+    @Transactional
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto, User user) {
 
         Receiver receiver = receiverService.createReceiverEntity(orderRequestDto.receiver());

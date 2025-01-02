@@ -4,7 +4,7 @@ async function get(endpoint, params = "") {
   console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
 
   // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
-  const token = sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("Authorization");
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
   const res = await fetch(apiUrl, { headers });
@@ -26,7 +26,7 @@ async function getPage(endpoint, params = "") {
   console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
 
   // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
-  const token = sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("Authorization");
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
   const res = await fetch(apiUrl, { headers });
@@ -45,11 +45,15 @@ async function getPage(endpoint, params = "") {
 
 async function post(endpoint, data) {
   const apiUrl = endpoint;
+  const jsonData = JSON.stringify(data);
   console.log(`%cPOST 요청: ${apiUrl}`, "color: #296aba;");
+  console.log(`%cPOST 요청 데이터: ${jsonData}`, "color: #296aba;");
 
   // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
-  const token = sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("Authorization");
+  const isJson = !(data instanceof FormData);
   const headers = {
+    ...(isJson && { "Content-Type": "application/json" }),
     ...(token && { Authorization: `Bearer ${token}` }),
   };
 
@@ -58,7 +62,7 @@ async function post(endpoint, data) {
     const res = await fetch(apiUrl, {
       method: "POST",
       headers,
-      body: data,  // FormData를 직접 body로 전달
+      body: isJson ? jsonData : data,  // FormData 면 직접 body로 전달
     });
 
     // 응답 코드가 4XX 계열일 때 (400, 403 등)

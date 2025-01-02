@@ -22,7 +22,26 @@
 
             <!-- 카테고리 목록 -->
             <div id="categoryList" class="box">
-                <h2 class="subtitle" id="categoryCount">카테고리 목록</h2>
+                <div style="display: flex; align-items: baseline;">
+                    <h2 class="subtitle" id="categoryCount" style="margin-right: 16px;">카테고리 목록 (7)</h2>
+                    <button class="button is-link is-small" onclick="toggleInlineForm()">추가</button>
+                </div>
+
+
+                <!-- Inline Form -->
+                <div id="inlineFormContainer" class="field is-grouped" style="display: none; margin-bottom: 16px;">
+                    <div class="control is-expanded">
+                        <input id="newCategoryName" class="input" type="text" placeholder="카테고리 이름을 입력하세요">
+                    </div>
+                    <div class="control">
+                        <button class="button is-success is-small" onclick="createRootCategory()">확인</button>
+                    </div>
+                    <div class="control">
+                        <button class="button is-light is-small" onclick="toggleInlineForm()">취소</button>
+                    </div>
+                </div>
+                <p id="errorText" style="color: red; font-size: 0.9rem; margin-top: 8px; display: none;"></p>
+
                 <div id="categoriesContainer"></div>
             </div>
         </div>

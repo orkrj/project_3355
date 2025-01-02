@@ -50,7 +50,7 @@ function addAllElements() {
 
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
-  subtitleCart.addEventListener("click", navigate("/cart"));
+  subtitleCart.addEventListener("click", navigate("/cart/cart.html"));
   searchAddressButton.addEventListener("click", searchAddress);
   requestSelectBox.addEventListener("change", handleRequestChange);
   checkoutButton.addEventListener("click", doCheckout);
@@ -172,7 +172,7 @@ async function insertOrderSummary() {
 }
 
 async function insertUserData() {
-  const userData = await Api.get("/user");
+  const userData = await Api.get("/api/user/info");
   const { fullName, phoneNumber, address } = userData;
 
   // 만약 db에 데이터 값이 있었다면, 배송지정보에 삽입
@@ -251,11 +251,7 @@ async function doCheckout() {
   };
 
   try {
-    // receiver 등록
-    await Api.post("/api/receiver")
-
     // 전체 주문을 등록함
-    // TODO OrderRequestDto 랑 필드 바인딩해야 함
     const orderData = await Api.post("/api/order", {
       summaryTitle,
       totalPrice,
@@ -264,19 +260,24 @@ async function doCheckout() {
     });
 
     // order 가 먼저 만들어지게 됨
-    const orderId = orderData._id;
+    const orderId = orderData.orderId;
 
     // 제품별로 주문아이템을 등록함
     for (const productId of selectedIds) {
       const { quantity, price } = await getFromDb("cart", productId);
       const totalPrice = quantity * price;
 
-      await Api.post("/api/productOrder", {
+      console.log(quantity);
+      console.log(totalPrice);
+
+      const resp = await Api.post("/api/productOrder", {
         orderId,
         productId,
         quantity,
         totalPrice,
       });
+
+      console.log("saved");
 
       // TODO productOrder 전부 생성되고 나면 Order 에 매핑해주기
 
@@ -288,19 +289,22 @@ async function doCheckout() {
         data.productsCount -= 1;
         data.productsTotal -= totalPrice;
       });
+
+      console.log("applied");
     }
 
-    // 입력된 배송지정보를 유저db에 등록함
-    const data = {
-      phoneNumber: receiverPhoneNumber,
-      address: {
-        postalCode,
-        address1,
-        address2,
-      },
-    };
-    // TODO user-address 컨트롤러로 전달
-    await Api.post("/api/user/deliveryinfo", data);
+    // 입력된 배송지정보를 유저db에 등록함 -> 필요함?
+    // const data = {
+    //   phoneNumber: receiverPhoneNumber,
+    //   address: {
+    //     postalCode,
+    //     address1,
+    //     address2,
+    //   },
+    // };
+
+    // TODO user-address 컨트롤러로 전달 -> 필요함?
+    // await Api.post("/api/user/deliveryinfo", data);
 
     // alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");
     // window.location.href = "/order/complete";
