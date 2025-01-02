@@ -11,7 +11,7 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton"); //삭제 ok 버튼
 const deleteCancelButton = document.querySelector("#deleteCancelButton"); //삭제 취소 버튼
 
-checkAdmin();
+//checkAdmin();
 addAllElements();
 addAllEvents();
 

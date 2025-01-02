@@ -1,4 +1,4 @@
 import { checkLogin, createNavbar } from "../useful-functions.js";
 
-checkLogin();
+//checkLogin();
 createNavbar();

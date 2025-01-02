@@ -27,7 +27,7 @@ const emailInput = document.querySelector("#emailInput"); //이메일
 
 const token = sessionStorage.getItem("Authorization");
 
-checkLogin();
+//checkLogin();
 addAllElements();
 addAllEvents();
 
