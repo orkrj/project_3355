@@ -1,8 +1,8 @@
-import { addCommas, createNavbar } from "../useful-functions.js";
+import {addCommas, checkAdmin, createNavbar} from "../useful-functions.js";
 import * as Api from "../api.js";
 
 // 요소
-const productsContainer = document.querySelector("#productsContainer");
+const productsContainer = document.querySelector("#productsContainer1");
 const searchCategory = document.querySelector("#searchCategory");
 const searchInput = document.querySelector("#searchInput");
 const searchButton = document.querySelector("#searchButton");
@@ -14,11 +14,21 @@ const modalBackground = document.querySelector("#modalBackground");
 const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
 const deleteCancelButton = document.querySelector("#deleteCancelButton");
+const paginationContainer = document.querySelector("#pagination");
 
 // 전역 변수
 let productIdToDelete;
 
+// 페이징 처리 변수
+let currentPage = 0;
+let totalPages = 1;
+
+// 검색 상태 변수
+let currentSearchCategory = "name"; // 기본 값
+let currentSearchInput = ""; // 기본 값
+
 // 페이지 로드 시 실행
+//checkAdmin();
 addAllElements();
 addAllEvents();
 
@@ -35,68 +45,73 @@ function addAllEvents() {
   document.addEventListener("keydown", keyDownCloseModal);
   deleteCompleteButton.addEventListener("click", deleteProductData);
   deleteCancelButton.addEventListener("click", cancelDelete);
-  searchButton.addEventListener("click", applySearch);
   sortButton.addEventListener("click", applySort);
+  paginationContainer.addEventListener("click", handlePaginationClick);
+  searchButton.addEventListener("click", () => {
+    applySearch(0, 8, "createdAt", "DESC");
+  });
 }
 
 // 상품 목록 삽입
 async function insertProducts(page = 0, size = 8, sortBy = "createdAt", direction = "DESC") {
-  try {
-    const { content: products } = await Api.get(
-        "api/product/page",
-        `?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`
+  productsContainer.innerHTML = ""; // 기존 상품 목록 초기화
+
+  const products = await Api.get(
+      `/api/product/page?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`
+  );
+
+  currentPage = page;
+
+  for (const product of products.content) {
+    const { productId, name, categoryName, price, stockQuantity, createdAt, updatedAt } = product;
+
+    productsContainer.insertAdjacentHTML(
+        "beforeend",
+        `
+      <div class="columns notification is-info is-light is-mobile product-item" id="product-${productId}">
+        <div class="column">${categoryName}</div>
+        <div class="column">${productId}</div>
+        <div class="column">${name}</div>
+        <div class="column">${addCommas(price)}원</div>
+        <div class="column">${stockQuantity}</div>
+        <div class="column">${createdAt}</div>
+        <div class="column">${updatedAt}</div>
+        <div class="column">
+          <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
+        </div>
+        <div class="column">
+          <button class="button is-primary" id="editButton-${productId}">정보수정</button>
+        </div>
+        <div class="column">
+          <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
+        </div>
+      </div>
+      `
     );
 
-    console.log(products);
-
-    productsContainer.innerHTML = ''; // 기존 상품 목록 초기화
-
-    for (const product of products) {
-      const { productId, name, category, price, stockQuantity, createdDate, updatedDate } = product;
-
-      productsContainer.insertAdjacentHTML(
-          "beforeend",
-          `
-          <div class="columns notification is-info is-light is-mobile product-item" id="product-${productId}">
-            <div class="column">${category.name}</div>
-            <div class="column">${productId}</div>
-            <div class="column">${name}</div>
-            <div class="column">${addCommas(price)}원</div>
-            <div class="column">${stockQuantity}</div>
-            <div class="column">${createdDate}</div>
-            <div class="column">${updatedDate}</div>
-            <div class="column">
-              <a href="/product-detail/${productId}" class="button">바로가기</a>
-            </div>
-            <div class="column">
-              <button class="button is-primary" id="editButton-${productId}">정보수정</button>
-            </div>
-            <div class="column">
-              <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
-            </div>
-          </div>
-        `
-      );
-
-      const deleteButton = document.querySelector(`#deleteButton-${productId}`);
-      deleteButton.addEventListener("click", () => {
-        productIdToDelete = productId;
-        openModal();
-      });
-    }
-  } catch (err) {
-    console.error("상품 목록을 가져오는 데 실패했습니다:", err);
-    alert("상품 목록을 불러오는 중 문제가 발생했습니다. 다시 시도해주세요.");
+    const deleteButton = document.querySelector(`#deleteButton-${productId}`);
+    deleteButton.addEventListener("click", () => {
+      productIdToDelete = productId;
+      openModal();
+    });
   }
+
+  totalPages = products.totalPages;
+  createPaginationButtons(); // 페이징 버튼 생성
 }
 
 // 상품 삭제 처리
 async function deleteProductData() {
   try {
-    await Api.delete("api/product", productIdToDelete);
-    alert("상품이 삭제되었습니다.");
+    console.log("삭제하려는 상품 ID:", productIdToDelete);
 
-    // 삭제한 상품 화면에서 제거
+    const response = await Api.delete(`/api/product/${productIdToDelete}`);
+    if (response.ok) {
+      alert("상품이 삭제되었습니다.");
+    } else {
+      throw new Error(`삭제 실패: ${response.status}`);
+    }
+
     const deletedItem = document.querySelector(`#product-${productIdToDelete}`);
     if (deletedItem) deletedItem.remove();
 
@@ -130,42 +145,128 @@ function keyDownCloseModal(e) {
 }
 
 // 검색 적용
-async function applySearch() {
-  const name = searchInput.value;
+async function applySearch(page = 0, size = 8, sortBy = "createdAt", direction = "DESC") {
+  const searchCategoryValue = searchCategory.value;
+  const searchInputValue = searchInput.value;
 
-  try {
-    const { content: products } = await Api.get(
-        "api/product/search",
-        `?name=${name}&page=0&size=8&sortBy=createdAt&direction=DESC`
+  currentSearchCategory = searchCategoryValue;
+  currentSearchInput = searchInputValue;
+
+  let products;
+
+  if (searchCategoryValue === "name" && searchInputValue !== "") {
+    products = await Api.get(
+        `/api/product/search?name=${searchInputValue}&page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`
+    );
+  } else if (searchCategoryValue === "categoryName" && searchInputValue !== "") {
+    products = await Api.get(
+        `/api/product/category/${searchInputValue}?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`
+    );
+  } else {
+    products = await Api.get(
+        `/api/product/page?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`
+    );
+  }
+
+  currentPage = page;
+  productsContainer.innerHTML = "";
+
+  for (const product of products.content) {
+    const { productId, name, categoryName, price, stockQuantity, createdAt, updatedAt } = product;
+
+    productsContainer.insertAdjacentHTML(
+        "beforeend",
+        `
+      <div class="columns notification is-info is-light is-mobile product-item" id="product-${productId}">
+        <div class="column">${categoryName}</div>
+        <div class="column">${productId}</div>
+        <div class="column">${name}</div>
+        <div class="column">${addCommas(price)}원</div>
+        <div class="column">${stockQuantity}</div>
+        <div class="column">${createdAt}</div>
+        <div class="column">${updatedAt}</div>
+        <div class="column">
+          <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
+        </div>
+        <div class="column">
+          <button class="button is-primary" id="editButton-${productId}">정보수정</button>
+        </div>
+        <div class="column">
+          <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
+        </div>
+      </div>
+      `
     );
 
-    productsContainer.innerHTML = ''; // 기존 목록 초기화
-    for (const product of products) {
-      const { productId, name, category, price, stockQuantity, createdDate, updatedDate } = product;
-      productsContainer.insertAdjacentHTML(
-          "beforeend",
-          `
-          <div class="columns notification is-info is-light is-mobile product-item" id="product-${productId}">
-            <div class="column">${category.name}</div>
-            <div class="column">${productId}</div>
-            <div class="column">${name}</div>
-            <div class="column">${addCommas(price)}원</div>
-            <div class="column">${stockQuantity}</div>
-            <div class="column">${createdDate}</div>
-            <div class="column">${updatedDate}</div>
-          </div>
-        `
-      );
-    }
-  } catch (err) {
-    console.error("검색 중 문제가 발생했습니다:", err);
-    alert("검색 중 문제가 발생했습니다. 다시 시도해주세요.");
+    const deleteButton = document.querySelector(`#deleteButton-${productId}`);
+    deleteButton.addEventListener("click", () => {
+      productIdToDelete = productId;
+      openModal();
+    });
   }
+
+  totalPages = products.totalPages;
+  createPaginationButtons();
 }
 
 // 정렬 적용
 function applySort() {
   const criteria = sortCriteria.value;
   const direction = sortDirection.value;
-  insertProducts(0, 8, criteria, direction);
+  applySearch(currentPage, 8, criteria, direction);
+}
+
+// 페이징 버튼 생성
+function createPaginationButtons() {
+  paginationContainer.innerHTML = "";
+
+  const prevButton = document.createElement("a");
+  prevButton.className = "pagination-previous";
+  prevButton.innerText = "이전";
+  prevButton.disabled = currentPage === 0;
+
+  const nextButton = document.createElement("a");
+  nextButton.className = "pagination-next";
+  nextButton.innerText = "다음";
+  nextButton.disabled = currentPage === totalPages - 1;
+
+  paginationContainer.appendChild(prevButton);
+
+  const pageList = document.createElement("ul");
+  pageList.className = "pagination-list";
+
+  for (let i = 0; i < totalPages; i++) {
+    const pageItem = document.createElement("li");
+    const pageLink = document.createElement("a");
+
+    pageLink.className = `pagination-link ${i === currentPage ? "is-current" : ""}`;
+    pageLink.innerText = i + 1;
+    pageLink.dataset.page = i;
+
+    pageItem.appendChild(pageLink);
+    pageList.appendChild(pageItem);
+  }
+
+  paginationContainer.appendChild(pageList);
+  paginationContainer.appendChild(nextButton);
+}
+
+// 페이징 버튼 클릭 이벤트 처리
+function handlePaginationClick(event) {
+  const target = event.target;
+
+  if (target.classList.contains("pagination-link")) {
+    currentPage = parseInt(target.dataset.page, 10);
+    applySearch(currentPage, 8, "createdAt", "DESC");
+  } else if (target.classList.contains("pagination-previous")) {
+    if (currentPage > 0) {
+      currentPage--;
+      applySearch(currentPage, 8, "createdAt", "DESC");
+    }
+  } else if (target.classList.contains("pagination-next")) {
+    if (currentPage < totalPages - 1) {
+      currentPage++;
+      applySearch(currentPage, 8, "createdAt", "DESC");
+    }
+  }
 }
