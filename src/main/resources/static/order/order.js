@@ -252,7 +252,7 @@ async function doCheckout() {
 
   try {
     // receiver 등록
-    await Api.post("/api/receiver")
+    await Api.post("/api/receiver", receiver);
 
     // 전체 주문을 등록함
     // TODO OrderRequestDto 랑 필드 바인딩해야 함
@@ -300,7 +300,7 @@ async function doCheckout() {
       },
     };
     // TODO user-address 컨트롤러로 전달
-    await Api.post("/api/user/deliveryinfo", data);
+    // await Api.post("/api/user/deliveryinfo", data);
 
     // alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");
     // window.location.href = "/order/complete";
