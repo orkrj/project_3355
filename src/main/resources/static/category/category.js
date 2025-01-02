@@ -236,6 +236,7 @@ async function submitSubCategory(parentId) {
         return;
     }
 
+
     try {
         const response = await fetch(`${BASE_URL}/create`, {
             method: "POST",
@@ -260,8 +261,6 @@ async function submitSubCategory(parentId) {
         errorTextElement.style.display = "block";
     }
 }
-
-
 function editCategory(id, currentName) {
     let newName = null;
 
