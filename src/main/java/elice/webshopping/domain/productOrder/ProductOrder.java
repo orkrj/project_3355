@@ -25,7 +25,7 @@ public class ProductOrder {
     private Order order;
 
     @Column(nullable = false)
-    private int price;
+    private int totalPrice;
 
     @Column(nullable = false)
     private int quantity;

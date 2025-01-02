@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record OrderResponseDto (
+        Long orderId,
         String orderNumber,
         OrderStatus status,
         String summaryTittle,
@@ -19,6 +20,7 @@ public record OrderResponseDto (
 
     public static OrderResponseDto from(Order order) {
         return new OrderResponseDto(
+                order.getOrderId(),
                 order.getOrderNumber(),
                 order.getStatus(),
                 order.getSummaryTitle(),
