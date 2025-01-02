@@ -2,9 +2,7 @@ package elice.webshopping.controller.order;
 
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
-import elice.webshopping.domain.order.ReceiverRequestDto;
-import elice.webshopping.domain.product.ProductRequestDto;
-import elice.webshopping.domain.user.User;
+import elice.webshopping.domain.user.CustomUserDetails;
 import elice.webshopping.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +21,9 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderResponseDto> createOrder(
             @RequestBody OrderRequestDto orderRequestDto,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
-        return ResponseEntity.ok(orderService.createOrder(orderRequestDto, user));
+        return ResponseEntity.ok(orderService.createOrder(orderRequestDto, user.getUser()));
     }
 
     @GetMapping
