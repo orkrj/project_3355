@@ -54,7 +54,7 @@ async function addProductItemsToContainer() {
     const random = randomId();
 
     // S3 URL을 비동기적으로 가져옴
-    const imageUrl = mainImageUrls?.[0]?.split("?")[0] || "../elice-rabbit.png";
+    const imageUrl = mainImageUrls?.[0]?.split("?")[0] || "../noimage.jpg";
 
     productItemContainer.insertAdjacentHTML(
         "beforeend",

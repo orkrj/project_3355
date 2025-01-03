@@ -14,6 +14,7 @@ public class ProductResponseDto {
     private int price;                             // 가격
     private String description;                    // 설명
     private int stockQuantity;                     // 재고 수량
+    private Long categoryId;                   // 카테고리 이름
     private String categoryName;                   // 카테고리 이름
     private LocalDateTime createdAt;               // 생성 일자
     private LocalDateTime updatedAt;               // 수정 일자
