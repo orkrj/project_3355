@@ -54,7 +54,8 @@ function addAllEvents() {
 
 // 상품 목록 삽입
 async function insertProducts(page = 0, size = 8, sortBy = "createdAt", direction = "DESC") {
-  productsContainer.innerHTML = ""; // 기존 상품 목록 초기화
+  const productTableBody = document.querySelector("#productTableBody");
+  productTableBody.innerHTML = ""; // 기존 상품 목록 초기화
 
   const products = await Api.get(
       `/api/product/page?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`
@@ -69,29 +70,30 @@ async function insertProducts(page = 0, size = 8, sortBy = "createdAt", directio
     const formattedCreatedAt = formatDate(createdAt);
     const formattedUpdatedAt = formatDate(updatedAt);
 
-    productsContainer.insertAdjacentHTML(
-        "beforeend",
-        `
-      <div class="columns notification is-info is-light is-mobile product-item" id="product-${productId}">
-        <div class="column">${categoryName}</div>
-        <div class="column">${productId}</div>
-        <div class="column">${name}</div>
-        <div class="column">${addCommas(price)}원</div>
-        <div class="column">${stockQuantity}</div>
-        <div class="column">${formattedCreatedAt}</div>
-        <div class="column">${formattedUpdatedAt}</div>
-        <div class="column">
-          <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
-        </div>
-        <div class="column">
-          <a href="/product-add/product-add.html?productId=${productId}" class="button">수정</a>
-        </div>
-        <div class="column">
-          <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
-        </div>
-      </div>
-      `
-    );
+    const row = document.createElement("tr");
+    row.classList.add("product-item");
+    row.id = `product-${productId}`;
+
+    row.innerHTML = `
+      <td>${categoryName}</td>
+      <td>${productId}</td>
+      <td>${name}</td>
+      <td>${addCommas(price)}원</td>
+      <td>${stockQuantity}</td>
+      <td>${formattedCreatedAt}</td>
+      <td>${formattedUpdatedAt}</td>
+      <td>
+        <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
+      </td>
+      <td>
+        <a href="/product-add/product-add.html?productId=${productId}" class="button">수정</a>
+      </td>
+      <td>
+        <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
+      </td>
+    `;
+
+    productTableBody.appendChild(row);
 
     const deleteButton = document.querySelector(`#deleteButton-${productId}`);
     deleteButton.addEventListener("click", () => {
@@ -173,7 +175,8 @@ async function applySearch(page = 0, size = 8, sortBy = "createdAt", direction =
   }
 
   currentPage = page;
-  productsContainer.innerHTML = "";
+  const productTableBody = document.querySelector("#productTableBody");
+  productTableBody.innerHTML = "";
 
   for (const product of products.content) {
     const { productId, name, categoryName, price, stockQuantity, createdAt, updatedAt } = product;
@@ -182,29 +185,30 @@ async function applySearch(page = 0, size = 8, sortBy = "createdAt", direction =
     const formattedCreatedAt = formatDate(createdAt);
     const formattedUpdatedAt = formatDate(updatedAt);
 
-    productsContainer.insertAdjacentHTML(
-        "beforeend",
-        `
-      <div class="columns notification is-info is-light is-mobile product-item" id="product-${productId}">
-        <div class="column">${categoryName}</div>
-        <div class="column">${productId}</div>
-        <div class="column">${name}</div>
-        <div class="column">${addCommas(price)}원</div>
-        <div class="column">${stockQuantity}</div>
-        <div class="column">${formattedCreatedAt}</div>
-        <div class="column">${formattedUpdatedAt}</div>
-        <div class="column">
-          <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
-        </div>
-        <div class="column">
-          <a href="/product-add/product-add.html?productId=${productId}" class="button">수정</a>
-        </div>
-        <div class="column">
-          <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
-        </div>
-      </div>
-      `
-    );
+    const row = document.createElement("tr");
+    row.classList.add("product-item");
+    row.id = `product-${productId}`;
+
+    row.innerHTML = `
+      <td>${categoryName}</td>
+      <td>${productId}</td>
+      <td>${name}</td>
+      <td>${addCommas(price)}원</td>
+      <td>${stockQuantity}</td>
+      <td>${formattedCreatedAt}</td>
+      <td>${formattedUpdatedAt}</td>
+      <td>
+        <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
+      </td>
+      <td>
+        <a href="/product-add/product-add.html?productId=${productId}" class="button">수정</a>
+      </td>
+      <td>
+        <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
+      </td>
+    `;
+
+    productTableBody.appendChild(row);
 
     const deleteButton = document.querySelector(`#deleteButton-${productId}`);
     deleteButton.addEventListener("click", () => {
