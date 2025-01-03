@@ -1,8 +1,8 @@
-import {addCommas, checkAdmin, createNavbar} from "../useful-functions.js";
+import { addCommas, checkAdmin, createNavbar } from "../useful-functions.js";
 import * as Api from "../api.js";
 
 // 요소
-const productsContainer = document.querySelector("#productsContainer1");
+const productsContainer = document.querySelector("#productsContainer");
 const searchCategory = document.querySelector("#searchCategory");
 const searchInput = document.querySelector("#searchInput");
 const searchButton = document.querySelector("#searchButton");
@@ -28,7 +28,7 @@ let currentSearchCategory = "name"; // 기본 값
 let currentSearchInput = ""; // 기본 값
 
 // 페이지 로드 시 실행
-//checkAdmin();
+// checkAdmin(); // 관리자 확인 함수 (필요시 활성화)
 addAllElements();
 addAllEvents();
 
@@ -65,6 +65,10 @@ async function insertProducts(page = 0, size = 8, sortBy = "createdAt", directio
   for (const product of products.content) {
     const { productId, name, categoryName, price, stockQuantity, createdAt, updatedAt } = product;
 
+    // 날짜 형식 변환
+    const formattedCreatedAt = formatDate(createdAt);
+    const formattedUpdatedAt = formatDate(updatedAt);
+
     productsContainer.insertAdjacentHTML(
         "beforeend",
         `
@@ -74,13 +78,13 @@ async function insertProducts(page = 0, size = 8, sortBy = "createdAt", directio
         <div class="column">${name}</div>
         <div class="column">${addCommas(price)}원</div>
         <div class="column">${stockQuantity}</div>
-        <div class="column">${createdAt}</div>
-        <div class="column">${updatedAt}</div>
+        <div class="column">${formattedCreatedAt}</div>
+        <div class="column">${formattedUpdatedAt}</div>
         <div class="column">
           <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
         </div>
         <div class="column">
-          <button class="button is-primary" id="editButton-${productId}">정보수정</button>
+          <a href="/product-add/product-add.html?productId=${productId}" class="button">수정</a>
         </div>
         <div class="column">
           <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
@@ -174,6 +178,10 @@ async function applySearch(page = 0, size = 8, sortBy = "createdAt", direction =
   for (const product of products.content) {
     const { productId, name, categoryName, price, stockQuantity, createdAt, updatedAt } = product;
 
+    // 날짜 형식 변환
+    const formattedCreatedAt = formatDate(createdAt);
+    const formattedUpdatedAt = formatDate(updatedAt);
+
     productsContainer.insertAdjacentHTML(
         "beforeend",
         `
@@ -183,13 +191,13 @@ async function applySearch(page = 0, size = 8, sortBy = "createdAt", direction =
         <div class="column">${name}</div>
         <div class="column">${addCommas(price)}원</div>
         <div class="column">${stockQuantity}</div>
-        <div class="column">${createdAt}</div>
-        <div class="column">${updatedAt}</div>
+        <div class="column">${formattedCreatedAt}</div>
+        <div class="column">${formattedUpdatedAt}</div>
         <div class="column">
           <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
         </div>
         <div class="column">
-          <button class="button is-primary" id="editButton-${productId}">정보수정</button>
+          <a href="/product-add/product-add.html?productId=${productId}" class="button">수정</a>
         </div>
         <div class="column">
           <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
@@ -269,4 +277,17 @@ function handlePaginationClick(event) {
       applySearch(currentPage, 8, "createdAt", "DESC");
     }
   }
+}
+
+// 날짜 포맷 함수
+function formatDate(dateString) {
+  const date = new Date(dateString);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더해줌
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
