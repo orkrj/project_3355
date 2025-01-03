@@ -9,7 +9,7 @@ const modalCloseButton = document.querySelector("#modalCloseButton"); //모달�
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton"); //모달창에서 삭제하는 버튼
 const deleteCancelButton = document.querySelector("#deleteCancelButton"); //모달창에서 삭제 취소하는 버튼
 
-//checkLogin();
+checkLogin();
 addAllElements();
 addAllEvents();
 

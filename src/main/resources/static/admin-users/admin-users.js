@@ -11,7 +11,7 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton"); //삭제 ok 버튼
 const deleteCancelButton = document.querySelector("#deleteCancelButton"); //삭제 취소 버튼
 
-//checkAdmin();
+checkAdmin();
 addAllElements();
 addAllEvents();
 
@@ -55,10 +55,10 @@ async function insertUsers() {
 
 
   for (const user of users) {
-    const {userId, username, real_name, email, phone} = user;
+    const {user_id, username, real_name, email, phone, role} = user; //변수명을 fetch에서 받아오는 데이터와 동일하게 맞춰줘야 제대로 내려옴
     // const date = createdAt;
 
-    //const isAdmin = role.includes("ADMIN");
+    const isAdmin = role.includes("ADMIN");
 
     summary.usersCount += 1;
     /*
@@ -69,46 +69,28 @@ async function insertUsers() {
     usersContainer.insertAdjacentHTML( //사용자 정보를 html로 변환하여 삽입..
         "beforeend",
         `
-        <div class="columns orders-item" id="user-${userId}">
+        <div class="columns orders-item" id="user-${user_id}">
           <div class="column is-2">${username}</div>
           <div class="column is-2">${real_name}</div>
           <div class="column is-2">${email}</div>
           <div class="column is-2">${phone}</div>
            <div class="column is-2">
-            <button class="button" id="deleteButton-${userId}">회원 탈퇴</button>
+            ${isAdmin ? "관리자" : `<button class="button" id="deleteButton-${user_id}">회원 탈퇴</button>`}
           </div>
         </div>
       `
     );
 
     // 요소 선택
-    //    const roleSelectBox = document.querySelector(`#roleSelectBox-${id}`);
-        const deleteButton = document.querySelector(`#deleteButton-${userId}`);
+    if(!isAdmin){
+      const deleteButton = document.querySelector(`#deleteButton-${user_id}`);
 
-        /*
-        // 권한관리 박스에, 선택되어 있는 옵션의 배경색 반영
-        const index = roleSelectBox.selectedIndex;
-        roleSelectBox.className = roleSelectBox[index].className;
-
-        // 이벤트 - 권한관리 박스 수정 시 바로 db 반영
-          roleSelectBox.addEventListener("change", async () => {
-          const newRole = roleSelectBox.value;
-          const data = { roles: newRole };
-
-          // 선택한 옵션의 배경색 반영
-          const index = roleSelectBox.selectedIndex;
-          roleSelectBox.className = roleSelectBox[index].className;
-
-          // api 요청
-          await Api.patch("/users", id, data);
-        });
-         */
-
-        // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
-        deleteButton.addEventListener("click", () => {
-          userIdToDelete = userId;
-          openModal();
-        });
+      // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
+      deleteButton.addEventListener("click", () => {
+        userIdToDelete = user_id;
+        openModal();
+      });
+    }
 
       }
 
