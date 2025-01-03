@@ -91,13 +91,34 @@ async function navFunction() {
     const token = sessionStorage.getItem("Authorization");
 
     if (token) {
-        // 로그인 상태일 때
-        const myPage = document.createElement("a");
-        myPage.classList.add("navbar-item", "has-text-weight-semibold");
-        myPage.href = `/mypage`;
-        myPage.textContent = "My Page";
-        navbarEnd.appendChild(myPage);
+        // 관리자 여부 확인
+        const res = await fetch("/api/user/admin-check", {
+            method : "POST",
+            headers: {
+                "Content-Type" : "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
+        const isAdmin = await checkAdmin();
+
+        if (isAdmin) {
+            // 관리자일 경우
+            const adminPage = document.createElement("a");
+            adminPage.classList.add("navbar-item", "has-text-weight-semibold");
+            adminPage.href = `/admin/admin.html`;
+            adminPage.textContent = "Admin Page";
+            navbarEnd.appendChild(adminPage);
+        } else {
+            // 일반 사용자일 경우
+            const myPage = document.createElement("a");
+            myPage.classList.add("navbar-item", "has-text-weight-semibold");
+            myPage.href = `/account/account.html`;
+            myPage.textContent = "My Page";
+            navbarEnd.appendChild(myPage);
+        }
+
+        // 공통 로그아웃 링크
         const logOut = document.createElement("a");
         logOut.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
         logOut.href = `/logOut`;
@@ -117,7 +138,6 @@ async function navFunction() {
         logIn.textContent = "LogIn";
         navbarEnd.appendChild(logIn);
     }
-
 }
 
 // Bulma 화살표 제거 함수
@@ -130,4 +150,28 @@ function removeNavbarArrow() {
         }
     `;
     document.head.appendChild(style); // <head>에 추가
+}
+
+// 관리자 여부 확인 함수
+async function checkAdmin() {
+    const token = sessionStorage.getItem("Authorization");
+
+    if (!token) {
+        return false;
+    }
+
+    const response = await fetch("/api/user/admin-check", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (response.ok) {
+        const { result } = await response.json();
+        return result === "success"; // 관리자 여부 반환
+    }
+
+    return false;
 }
