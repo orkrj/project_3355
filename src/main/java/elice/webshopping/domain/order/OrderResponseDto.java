@@ -3,6 +3,7 @@ package elice.webshopping.domain.order;
 import elice.webshopping.domain.payment.Payment;
 import elice.webshopping.domain.payment.PaymentResponseDto;
 import elice.webshopping.domain.productOrder.ProductOrderResponseDto;
+import elice.webshopping.domain.user.UserResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,9 +12,10 @@ public record OrderResponseDto (
         Long orderId,
         String orderNumber,
         OrderStatus status,
-        String summaryTittle,
+        String summaryTitle,
         int totalPrice,
         String request,
+        UserResponseDto user,
         ReceiverResponseDto receiver,
         List<ProductOrderResponseDto> productOrdersResponseDto
 ) {
@@ -26,6 +28,7 @@ public record OrderResponseDto (
                 order.getSummaryTitle(),
                 order.getTotalPrice(),
                 order.getRequest(),
+                new UserResponseDto(order.getUser()),
                 ReceiverResponseDto.from(order),
                 ProductOrderResponseDto.from(order)
         );
