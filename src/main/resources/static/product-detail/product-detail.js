@@ -76,12 +76,19 @@ async function insertProductData() {
     );
   });
 
-
+//장바구니는 페이지 이동은 하지 않고, 구매를 하면 페이지 이동을 시킨다
   addToCartButton.addEventListener("click", async () => {
     try {
+      //장바구니 추가할 때 로그인되어 있는지 확인하고 아니면 리다이렉트하는 로직
+      const authToken = sessionStorage.getItem("Authorization");
+      if (!authToken) {
+        alert("로그인이 필요합니다.");
+        return; // 함수 종료
+      }
+
       await insertDb(product, productId);
 
-      alert("장바구니에 추가되었습니다.");
+      alert("장바구니에 추가");
     } catch (err) {
       // Key already exists 에러면 아래와 같이 alert함
       if (err.message.includes("Key")) {
@@ -94,15 +101,24 @@ async function insertProductData() {
 
   purchaseButton.addEventListener("click", async () => {
     try {
-      await insertDb(product);
+      //로그인되어 있는지 확인하하는 로직
+      const authToken = sessionStorage.getItem("Authorization");
+      if (!authToken) {
+        alert("로그인이 필요합니다.");
+        return; // 함수 종료
+      }
 
-      window.location.href = "/order/order.html";
+      await insertDb(product, productId);
+      window.location.href = "../cart/cart.html";
     } catch (err) {
+      if (err.message.includes("Key")) {
+        alert("이미 장바구니에 추가되어 있습니다.");
+      }
       console.log(err);
 
       //insertDb가 에러가 되는 경우는 이미 제품이 장바구니에 있던 경우임
       //따라서 다시 추가 안 하고 바로 order 페이지로 이동함
-      window.location.href = "/order/order.html";
+      window.location.href = "../cart/cart.html";
     }
   });
 }
