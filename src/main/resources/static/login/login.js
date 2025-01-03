@@ -57,7 +57,7 @@ async function handleSubmit(e) {
    // console.log(token);
 
     alert("로그인에 성공하셨습니다.");
-    window.location.href=" /home/home.html" //메인 페이지로 이동
+    window.location.href=" /" //메인 페이지로 이동
   }
   else {
     alert("로그인에 실패하셨습니다. 다시 로그인해주세요.");
