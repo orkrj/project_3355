@@ -39,14 +39,10 @@
 
       async function main() {
         const button = document.getElementById("payment-button");
-        const coupon = document.getElementById("coupon-box");
+        // const coupon = document.getElementById("coupon-box");
 
         const orderId = getOrderId();
         const order = await fetchOrder(orderId);
-
-        console.log(order.summaryTitle);
-        console.log(order.orderNumber);
-        console.log(order.totalPrice);
 
         if (!order) alert("order not found")
 
@@ -143,6 +139,7 @@
         const url = new URLSearchParams(window.location.search);
         return url.get("orderId");
       }
+
     </script>
   </body>
 </html>
