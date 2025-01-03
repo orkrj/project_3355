@@ -1,4 +1,4 @@
-import { checkLogin, createNavbar } from "../useful-functions.js";
+import {createNavbar} from "../useful-functions.js";
 import * as Api from "../api.js";
 
 
@@ -35,29 +35,29 @@ async function insertOrders() {
   const orders = await Api.get("/api/order/user");
 
   for (const order of orders) {
-    const { id, createdAt, summaryTitle, status } = order;
+    const { orderId, createdAt, summaryTitle, status } = order;
     // const date = createdAt.split("T")[0];
     const date = new Date(createdAt).toLocaleDateString('ko-KR');
 
     ordersContainer.insertAdjacentHTML(
       "beforeend",
       `
-        <div class="columns orders-item" id="order-${id}">
+        <div class="columns orders-item" id="order-${orderId}">
           <div class="column is-2">${date}</div>
           <div class="column is-6 order-summary">${summaryTitle}</div>
-          <div class="column is-2">${status}</div>
+          <div class="column is-2" id="status-${orderId}">${status}</div>
           <div class="column is-2">
-            <button class="button" id="deleteButton-${id}" >주문 취소</button>
+            <button class="button" id="deleteButton-${orderId}" >주문 취소</button>
           </div>
         </div>
       `
     );
 
-    const deleteButton = document.querySelector(`#deleteButton-${id}`);
+    const deleteButton = document.querySelector(`#deleteButton-${orderId}`);
 
     // Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
     deleteButton.addEventListener("click", () => {
-      orderIdToDelete = id;
+      orderIdToDelete = orderId;
       openModal();
     });
   }
@@ -67,15 +67,20 @@ async function insertOrders() {
 async function deleteOrderData(e) {
   e.preventDefault();
 
+  console.log(orderIdToDelete);
   try {
-    await Api.patch("/api/order", orderIdToDelete);
+    await fetch(`/api/order/${orderIdToDelete}`, {
+      method: "PATCH",
+    });
 
     // 삭제 성공
     alert("주문을 취소하였습니다.");
+    const statusInfo = document.querySelector(`#status-${orderIdToDelete}`);
+    statusInfo.textContent = (await getOrderStatus(orderIdToDelete)).replace(/"/g, "");
 
     // 삭제한 아이템 화면에서 지우기
-    const deletedItem = document.querySelector(`#order-${orderIdToDelete}`);
-    deletedItem.remove();
+    // const deletedItem = document.querySelector(`#order-${orderIdToDelete}`);
+    // deletedItem.remove();
 
     // 전역변수 초기화
     orderIdToDelete = "";
@@ -84,6 +89,11 @@ async function deleteOrderData(e) {
   } catch (err) {
     alert(`주문 취소 과정에서 오류가 발생하였습니다: ${err}`);
   }
+}
+
+async function getOrderStatus(orderId) {
+  const response = await fetch(`/api/order/status/${orderId}`);
+  return await response.text();
 }
 
 // Modal 창에서 아니오 클릭할 시, 전역 변수를 다시 초기화함.

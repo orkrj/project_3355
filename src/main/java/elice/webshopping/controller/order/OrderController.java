@@ -2,15 +2,18 @@ package elice.webshopping.controller.order;
 
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
+import elice.webshopping.domain.order.OrderStatus;
 import elice.webshopping.domain.user.CustomUserDetails;
 import elice.webshopping.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/order")
 @RequiredArgsConstructor
@@ -41,9 +44,16 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderResponseDtoById(orderId));
     }
 
+    @GetMapping("/status/{orderId}")
+    public ResponseEntity<OrderStatus> getOrderStatus(@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderService.getOrderStatus(orderId));
+    }
+
     @PatchMapping("/{orderId}")
     public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
+        log.info("this controller activated {}", orderId);
         orderService.cancelOrder(orderId);
+        log.info("this controller finished {}", orderId);
         return ResponseEntity.ok().build();
     }
 

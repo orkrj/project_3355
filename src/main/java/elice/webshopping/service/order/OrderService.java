@@ -3,6 +3,7 @@ package elice.webshopping.service.order;
 import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
+import elice.webshopping.domain.order.OrderStatus;
 import elice.webshopping.domain.user.User;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,9 @@ public interface OrderService {
 
     //== 비즈니스 로직 내 사용할 단건 조회 ==//
     Order getOrderEntityById(Long orderId);
+
+    //== 주문 상태 조회 ==//
+    OrderStatus getOrderStatus(Long orderId);
 
     //== 관리자 삭제를 위해 deletedAt != null 인 주문까지 조회 ==//
     Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId);

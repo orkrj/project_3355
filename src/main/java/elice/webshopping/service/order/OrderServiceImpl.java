@@ -1,9 +1,6 @@
 package elice.webshopping.service.order;
 
-import elice.webshopping.domain.order.Order;
-import elice.webshopping.domain.order.OrderRequestDto;
-import elice.webshopping.domain.order.OrderResponseDto;
-import elice.webshopping.domain.order.Receiver;
+import elice.webshopping.domain.order.*;
 import elice.webshopping.domain.user.User;
 import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.exception.order.admin.OrderNotCanceledException;
@@ -72,6 +69,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public OrderStatus getOrderStatus(Long orderId) {
+        return getOrderEntityByIdIncludeDeletedAtIsNotNull(orderId).getStatus();
+    }
+
+    @Override
     public Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
@@ -89,6 +91,7 @@ public class OrderServiceImpl implements OrderService {
      */
 
     @Override
+    @Transactional
     public void cancelOrder(Long orderId) {
         Order order = getOrderEntityById(orderId);
         if (order.getStatus().canBeCanceled()) {
