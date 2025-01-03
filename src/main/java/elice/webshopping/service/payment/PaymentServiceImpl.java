@@ -20,14 +20,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponseDto createPayment(PaymentRequestDto paymentRequestDto) {
-        // TODO 주문 생성시 만들어지는 주문 번호가 결제 요청에 넘어가야 함
-        Order order = orderService.getOrderEntityByOrderNumber(paymentRequestDto.orderNumber());
+        Order order = orderService.getOrderEntityById(paymentRequestDto.orderId());
         Payment payment = paymentRepository.save(Payment.from(paymentRequestDto, order));
 
-        log.info("Payment created: {}", payment);
-        log.info("Payment created: {}", payment.getOrder().getOrderNumber());
+        log.info("order : {}", order.getStatus());
+        log.info("Payment created: {}", payment.getAmount());
+
         order.setPayment(payment);
-        log.info("Payment updated: {}", payment.getPaymentKey());
+
+        log.info("Payment created: {}", order.getPayment().getAmount());
         return PaymentResponseDto.from(payment);
     }
 }
