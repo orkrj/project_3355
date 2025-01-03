@@ -1,8 +1,8 @@
-import {addCommas, checkAdmin, createNavbar} from "../useful-functions.js";
+import { addCommas, checkAdmin, createNavbar } from "../useful-functions.js";
 import * as Api from "../api.js";
 
 // 요소
-const productsContainer = document.querySelector("#productsContainer1");
+const productsContainer = document.querySelector("#productsContainer");
 const searchCategory = document.querySelector("#searchCategory");
 const searchInput = document.querySelector("#searchInput");
 const searchButton = document.querySelector("#searchButton");
@@ -28,7 +28,7 @@ let currentSearchCategory = "name"; // 기본 값
 let currentSearchInput = ""; // 기본 값
 
 // 페이지 로드 시 실행
-//checkAdmin();
+// checkAdmin(); // 관리자 확인 함수 (필요시 활성화)
 addAllElements();
 addAllEvents();
 
@@ -54,7 +54,8 @@ function addAllEvents() {
 
 // 상품 목록 삽입
 async function insertProducts(page = 0, size = 8, sortBy = "createdAt", direction = "DESC") {
-  productsContainer.innerHTML = ""; // 기존 상품 목록 초기화
+  const productTableBody = document.querySelector("#productTableBody");
+  productTableBody.innerHTML = ""; // 기존 상품 목록 초기화
 
   const products = await Api.get(
       `/api/product/page?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`
@@ -65,29 +66,34 @@ async function insertProducts(page = 0, size = 8, sortBy = "createdAt", directio
   for (const product of products.content) {
     const { productId, name, categoryName, price, stockQuantity, createdAt, updatedAt } = product;
 
-    productsContainer.insertAdjacentHTML(
-        "beforeend",
-        `
-      <div class="columns notification is-info is-light is-mobile product-item" id="product-${productId}">
-        <div class="column">${categoryName}</div>
-        <div class="column">${productId}</div>
-        <div class="column">${name}</div>
-        <div class="column">${addCommas(price)}원</div>
-        <div class="column">${stockQuantity}</div>
-        <div class="column">${createdAt}</div>
-        <div class="column">${updatedAt}</div>
-        <div class="column">
-          <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
-        </div>
-        <div class="column">
-          <button class="button is-primary" id="editButton-${productId}">정보수정</button>
-        </div>
-        <div class="column">
-          <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
-        </div>
-      </div>
-      `
-    );
+    // 날짜 형식 변환
+    const formattedCreatedAt = formatDate(createdAt);
+    const formattedUpdatedAt = formatDate(updatedAt);
+
+    const row = document.createElement("tr");
+    row.classList.add("product-item");
+    row.id = `product-${productId}`;
+
+    row.innerHTML = `
+      <td>${categoryName}</td>
+      <td>${productId}</td>
+      <td>${name}</td>
+      <td>${addCommas(price)}원</td>
+      <td>${stockQuantity}</td>
+      <td>${formattedCreatedAt}</td>
+      <td>${formattedUpdatedAt}</td>
+      <td>
+        <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
+      </td>
+      <td>
+        <a href="/product-add/product-add.html?productId=${productId}" class="button">수정</a>
+      </td>
+      <td>
+        <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
+      </td>
+    `;
+
+    productTableBody.appendChild(row);
 
     const deleteButton = document.querySelector(`#deleteButton-${productId}`);
     deleteButton.addEventListener("click", () => {
@@ -101,26 +107,27 @@ async function insertProducts(page = 0, size = 8, sortBy = "createdAt", directio
 }
 
 // 상품 삭제 처리
-async function deleteProductData() {
-  try {
-    console.log("삭제하려는 상품 ID:", productIdToDelete);
+async function deleteProductData(e) {
+  e.preventDefault();
 
-    const response = await Api.delete(`/api/product/${productIdToDelete}`);
-    if (response.ok) {
-      alert("상품이 삭제되었습니다.");
-    } else {
-      throw new Error(`삭제 실패: ${response.status}`);
-    }
+  const response = await fetch(`/api/product/${productIdToDelete}`, { //삭제 진행
+    method: "DELETE"
+  });
+
+  if (response.ok) {
+    alert("상품이 삭제되었습니다.");
 
     const deletedItem = document.querySelector(`#product-${productIdToDelete}`);
-    if (deletedItem) deletedItem.remove();
+    deletedItem.remove();
 
-    productIdToDelete = ""; // 초기화
+    // 전역변수 초기화
+    productIdToDelete = "";
+
     closeModal();
-  } catch (err) {
-    console.error("상품 삭제 중 오류가 발생했습니다:", err);
+  } else {
     alert("상품 삭제 중 문제가 발생했습니다. 다시 시도해주세요.");
   }
+
 }
 
 // 삭제 취소
@@ -169,34 +176,40 @@ async function applySearch(page = 0, size = 8, sortBy = "createdAt", direction =
   }
 
   currentPage = page;
-  productsContainer.innerHTML = "";
+  const productTableBody = document.querySelector("#productTableBody");
+  productTableBody.innerHTML = "";
 
   for (const product of products.content) {
     const { productId, name, categoryName, price, stockQuantity, createdAt, updatedAt } = product;
 
-    productsContainer.insertAdjacentHTML(
-        "beforeend",
-        `
-      <div class="columns notification is-info is-light is-mobile product-item" id="product-${productId}">
-        <div class="column">${categoryName}</div>
-        <div class="column">${productId}</div>
-        <div class="column">${name}</div>
-        <div class="column">${addCommas(price)}원</div>
-        <div class="column">${stockQuantity}</div>
-        <div class="column">${createdAt}</div>
-        <div class="column">${updatedAt}</div>
-        <div class="column">
-          <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
-        </div>
-        <div class="column">
-          <button class="button is-primary" id="editButton-${productId}">정보수정</button>
-        </div>
-        <div class="column">
-          <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
-        </div>
-      </div>
-      `
-    );
+    // 날짜 형식 변환
+    const formattedCreatedAt = formatDate(createdAt);
+    const formattedUpdatedAt = formatDate(updatedAt);
+
+    const row = document.createElement("tr");
+    row.classList.add("product-item");
+    row.id = `product-${productId}`;
+
+    row.innerHTML = `
+      <td>${categoryName}</td>
+      <td>${productId}</td>
+      <td>${name}</td>
+      <td>${addCommas(price)}원</td>
+      <td>${stockQuantity}</td>
+      <td>${formattedCreatedAt}</td>
+      <td>${formattedUpdatedAt}</td>
+      <td>
+        <a href="/product-detail/product-detail.html?productId=${productId}" class="button">바로가기</a>
+      </td>
+      <td>
+        <a href="/product-add/product-add.html?productId=${productId}" class="button">수정</a>
+      </td>
+      <td>
+        <button class="button is-danger" id="deleteButton-${productId}">삭제</button>
+      </td>
+    `;
+
+    productTableBody.appendChild(row);
 
     const deleteButton = document.querySelector(`#deleteButton-${productId}`);
     deleteButton.addEventListener("click", () => {
@@ -269,4 +282,17 @@ function handlePaginationClick(event) {
       applySearch(currentPage, 8, "createdAt", "DESC");
     }
   }
+}
+
+// 날짜 포맷 함수
+function formatDate(dateString) {
+  const date = new Date(dateString);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더해줌
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 }

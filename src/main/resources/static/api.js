@@ -81,6 +81,41 @@ async function post(endpoint, data) {
   }
 }
 
+async function put(endpoint, data) {
+  const apiUrl = endpoint
+  const jsonData = JSON.stringify(data);
+
+  const bodyData = JSON.stringify(data);
+  console.log(`%cPUT 요청: ${apiUrl}`, "color: #0b84a5;");
+  console.log(`%cPUT 요청 데이터: ${jsonData}`, "color: #0b84a5;");
+
+  const isJson = !(data instanceof FormData);
+  const token = sessionStorage.getItem("Authorization");
+  const headers = {
+    ...(isJson && { "Content-Type": "application/json" }),
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+
+  try {
+    const res = await fetch(apiUrl, {
+      method: "PUT",
+      headers,
+      body: isJson ? jsonData : data,
+    });
+
+    if (!res.ok) {
+      const errorContent = await res.json();
+      const { reason } = errorContent;
+      throw new Error(reason);
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (err) {
+    console.error("서버에서 오류가 발생했습니다:", err);
+    throw new Error("서버에서 오류가 발생했습니다. 다시 시도해 주세요.");
+  }
+}
 
 
 // api 로 PATCH 요청 (/endpoint/params 로, JSON 데이터 형태로 요청함)
@@ -115,34 +150,42 @@ async function patch(endpoint, params = "", data) {
 
 // 아래 함수명에 관해, delete 단어는 자바스크립트의 reserved 단어이기에,
 // 여기서는 우선 delete 대신 del로 쓰고 아래 export 시에 delete로 alias 함.
-async function del(endpoint, params = "", data = {}) {
-  const apiUrl = `${endpoint}/${params}`;
-  const bodyData = JSON.stringify(data);
+async function del(endpoint, data) {
+  const apiUrl = endpoint;  // URL을 직접 endpoint로 설정
+  const jsonData = JSON.stringify(data);
 
-  console.log(`DELETE 요청 ${apiUrl}`, "color: #059c4b;");
-  console.log(`DELETE 요청 데이터: ${bodyData}`, "color: #059c4b;");
+  console.log(`%cDELETE 요청: ${apiUrl}`, "color: #059c4b;");
+  console.log(`%cDELETE 요청 데이터: ${jsonData}`, "color: #059c4b;");
 
-  const res = await fetch(apiUrl, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-    },
-    body: bodyData,
-  });
+  const isJson = !(data instanceof FormData);
+  const token = sessionStorage.getItem("Authorization");  // Authorization 토큰 가져오기
+  const headers = {
+    ...(isJson && { "Content-Type": "application/json" }),  // JSON일 경우 Content-Type 설정
+    ...(token && { Authorization: `Bearer ${token}` }),  // Authorization 헤더 설정
+  };
 
-  // 응답 코드가 4XX 계열일 때 (400, 403 등)
-  if (!res.ok) {
-    const errorContent = await res.json();
-    const { reason } = errorContent;
+  try {
+    const res = await fetch(apiUrl, {
+      method: "DELETE",
+      headers,
+      body: isJson ? jsonData : undefined,  // FormData가 아닐 경우에만 body에 데이터를 첨부
+    });
 
-    throw new Error(reason);
+    if (!res.ok) {
+      const errorContent = await res.json();
+      const { reason } = errorContent;
+      throw new Error(reason);  // 오류 발생시 reason을 포함하여 오류 처리
+    }
+
+    const result = await res.json();
+    return result;  // 응답 반환
+
+  } catch (err) {
+    console.error("서버에서 오류가 발생했습니다:", err);
+    throw new Error("서버에서 오류가 발생했습니다. 다시 시도해 주세요.");
   }
-
-  const result = await res.json();
-
-  return result;
 }
 
+
 // 아래처럼 export하면, import * as Api 로 할 시 Api.get, Api.post 등으로 쓸 수 있음.
-export { get, getPage, post, patch, del as delete };
+export { get, getPage, post, put, patch, del as delete };
