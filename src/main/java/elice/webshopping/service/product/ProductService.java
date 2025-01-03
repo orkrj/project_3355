@@ -155,6 +155,7 @@ public class ProductService {
                 .collect(Collectors.toList());
 
         // 카테고리 이름 가져오기
+        Long categoryId = product.getCategory() != null ? product.getCategory().getId() : null;
         String categoryName = product.getCategory() != null ? product.getCategory().getName() : null;
 
         return ProductResponseDto.builder()
@@ -163,6 +164,7 @@ public class ProductService {
                 .price(product.getPrice())
                 .description(product.getDescription())
                 .stockQuantity(product.getStockQuantity())
+                .categoryId(categoryId)
                 .categoryName(categoryName)  // 카테고리 이름 설정
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())

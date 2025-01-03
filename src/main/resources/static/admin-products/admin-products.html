@@ -76,25 +76,34 @@
     </div>
 
     <!-- 상품 목록 -->
+    <!-- 상품 목록 -->
     <div class="container products-container" id="productsContainer">
-      <div class="columns notification is-info is-light is-mobile products-top">
-        <div class="column">카테고리</div>
-        <div class="column">상품 ID</div>
-        <div class="column">상품 이름</div>
-        <div class="column">가격</div>
-        <div class="column">재고수</div>
-        <div class="column">생성일</div>
-        <div class="column">수정일</div>
-        <div class="column">바로가기</div>
-        <div class="column">정보수정</div>
-        <div class="column">삭제</div>
-      </div>
-    </div>
-    <div class="container products-container" id="productsContainer1">
-    </div>
+      <table class="table is-fullwidth">
+        <thead>
+        <tr>
+          <th>카테고리</th>
+          <th>상품 ID</th>
+          <th>상품 이름</th>
+          <th>가격</th>
+          <th>재고수</th>
+          <th>생성일</th>
+          <th>수정일</th>
+          <th>바로가기</th>
+          <th>정보수정</th>
+          <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody id="productTableBody">
+        <!-- 상품 목록이 여기에 추가됩니다 -->
+        </tbody>
+      </table>
+
 
     <!-- 페이징 -->
-    <div id="pagination" class="pagination is-centered"></div>
+      <div>
+        <div id="pagination" class="pagination is-centered"></div>
+      </div>
+
   </div>
 </section>
 

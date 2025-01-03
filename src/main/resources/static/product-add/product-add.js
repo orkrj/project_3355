@@ -15,12 +15,19 @@ const registerProductForm = document.querySelector("#registerProductForm");
 const mainFileNameSpan = document.querySelector("#mainFileNameSpan");
 const desFileNameSpan = document.querySelector("#desFileNameSpan");
 
+let productId = new URLSearchParams(window.location.search).get("productId");
+
+//checkLogin();
 addAllElements();
 addAllEvents();
 
-function addAllElements() {
+async function addAllElements() {
   createNavbar();
   addOptionsToSelectBox();
+  if (productId) {
+    await loadProductData(productId);
+    submitButton.innerText = "상품 수정하기";  // 수정 버튼 텍스트 변경
+  }
 }
 
 function addAllEvents() {
@@ -28,6 +35,28 @@ function addAllEvents() {
   desImageInput.addEventListener("change", handleDesImageUpload);
   submitButton.addEventListener("click", handleSubmit);
   categorySelectBox.addEventListener("change", handleCategoryChange);
+}
+
+// 상품 데이터 불러오기
+async function loadProductData(productId) {
+  try {
+    const productData = await Api.get(`/api/product/${productId}`);
+
+    console.log(productData);
+
+    // 폼 필드에 기존 상품 정보 채우기
+    nameInput.value = productData.name;
+    categorySelectBox.value=productData.categoryId;
+    priceInput.value = productData.price;
+    stockInput.value = productData.stockQuantity;
+    detailDescriptionInput.value = productData.description;
+    mainFileNameSpan.innerText = "메인사진파일 (png, jpg, jpeg)";
+    desFileNameSpan.innerText = "상세사진파일 (png, jpg, jpeg)";
+
+  } catch (err) {
+    console.error("상품 정보를 불러오는 데 실패했습니다.", err);
+    alert("상품 정보를 불러오는 데 문제가 발생했습니다.");
+  }
 }
 
 async function handleSubmit(e) {
@@ -61,8 +90,8 @@ async function handleSubmit(e) {
 
   try {
     // 이미지 업로드 후, 반환된 S3 파일 경로가 null인 경우를 처리.
-    const mainImageKey = mainImage ? await addImageToS3(mainImageInput, `products/main`) : null;
-    const desImageKey = desImage ? await addImageToS3(desImageInput, `products/description`) : null;
+    const mainImageKey = mainImage ? await addImageToS3(mainImageInput, `products/main`) : await addImageToS3("../noimage.jpg", `products/main`);
+    const desImageKey = desImage ? await addImageToS3(desImageInput, `products/description`) : await addImageToS3("../noimage.jpg", `products/description`);
 
     // 데이터 준비
     const formData = new FormData();
@@ -80,13 +109,19 @@ async function handleSubmit(e) {
       formData.append("descriptionImageFiles", desImage); // 파일 추가
     }
 
-    console.log("보낼 데이터:", formData);
-
-    // 요청 보내기
-    const response = await Api.post("/api/product", formData);
+    let response;
+    if (productId) {
+      // 상품 수정: PUT 요청
+      response = await Api.put(`/api/product/${productId}`, formData);
+    } else {
+      // 상품 등록: POST 요청
+      response = await Api.post("/api/product", formData);
+    }
 
     if (response) {
-      alert(`${name} 제품이 정상적으로 등록되었습니다.`);
+      alert(`${name} 상품이 정상적으로 ${productId ? '수정' : '등록'}되었습니다.`);
+
+      window.location.href = "/admin-products/admin-products.html";
     }
 
     // 폼 초기화
@@ -95,6 +130,7 @@ async function handleSubmit(e) {
     desFileNameSpan.innerText = "상세사진파일 (png, jpg, jpeg)";
     categorySelectBox.style.color = "black";
     categorySelectBox.style.backgroundColor = "white";
+
   } catch (err) {
     console.error(err.stack);
     alert(`문제가 발생하였습니다. 확인 후 다시 시도해 주세요: ${err.message}`);
@@ -116,7 +152,11 @@ function handleDesImageUpload() {
 async function addOptionsToSelectBox() {
   try {
     const categories = await Api.get("/api/category/findAll");
-    categories.forEach((category) => {
+
+    // categoryId가 5 이상인 카테고리만 필터링
+    const filteredCategories = categories.filter(category => category.id >= 5);
+
+    filteredCategories.forEach((category) => {
       const { id, name } = category;
 
       categorySelectBox.insertAdjacentHTML(
