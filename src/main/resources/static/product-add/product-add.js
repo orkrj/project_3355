@@ -159,7 +159,11 @@ function handleDesImageUpload() {
 async function addOptionsToSelectBox() {
   try {
     const categories = await Api.get("/api/category/findAll");
-    categories.forEach((category) => {
+
+    // categoryId가 5 이상인 카테고리만 필터링
+    const filteredCategories = categories.filter(category => category.id >= 5);
+
+    filteredCategories.forEach((category) => {
       const { id, name } = category;
 
       categorySelectBox.insertAdjacentHTML(
