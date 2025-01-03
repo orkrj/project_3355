@@ -301,7 +301,7 @@ async function doCheckout() {
     // window.location.href = "/order/complete";
 
     // 결제 페이지로 이동
-    const paymentUrl = await Api.get("/api/payment");
+    window.location.href = "/api/toss/payment?orderId=" + orderId;
 
   } catch (err) {
     console.log(err);

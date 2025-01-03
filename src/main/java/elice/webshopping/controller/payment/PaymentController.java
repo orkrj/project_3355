@@ -13,11 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -27,7 +24,7 @@ import java.util.Base64;
 
 @Controller
 @SuppressWarnings("unchecked")
-@RequestMapping("/api/payment")
+@RequestMapping("/api/toss/payment")
 @RequiredArgsConstructor
 public class PaymentController {
 
@@ -103,7 +100,8 @@ public class PaymentController {
      */
     @RequestMapping(value = "/success", method = RequestMethod.GET)
     public String paymentRequest(HttpServletRequest request, Model model) throws Exception {
-        return "redirect:/order-complete/order-complete.html";
+        return "/success";
+        // return "redirect:/order-complete/order-complete.html";
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -127,11 +125,6 @@ public class PaymentController {
         model.addAttribute("message", failMessage);
 
         return "/fail";
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity<PaymentResponseDto> savePayment(@RequestBody PaymentRequestDto paymentRequestDto) {
-        return ResponseEntity.ok(paymentService.createPayment(paymentRequestDto));
     }
 }
 
