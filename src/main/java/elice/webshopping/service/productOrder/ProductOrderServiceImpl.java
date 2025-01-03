@@ -4,6 +4,7 @@ import elice.webshopping.domain.order.Order;
 import elice.webshopping.domain.product.Product;
 import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.productOrder.ProductOrderRequestDto;
+import elice.webshopping.domain.productOrder.ProductOrderResponseDto;
 import elice.webshopping.exception.order.ProductOrderNotExistException;
 import elice.webshopping.repository.productOrder.ProductOrderRepository;
 import elice.webshopping.service.order.OrderService;
@@ -24,11 +25,14 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     private final OrderService orderService;
 
     @Override
-    public void createProductOrder(ProductOrderRequestDto productOrderRequestDto) {
+    public ProductOrderResponseDto createProductOrder(ProductOrderRequestDto productOrderRequestDto) {
         Product product = productService.getProductEntityById(productOrderRequestDto.productId());
         Order order = orderService.getOrderEntityById(productOrderRequestDto.orderId());
 
-        productOrderRepository.saveAndFlush(ProductOrder.of(productOrderRequestDto, product, order));
+        ProductOrder productOrder = ProductOrder.of(productOrderRequestDto, product, order);
+        productOrderRepository.saveAndFlush(productOrder);
+
+        return ProductOrderResponseDto.from(productOrder);
     }
 
     @Override

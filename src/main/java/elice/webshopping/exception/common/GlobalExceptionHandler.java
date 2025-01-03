@@ -83,12 +83,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoContentsException.class)
     public ResponseEntity<Object> handleNoContentsException(NoContentsException e) {
         log.error("NoContentsException: {}", e.getMessage());
+        getStackTraceElement(e);
         return ResponseEntity.ok(Collections.emptyList());
     }
 
     @ExceptionHandler(ServiceCustomException.class)
     public ResponseEntity<ErrorResponseDto> handleCustomException(ServiceCustomException e) {
         log.error("CustomException: {}", e.getMessage());
+        getStackTraceElement(e);
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(
                 "비즈니스 에러 발생",
                 e.getMessage()
@@ -100,6 +102,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorResponseDto> handleNullPointerException(NullPointerException e) {
         log.error("NullPointerException: {}", e.getMessage());
+        getStackTraceElement(e);
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(
                 "NPE",
                 e.getMessage()
@@ -111,11 +114,30 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleException(Exception e) {
         log.error("Exception: {}", e.getMessage());
+        getStackTraceElement(e);
         ErrorResponseDto errorResponseDto = new ErrorResponseDto(
                 "기타 서버 내부 오류",
                 e.getMessage()
         );
 
         return new ResponseEntity<>(errorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private void getStackTraceElement(Exception e) {
+        StackTraceElement[] stackTraceElements = e.getStackTrace();
+
+        for (StackTraceElement stackTraceElement : stackTraceElements) {
+            if (stackTraceElement.getClassName().startsWith("elice.webshopping")) {
+                log.info("Stack trace: {}.{} ({}:{})",
+                        stackTraceElement.getClassName(),
+                        stackTraceElement.getMethodName(),
+                        stackTraceElement.getFileName(),
+                        stackTraceElement.getLineNumber());
+
+                return;
+            }
+        }
+
+        log.error("Stack trace: {}", stackTraceElements[0].getClassName());
     }
 }
