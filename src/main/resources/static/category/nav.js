@@ -88,42 +88,35 @@ async function navFunction() {
         console.error("네비게이션 데이터를 가져오는 데 실패했습니다.");
     }
 
+    const token = sessionStorage.getItem("Authorization");
 
-    // My Page 링크 추가
-    const myPage = document.createElement("a");
-    myPage.classList.add("navbar-item", "has-text-weight-semibold");
-    myPage.href = `/mypage`;
-    myPage.textContent = "My Page";
-    navbarEnd.appendChild(myPage);
+    if (token) {
+        // 로그인 상태일 때
+        const myPage = document.createElement("a");
+        myPage.classList.add("navbar-item", "has-text-weight-semibold");
+        myPage.href = `/mypage`;
+        myPage.textContent = "My Page";
+        navbarEnd.appendChild(myPage);
 
-    // 장바구니 링크 추가
-    const basket = document.createElement("a");
-    basket.classList.add("navbar-item", "has-text-weight-semibold");
-    basket.href = `/cart/cart.html`;
-    basket.textContent = "장바구니";
-    navbarEnd.appendChild(basket);
+        const logOut = document.createElement("a");
+        logOut.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
+        logOut.href = `/logOut`;
+        logOut.textContent = "LogOut";
+        navbarEnd.appendChild(logOut);
+    } else {
+        // 비로그인 상태일 때
+        const join = document.createElement("a");
+        join.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
+        join.href = `/register/register.html`;
+        join.textContent = "회원가입";
+        navbarEnd.appendChild(join);
 
-
-    // 회원가입 링크 추가
-    const join = document.createElement("a");
-    join.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
-    join.href = `/register/register.html`;
-    join.textContent = "회원가입";
-    navbarEnd.appendChild(join);
-
-    // Login 링크 추가
-    const logIn = document.createElement("a");
-    logIn.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
-    logIn.href = `/login/login.html`;
-    logIn.textContent = "LogIn";
-    navbarEnd.appendChild(logIn);
-
-    // LogOut 링크 추가
-    const logOut = document.createElement("a");
-    logOut.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
-    logOut.href = `/logOut`;
-    logOut.textContent = "LogOut";
-    navbarEnd.appendChild(logOut);
+        const logIn = document.createElement("a");
+        logIn.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
+        logIn.href = `/login/login.html`;
+        logIn.textContent = "LogIn";
+        navbarEnd.appendChild(logIn);
+    }
 
 }
 
