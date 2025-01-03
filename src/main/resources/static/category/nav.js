@@ -52,7 +52,7 @@ async function navFunction() {
 
             const categoryLink = document.createElement("a");
             categoryLink.classList.add("navbar-link", "has-text-weight-semibold");
-            categoryLink.href = `/api/category/${category.name}`;
+            //categoryLink.href = `/api/category/${category.name}`;
             categoryLink.textContent = category.name;
 
 
