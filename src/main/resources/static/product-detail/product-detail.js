@@ -49,7 +49,7 @@ async function insertProductData() {
     descriptionImageUrls
   } = product;
 
-  const mainImageUrl = mainImageUrls?.[0]?.split("?")[0] || "../elice-rabbit.png";
+  const mainImageUrl = mainImageUrls?.[0]?.split("?")[0] || "../noimage.jpg";
 
   productMainImageTag.src = mainImageUrl;
   titleTag.innerText = name;

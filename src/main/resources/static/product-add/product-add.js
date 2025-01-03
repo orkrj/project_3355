@@ -46,20 +46,12 @@ async function loadProductData(productId) {
 
     // 폼 필드에 기존 상품 정보 채우기
     nameInput.value = productData.name;
+    categorySelectBox.value=productData.categoryId;
     priceInput.value = productData.price;
     stockInput.value = productData.stockQuantity;
     detailDescriptionInput.value = productData.description;
     mainFileNameSpan.innerText = "메인사진파일 (png, jpg, jpeg)";
     desFileNameSpan.innerText = "상세사진파일 (png, jpg, jpeg)";
-
-    // categorySelectBox에서 categoryName에 해당하는 옵션을 선택
-    const options = categorySelectBox.options;  // select 요소 내 모든 옵션을 가져옵니다.
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].value === productData.categoryName) {
-        categorySelectBox.selectedIndex = i;  // 해당 옵션을 선택
-        break;
-      }
-    }
 
   } catch (err) {
     console.error("상품 정보를 불러오는 데 실패했습니다.", err);
@@ -98,8 +90,8 @@ async function handleSubmit(e) {
 
   try {
     // 이미지 업로드 후, 반환된 S3 파일 경로가 null인 경우를 처리.
-    const mainImageKey = mainImage ? await addImageToS3(mainImageInput, `products/main`) : null;
-    const desImageKey = desImage ? await addImageToS3(desImageInput, `products/description`) : null;
+    const mainImageKey = mainImage ? await addImageToS3(mainImageInput, `products/main`) : await addImageToS3("../noimage.jpg", `products/main`);
+    const desImageKey = desImage ? await addImageToS3(desImageInput, `products/description`) : await addImageToS3("../noimage.jpg", `products/description`);
 
     // 데이터 준비
     const formData = new FormData();
