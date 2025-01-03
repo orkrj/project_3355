@@ -314,7 +314,10 @@ async function updateCategory(id, name) {
         fetchRootCategories();
 
     } else {
-        alert("카테고리 수정에 실패했습니다.");
+
+        // 서버에서 반환된 오류 메시지 표시
+        const error = await response.json();
+        alert(`${error.errorMessage}`);
     }
 }
 
