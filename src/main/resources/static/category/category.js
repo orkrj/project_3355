@@ -94,6 +94,8 @@ async function toggleChildren(parentId) {
 function toggleInlineForm() {
     const formContainer = document.getElementById("inlineFormContainer");
     const inputField = document.getElementById("newCategoryName");
+    const errorText = document.getElementById("errorText");
+
 
     if (formContainer.style.display === "none" || formContainer.style.display === "") {
         formContainer.style.display = "flex"; // 폼 표시
@@ -101,6 +103,10 @@ function toggleInlineForm() {
     } else {
         formContainer.style.display = "none"; // 폼 숨기기
         inputField.value = ""; // 입력 필드 초기화
+
+        // 오류 메시지 숨기기
+        errorText.style.display = "none";
+        errorText.textContent = ""; // 텍스트 초기화
     }
 }
 
@@ -308,7 +314,10 @@ async function updateCategory(id, name) {
         fetchRootCategories();
 
     } else {
-        alert("카테고리 수정에 실패했습니다.");
+
+        // 서버에서 반환된 오류 메시지 표시
+        const error = await response.json();
+        alert(`${error.errorMessage}`);
     }
 }
 

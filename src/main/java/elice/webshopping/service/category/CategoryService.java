@@ -30,17 +30,10 @@ public class CategoryService {
 
     public CategoryDto save(String name, Long parentId){
 
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("카테고리 이름은 공백일 수 없습니다.");
-        }
-
         // 이스케이프 처리
         String escapedName = StringEscapeUtils.escapeHtml4(name);
 
-        // 이미 이름이 있다면 중복예외 발생
-        if(categoryRepository.existsByName(escapedName)){
-            throw new IllegalArgumentException(escapedName + "은 이미 존재하는 카테고리 이름입니다");
-        }
+        validate(escapedName);
 
         Category category = Category.from(escapedName);
 
@@ -63,23 +56,27 @@ public class CategoryService {
 
     public CategoryDto update(String name, Long id){
 
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("카테고리 이름은 공백일 수 없습니다.");
-        }
-
         // 이스케이프 처리
         String escapedName = StringEscapeUtils.escapeHtml4(name);
 
-        // 이미 이름이 있다면 중복예외 발생
-        if(categoryRepository.existsByName(escapedName)){
-            throw new IllegalArgumentException(escapedName + "은 이미 존재하는 카테고리 이름입니다");
-        }
+        validate(escapedName);
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID가 없습니다."));
 
         category.update(escapedName);
         return categoryRepository.save(category).toDto();
+    }
+
+    private void validate(String escapedName) {
+        if (escapedName == null || escapedName.trim().isEmpty()) {
+            throw new IllegalArgumentException("카테고리 이름은 공백일 수 없습니다.");
+        }
+
+        // 이미 이름이 있다면 중복예외 발생
+        if(categoryRepository.existsByName(escapedName)){
+            throw new IllegalArgumentException(escapedName + "은 이미 존재하는 카테고리 이름입니다");
+        }
     }
 
     public void delete(Long id){
