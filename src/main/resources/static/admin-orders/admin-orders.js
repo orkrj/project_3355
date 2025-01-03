@@ -1,14 +1,9 @@
-import { checkLogin, createNavbar } from "../../useful-functions.js";
-import * as Api from "../../api.js";
+import { createNavbar } from "../../useful-functions.js";
+
 
 
 // 요소(element), input 혹은 상수
 const ordersContainer = document.querySelector("#ordersContainer");
-// const modal = document.querySelector("#modal");
-// const modalBackground = document.querySelector("#modalBackground");
-// const modalCloseButton = document.querySelector("#modalCloseButton");
-// const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
-// const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
 // checkLogin();
 addAllElements();
@@ -17,17 +12,9 @@ addAllElements();
 // 요소 삽입 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllElements() {
   createNavbar();
-  // insertOrders();
 }
 
-// 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
-// function addAllEvents() {
-//    modalBackground.addEventListener("click", closeModal);
-//    modalCloseButton.addEventListener("click", closeModal);
-//   document.addEventListener("keydown", keyDownCloseModal);
-//   deleteCompleteButton.addEventListener("click", deleteOrderData);
-//   deleteCancelButton.addEventListener("click", cancelDelete);
-// }
+let jsonData;
 
 const getAddress = async function () {
   try {
@@ -42,11 +29,47 @@ const getAddress = async function () {
 
     // JSON 데이터를 파싱
     const responseText = await response.text();
-    console.log("responseText: "+responseText);
-    let jsonData;
+    //console.log("responseText: "+responseText);
+
     try {
       jsonData = JSON.parse(responseText);
       console.log("변환된 JSON 데이터:", jsonData);
+      for (const orderData of jsonData) {
+        const summaryParts = orderData.summaryTitle.split("\n");
+        const mainProduct = summaryParts[0]; // 첫 번째 항목
+        const additionalProducts = summaryParts.slice(1).join(" / "); // 나머지 항목
+
+        // 새로 추가할 HTML 템플릿 생성
+        const newOrderHTML = `
+         <div class="columns notification is-info is-light is-mobile orders-top">
+            <div class="column is-2 order-date">${orderData.orderNumber.substring(0, 8).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')}</div>
+            <div class="column is-2 userId">${orderData.user.username.toLocaleString()}</div>
+            <div class="column is-4 order-product" id="order-product">
+                <span>${mainProduct}</span>
+                <button class="toggle-button">↓</button>
+                <span class="product-details" style="display: none;">${additionalProducts || ""}</span>
+            </div>
+            <div class="column is-2 order-total">${orderData.totalPrice.toLocaleString()}원</div>
+         </div>
+        `;
+
+        // 기존 컨테이너에 새 HTML 삽입
+        ordersContainer.insertAdjacentHTML('beforeend', newOrderHTML);
+      }
+
+      // 토글 버튼 기능 추가 (상품 상세 보기)
+      document.querySelectorAll('.toggle-button').forEach(button => {
+        button.addEventListener('click', function () {
+          const details = this.nextElementSibling;
+          if (details.style.display === 'none') {
+            details.style.display = 'block';
+            this.textContent = '↑';
+          } else {
+            details.style.display = 'none';
+            this.textContent = '↓';
+          }
+        });
+      });
     } catch (error) {
       console.error("JSON 변환 중 오류 발생:", error.message);
     }
@@ -67,103 +90,171 @@ getAddress() .then(data => {
 });
 
 
-//내가 추가한 함수
-// document.addEventListener('DOMContentLoaded', () => {
-//   const button = document.querySelector('.toggle-button');
-//   const details = document.querySelector('.product-details');
-//
-//   if (button && details) {
-//     button.addEventListener('click', () => {
-//       if (details.style.display === 'none') {
-//         details.style.display = 'block';
-//         button.textContent = '↑';
-//       } else {
-//         details.style.display = 'none';
-//         button.textContent = '↓';
-//       }
-//     });
-//   } else {
-//     console.error('Button or details element not found.');
-//   }
-// });
+// 정렬 버튼 이벤트 리스너
+const sortForm = document.querySelector('.sortForm');
+sortForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // 폼 제출 기본 동작 방지
 
-//검색어 처리 로직
-// document.getElementById('searchButton').addEventListener('click', function () {
-//   const searchValue = document.getElementById('searchInput').value.toLowerCase();
-//   const orders = document.querySelectorAll('#ordersContainer .columns');
-//
-//   orders.forEach(order => {
-//     const date = order.dataset.date?.toLowerCase() || '';
-//     const status = order.dataset.status?.toLowerCase() || '';
-//     const info = order.dataset.info?.toLowerCase() || '';
-//
-//     if (date.includes(searchValue) || status.includes(searchValue) || info.includes(searchValue)) {
-//       order.style.display = 'flex';
-//     } else {
-//       order.style.display = 'none';
-//     }
-//   });
-// });
+  // 정렬 기준과 방식 가져오기
+  const sortMethod = document.getElementById('sort-method').value; // 오름차순/내림차순
+
+  const sortStandard = document.getElementById('sort-standard').value; // 정렬 기준
+  let comparison = 0;
+  console.log("sortMethod: " + sortMethod);
+
+  // 정렬 함수 정의
+  jsonData.sort((a, b) => {
 
 
-
-//샘플
-const sampleText = `{
-  "orderNumber": "202501027b67d1a5-61f",
-  "status": "ORDERED",
-  "summaryTittle": "생지 와이드 데님 팬츠 / 1개\\n상품3 / 1개",
-  "totalPrice": 70000,
-  "request": "배송 전 연락바랍니다.",
-  "receiver": {
-    "name": "테스트",
-    "phoneNumber": "123123123",
-    "zipCode": "06252",
-    "streetAddress": "서울 강남구 강남대로 328  (역삼동)",
-    "detailAddress": "서울역"
-  },
-  "productOrdersResponseDto": []
-}`;
-
-// JSON 파싱
-const orderData = JSON.parse(sampleText);
-
-// summaryTittle를 \n으로 분리
-const summaryParts = orderData.summaryTittle.split("\n");
-const mainProduct = summaryParts[0]; // 첫 번째 항목
-const additionalProducts = summaryParts.slice(1).join(" / "); // 나머지 항목
-
-
-
-// 새로 추가할 HTML 템플릿 생성
-const newOrderHTML = `
-  <div class="columns notification is-info is-light is-mobile orders-top">
-    <div class="column is-2 order-date">${new Date().toISOString().split('T')[0]}</div>
-    <div class="column is-2 userId">user123</div>
-    <div class="column is-4 order-product" id="order-product">
-      <span>${mainProduct}</span>
-      <button class="toggle-button">↓</button>
-      <span class="product-details" style="display: none;">${additionalProducts || ""}</span>
-    </div>
-    <div class="column is-2 order-total">${orderData.totalPrice.toLocaleString()}원</div>
-  </div>
-`;
-
-// 기존 컨테이너에 새 HTML 삽입
-ordersContainer.insertAdjacentHTML('beforeend', newOrderHTML);
-
-// 토글 버튼 기능 추가 (상품 상세 보기)
-document.querySelectorAll('.toggle-button').forEach(button => {
-  button.addEventListener('click', function () {
-    const details = this.nextElementSibling;
-    if (details.style.display === 'none') {
-      details.style.display = 'block';
-      this.textContent = '↑';
-    } else {
-      details.style.display = 'none';
-      this.textContent = '↓';
+    if (sortStandard === "날짜") {
+      const dateA = a.orderNumber.substring(0, 8);
+      const dateB = b.orderNumber.substring(0, 8);
+      comparison = dateA.localeCompare(dateB);
+    } else if (sortStandard === "사용자 ID") {
+      comparison = a.username.localeCompare(b.username);
+    } else if (sortStandard === "주문총액") {
+      comparison = a.totalPrice - b.totalPrice;
     }
+
+
+    return sortMethod === "내림차순" ? comparison * -1 : comparison;
+  });
+
+  console.log("comparison: " + comparison);
+
+
+  // 필요하면 정렬된 결과를 화면에 업데이트
+  const ordersContainer = document.getElementById('ordersContainer');
+  ordersContainer.innerHTML = ''; // 기존 내용 제거
+
+  // const newNavHTML = ` <div
+  //     className="columns notification is-info is-light is-mobile orders-top"
+  // >
+  //   <div className="column is-2">주문날짜</div>
+  //   <div className="column is-2">주문한 사용자 ID</div>
+  //   <div className="column is-4">주문정보</div>
+  //   <div className="column is-2">주문총액</div>
+  // </div>
+  // `;
+
+  for (const orderData of jsonData) {
+    const summaryParts = orderData.summaryTitle.split("\n");
+    const mainProduct = summaryParts[0];
+    const additionalProducts = summaryParts.slice(1).join(" / ");
+
+    const newOrderHTML = `
+
+      <div class="columns notification is-info is-light is-mobile orders-top">
+        <div class="column is-2 order-date">${orderData.orderNumber.substring(0, 8).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')}</div>
+        <div class="column is-2 userId">${orderData.user.username}</div>
+        <div class="column is-4 order-product" id="order-product">
+          <span>${mainProduct}</span>
+          <button class="toggle-button">↓</button>
+          <span class="product-details" style="display: none;">${additionalProducts || ""}</span>
+        </div>
+        <div class="column is-2 order-total">${orderData.totalPrice.toLocaleString()}원</div>
+      </div>
+    `;
+
+    ordersContainer.insertAdjacentHTML('beforeend', newOrderHTML);
+  }
+
+  // 토글 버튼 기능 추가 (상품 상세 보기)
+  document.querySelectorAll('.toggle-button').forEach(button => {
+    button.addEventListener('click', function () {
+      const details = this.nextElementSibling;
+      if (details.style.display === 'none') {
+        details.style.display = 'block';
+        this.textContent = '↑';
+      } else {
+        details.style.display = 'none';
+        this.textContent = '↓';
+      }
+    });
   });
 });
+
+
+// 검색 버튼 이벤트 리스너
+const searchButton = document.getElementById('searchButton');
+const searchInput = document.getElementById('searchInput');
+
+searchButton.addEventListener('click', () => {
+  const searchQuery = searchInput.value.trim().toLowerCase(); // 검색어 가져오기
+  console.log("searchQuery: " + searchQuery);
+
+  // 검색어가 포함된 항목 필터링
+  const filteredSamples = jsonData.filter(order => {
+    console.log("order.user.username: " + order.user.username);
+    return order.user.username.toLowerCase().includes(searchQuery);
+  });
+
+
+  // 기존 내용 제거
+  ordersContainer.innerHTML = '';
+
+  // 필터링된 결과 화면에 출력
+  for (const orderData of filteredSamples) {
+    const summaryParts = orderData.summaryTitle.split("\n");
+    const mainProduct = summaryParts[0];
+    const additionalProducts = summaryParts.slice(1).join(" / ");
+
+    const newOrderHTML = `
+     <div
+            class="columns notification is-info is-light is-mobile orders-top"
+          >
+            <div class="column is-2">주문날짜</div>
+            <div class="column is-2">주문한 사용자 ID</div>
+            <div class="column is-4">주문정보</div>
+            <div class="column is-2">주문총액</div>
+      </div>
+
+      <div class="columns notification is-info is-light is-mobile orders-top">
+        <div class="column is-2 order-date">${orderData.orderNumber.substring(0, 8).replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')}</div>
+        <div class="column is-2 userId">${orderData.user.username}</div>
+        <div class="column is-4 order-product" id="order-product">
+          <span>${mainProduct}</span>
+          <button class="toggle-button">↓</button>
+          <span class="product-details" style="display: none;">${additionalProducts || ""}</span>
+        </div>
+        <div class="column is-2 order-total">${orderData.totalPrice.toLocaleString()}원</div>
+      </div>
+    `;
+
+    ordersContainer.insertAdjacentHTML('beforeend', newOrderHTML);
+
+    // 토글 버튼 기능 추가 (상품 상세 보기)
+    document.querySelectorAll('.toggle-button').forEach(button => {
+      button.addEventListener('click', function () {
+        const details = this.nextElementSibling;
+        if (details.style.display === 'none') {
+          details.style.display = 'block';
+          this.textContent = '↑';
+        } else {
+          details.style.display = 'none';
+          this.textContent = '↓';
+        }
+      });
+    });
+  }
+
+  // 검색 결과 없을 때 처리
+  if (filteredSamples.length === 0) {
+    ordersContainer.innerHTML = '<p>검색 결과가 없습니다.</p>';
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

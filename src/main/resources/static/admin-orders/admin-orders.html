@@ -36,35 +36,40 @@
     <!-- 주문관리 -->
     <section class="section">
       <div class="container">
-        <!-- 검색창 추가 -->
-<!--        <div class="block">-->
-<!--          <div class="field has-addons">-->
-<!--            <div class="control">-->
-<!--              <input-->
-<!--                      id="searchInput"-->
-<!--                      class="input"-->
-<!--                      type="text"-->
-<!--                      placeholder="검색하고자 하는 아이디를 입력하세요"-->
-<!--              />-->
-<!--            </div>-->
-<!--            <div class="control">-->
-<!--              <button id="searchButton" class="button is-info">검색</button>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
+
+        <!-- 검색창 -->
+        <div class="block">
+          <div class="field has-addons">
+            <div class="control">
+              <input
+                      id="searchInput"
+                      class="input"
+                      type="text"
+                      placeholder="검색하고자 하는 아이디를 입력하세요"
+              />
+            </div>
+            <div class="control">
+              <button id="searchButton" class="button is-info">검색</button>
+            </div>
+          </div>
+        </div>
 
         <!-- 제목 -->
         <div class="block account-header">
           <h1 class="subtitle is-4">주문관리</h1>
         </div>
 
-        <!-- Css 활용해서 오른쪽에 위치시키기 -->
-        <form class="sortForm" action="#">
-          <select name="languages" id="sort">
-            <option value="사용자 ID" class="user">사용자 ID</option>
+        <form class="sortForm">
+          <select name="sort-method" id="sort-method">
+            <option value="오름차순">오름차순</option>
+            <option value="내림차순">내림차순</option>
+          </select>
+          <select name="sort-standard" id="sort-standard">
             <option value="날짜" class="date">날짜</option>
+            <option value="사용자 ID" class="user">사용자 ID</option>
             <option value="주문총액" class="order">주문총액</option>
           </select>
+          <button id="sort-button">정렬하기</button>
         </form>
 
 
@@ -78,18 +83,7 @@
             <div class="column is-2">주문총액</div>
           </div>
 
-          <div
-                  class="columns notification is-info is-light is-mobile orders-top"
-          >
-            <div class="column is-2 order-date" >2025-01-02</div>
-            <div class="column is-2 userId">user123</div>
-            <div class="column is-4 order-product" id="order-product">
-              <span > 캐주얼 스니커즈 / 3개 </span>
-              <button class="toggle-button">↓</button>
-              <span class="product-details" style="display: none;">퍼피렛 오프 화이트 패딩 신발 / 5개</span>
-            </div>
-            <div class="column is-2 order-total">$120</div>
-          </div>
+
         </div>
       </div>
     </section>
