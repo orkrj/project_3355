@@ -107,7 +107,7 @@ async function navFunction() {
             const adminPage = document.createElement("a");
             adminPage.classList.add("navbar-item", "has-text-weight-semibold");
             adminPage.href = `/admin/admin.html`;
-            adminPage.textContent = "Admin Page";
+            adminPage.textContent = "관리자페이지";
             navbarEnd.appendChild(adminPage);
         } else {
             // 일반 사용자일 경우
@@ -123,16 +123,22 @@ async function navFunction() {
             const myPage = document.createElement("a");
             myPage.classList.add("navbar-item", "has-text-weight-semibold");
             myPage.href = `/account/account.html`;
-            myPage.textContent = "My Page";
+            myPage.textContent = "마이페이지";
             navbarEnd.appendChild(myPage);
         }
+
 
         // 공통 로그아웃 링크
         const logOut = document.createElement("a");
         logOut.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
-        logOut.href = `/logOut`;
-        logOut.textContent = "LogOut";
+        logOut.href = "#"; // 기본 링크 제거
+        logOut.textContent = "로그아웃";
+        logOut.addEventListener("click", (e) => {
+            e.preventDefault(); // 기본 동작(페이지 이동) 막기
+            logout(); // 로그아웃 함수 호출
+        });
         navbarEnd.appendChild(logOut);
+
     } else {
         // 비로그인 상태일 때
         const join = document.createElement("a");
@@ -144,7 +150,7 @@ async function navFunction() {
         const logIn = document.createElement("a");
         logIn.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
         logIn.href = `/login/login.html`;
-        logIn.textContent = "LogIn";
+        logIn.textContent = "로그인";
         navbarEnd.appendChild(logIn);
     }
 }
@@ -183,4 +189,27 @@ async function checkAdmin() {
     }
 
     return false;
+}
+
+
+async function logout() {
+    try {
+        const response = await fetch("/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${sessionStorage.getItem("Authorization")}`, // JWT 토큰 추가
+            },
+        });
+
+        if (response.ok) {
+            //alert("로그아웃되었습니다.");
+            sessionStorage.removeItem("Authorization"); // JWT 토큰 삭제
+            window.location.href = "/home/home.html"; // 리다이렉트
+        } else {
+            alert("로그아웃에 실패했습니다.");
+        }
+    } catch (error) {
+        console.error("로그아웃 중 오류 발생:", error);
+    }
 }
