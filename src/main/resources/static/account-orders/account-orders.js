@@ -47,7 +47,9 @@ async function insertOrders() {
           <div class="column is-6 order-summary">${summaryTitle}</div>
           <div class="column is-2" id="status-${orderId}">${status}</div>
           <div class="column is-2">
-            <button class="button" id="deleteButton-${orderId}" >주문 취소</button>
+            <button class="button" id="deleteButton-${orderId}" ${status === "CANCELED" ? "disabled" : ""}>
+                주문 취소
+            </button>
           </div>
         </div>
       `
