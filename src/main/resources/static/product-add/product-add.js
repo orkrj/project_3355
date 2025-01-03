@@ -17,6 +17,7 @@ const desFileNameSpan = document.querySelector("#desFileNameSpan");
 
 let productId = new URLSearchParams(window.location.search).get("productId");
 
+//checkLogin();
 addAllElements();
 addAllEvents();
 
