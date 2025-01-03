@@ -20,13 +20,13 @@
         <!-- 이용약관 UI -->
         <div id="agreement"></div>
         <!-- 쿠폰 체크박스 -->
-        <div style="padding-left: 25px">
-          <div class="checkable typography--p">
-            <label for="coupon-box" class="checkable__label typography--regular"
-              ><input id="coupon-box" class="checkable__input" type="checkbox" aria-checked="true" /><span class="checkable__label-text">5,000원 쿠폰 적용</span></label
-            >
-          </div>
-        </div>
+<!--        <div style="padding-left: 25px">-->
+<!--          <div class="checkable typography&#45;&#45;p">-->
+<!--            <label for="coupon-box" class="checkable__label typography&#45;&#45;regular"-->
+<!--              ><input id="coupon-box" class="checkable__input" type="checkbox" aria-checked="true" /><span class="checkable__label-text">5,000원 쿠폰 적용</span></label-->
+<!--            >-->
+<!--          </div>-->
+<!--        </div>-->
         <!-- 결제하기 버튼 -->
         <div class="result wrapper">
           <button class="button" id="payment-button" style="margin-top: 30px">
@@ -42,7 +42,11 @@
         const coupon = document.getElementById("coupon-box");
 
         const orderId = getOrderId();
-        const order = fetchOrder(orderId);
+        const order = await fetchOrder(orderId);
+
+        console.log(order.summaryTitle);
+        console.log(order.orderNumber);
+        console.log(order.totalPrice);
 
         if (!order) alert("order not found")
 
@@ -85,21 +89,21 @@
 
         // ------  주문서의 결제 금액이 변경되었을 경우 결제 금액 업데이트 ------
         // @docs https://docs.tosspayments.com/sdk/v2/js#widgetssetamount
-        coupon.addEventListener("change", async function () {
-          if (coupon.checked) {
-            await widgets.setAmount({
-              currency: "KRW",
-              value: amount.value - 5000,
-            });
-
-            return;
-          }
-
-          await widgets.setAmount({
-            currency: "KRW",
-            value: amount,
-          });
-        });
+        // coupon.addEventListener("change", async function () {
+        //   if (coupon.checked) {
+        //     await widgets.setAmount({
+        //       currency: "KRW",
+        //       value: amount.value - 5000,
+        //     });
+        //
+        //     return;
+        //   }
+        //
+        //   await widgets.setAmount({
+        //     currency: "KRW",
+        //     value: amount,
+        //   });
+        // });
 
         // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
         // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrequestpayment
@@ -111,16 +115,19 @@
           await widgets.requestPayment({
             orderId: order.orderNumber,
             orderName: order.summaryTitle,
-            successUrl: window.location.origin + "/api/payment/success",
-            failUrl: window.location.origin + "/api/payment/fail",
+            successUrl: window.location.origin + "/api/toss/payment/success",
+            failUrl: window.location.origin + "/api/toss/payment/fail",
             customerEmail: order.user.email,
-            customerName: order.user.real_Name,
+            customerName: order.user.real_name,
             customerMobilePhone: order.user.phone,
           });
         });
       }
 
-      // custom method
+      function generateRandomString() {
+        return window.btoa(Math.random()).slice(0, 20);
+      }
+
       async function fetchOrder(orderId) {
         try {
           const resp = await fetch(`/api/order/${orderId}`);
@@ -132,14 +139,9 @@
         }
       }
 
-      // extract orderId
       function getOrderId() {
         const url = new URLSearchParams(window.location.search);
         return url.get("orderId");
-      }
-
-      function generateRandomString() {
-        return window.btoa(Math.random()).slice(0, 20);
       }
     </script>
   </body>
