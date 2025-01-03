@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -46,6 +47,15 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll()
                 .stream()
                 .filter(order -> order.getDeletedAt() == null)
+                .map(OrderResponseDto::from)
+                .toList();
+    }
+
+    @Override
+    public List<OrderResponseDto> getOrdersByUser(User user) {
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> Objects.equals(order.getUser().getUserId(), user.getUserId()))
                 .map(OrderResponseDto::from)
                 .toList();
     }

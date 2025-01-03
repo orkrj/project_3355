@@ -16,6 +16,9 @@ public interface OrderService {
     //== 주문 전체 조회 ==//
     List<OrderResponseDto> getOrders();
 
+    //== 유저별 주문 조회 ==//
+    List<OrderResponseDto> getOrdersByUser(User user);
+
     //== 주문 단건 조회 ==//
     OrderResponseDto getOrderResponseDtoById(Long orderId);
 

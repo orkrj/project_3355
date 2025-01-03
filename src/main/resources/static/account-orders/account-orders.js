@@ -1,5 +1,5 @@
-import { checkLogin, createNavbar } from "../../useful-functions.js";
-import * as Api from "../../api.js";
+import { checkLogin, createNavbar } from "../useful-functions.js";
+import * as Api from "../api.js";
 
 
 // 요소(element), input 혹은 상수
@@ -10,7 +10,7 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
 const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
-checkLogin();
+// checkLogin();
 addAllElements();
 addAllEvents();
 
@@ -32,14 +32,12 @@ function addAllEvents() {
 // 페이지 로드 시 실행, 삭제할 주문 id를 전역변수로 관리함
 let orderIdToDelete;
 async function insertOrders() {
-  const orders = await Api.get("/orders/orderlist/user");
+  const orders = await Api.get("/api/order/user");
 
   for (const order of orders) {
     const { id, createdAt, summaryTitle, status } = order;
     // const date = createdAt.split("T")[0];
     const date = new Date(createdAt).toLocaleDateString('ko-KR');
-    console.log(date);
-
 
     ordersContainer.insertAdjacentHTML(
       "beforeend",
@@ -70,10 +68,10 @@ async function deleteOrderData(e) {
   e.preventDefault();
 
   try {
-    await Api.delete("/orders", orderIdToDelete);
+    await Api.patch("/api/order", orderIdToDelete);
 
     // 삭제 성공
-    alert("주문 정보가 삭제되었습니다.");
+    alert("주문을 취소하였습니다.");
 
     // 삭제한 아이템 화면에서 지우기
     const deletedItem = document.querySelector(`#order-${orderIdToDelete}`);
@@ -84,7 +82,7 @@ async function deleteOrderData(e) {
 
     closeModal();
   } catch (err) {
-    alert(`주문정보 삭제 과정에서 오류가 발생하였습니다: ${err}`);
+    alert(`주문 취소 과정에서 오류가 발생하였습니다: ${err}`);
   }
 }
 
