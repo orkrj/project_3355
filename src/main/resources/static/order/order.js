@@ -173,22 +173,22 @@ async function insertOrderSummary() {
 
 async function insertUserData() {
   const userData = await Api.get("/api/user/info");
-  const { fullName, phoneNumber, address } = userData;
+  const { real_name, phone } = userData;
 
   // 만약 db에 데이터 값이 있었다면, 배송지정보에 삽입
-  if (fullName) {
-    receiverNameInput.value = fullName;
+  if (real_name) {
+    receiverNameInput.value = real_name;
   }
 
-  if (phoneNumber) {
-    receiverPhoneNumberInput.value = phoneNumber;
+  if (phone) {
+    receiverPhoneNumberInput.value = phone;
   }
 
-  if (address) {
-    postalCode.value = address.postalCode;
-    address1Input.value = address.address1;
-    address2Input.value = address.address2;
-  }
+  // if (address) {
+  //   postalCode.value = address.postalCode;
+  //   address1Input.value = address.address1;
+  //   address2Input.value = address.address2;
+  // }
 }
 
 // "직접 입력" 선택 시 input칸 보이게 함
@@ -267,21 +267,12 @@ async function doCheckout() {
       const { quantity, price } = await getFromDb("cart", productId);
       const totalPrice = quantity * price;
 
-      console.log(productId);
-      console.log(orderId);
-      console.log(quantity);
-      console.log(totalPrice);
-
       const resp = await Api.post("/api/productOrder", {
         orderId,
         productId,
         quantity,
         totalPrice,
       });
-
-      console.log("saved");
-
-      // TODO productOrder 전부 생성되고 나면 Order 에 매핑해주기
 
       // indexedDB에서 해당 제품 관련 데이터를 제거함
       await deleteFromDb("cart", productId);
@@ -291,8 +282,6 @@ async function doCheckout() {
         data.productsCount -= 1;
         data.productsTotal -= totalPrice;
       });
-
-      console.log("applied");
     }
 
     // 입력된 배송지정보를 유저db에 등록함 -> 필요함?
@@ -312,8 +301,7 @@ async function doCheckout() {
     // window.location.href = "/order/complete";
 
     // 결제 페이지로 이동
-    const paymentUrl = await Api.getPage("/api/payment")
-    window.location.href = `/checkout.html?orderId=${orderId}`;
+    const paymentUrl = await Api.get("/api/payment");
 
   } catch (err) {
     console.log(err);
