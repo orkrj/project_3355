@@ -267,6 +267,8 @@ async function doCheckout() {
       const { quantity, price } = await getFromDb("cart", productId);
       const totalPrice = quantity * price;
 
+      console.log(productId);
+      console.log(orderId);
       console.log(quantity);
       console.log(totalPrice);
 
