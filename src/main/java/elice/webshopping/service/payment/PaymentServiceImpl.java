@@ -23,7 +23,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public PaymentResponseDto createPayment(PaymentRequestDto paymentRequestDto) {
-        Order order = orderService.getOrderEntityById(paymentRequestDto.orderId());
+        Order order = orderService.getOrderEntityByOrderNumber(paymentRequestDto.orderNumber());
         Payment payment = paymentRepository.save(Payment.from(paymentRequestDto, order));
 
         order.setPayment(payment);
