@@ -35,7 +35,7 @@ async function insertOrders() {
   const orders = await Api.get("/api/order/user");
 
   for (const order of orders) {
-    const { orderId, createdAt, summaryTitle, status } = order;
+    const { orderId, createdAt, summaryTitle, totalPrice, status } = order;
     // const date = createdAt.split("T")[0];
     const date = new Date(createdAt).toLocaleDateString('ko-KR');
 
@@ -44,7 +44,8 @@ async function insertOrders() {
       `
         <div class="columns orders-item" id="order-${orderId}">
           <div class="column is-2">${date}</div>
-          <div class="column is-6 order-summary">${summaryTitle}</div>
+          <div class="column is-4 order-summary">${summaryTitle}</div>
+          <div class="column is-2 order-totalPrice">${totalPrice}</div>
           <div class="column is-2" id="status-${orderId}">${status}</div>
           <div class="column is-2">
             <button class="button" id="deleteButton-${orderId}" ${status === "CANCELED" ? "disabled" : ""}>
