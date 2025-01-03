@@ -111,6 +111,15 @@ async function navFunction() {
             navbarEnd.appendChild(adminPage);
         } else {
             // 일반 사용자일 경우
+
+            // 장바구니 링크 추가
+            const basket = document.createElement("a");
+            basket.classList.add("navbar-item", "has-text-weight-semibold");
+            basket.href = `/cart/cart.html`;
+            basket.textContent = "장바구니";
+            navbarEnd.appendChild(basket);
+
+            //마이페이지
             const myPage = document.createElement("a");
             myPage.classList.add("navbar-item", "has-text-weight-semibold");
             myPage.href = `/account/account.html`;
