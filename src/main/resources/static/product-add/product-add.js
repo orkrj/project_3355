@@ -1,6 +1,6 @@
 import { addImageToS3 } from "../aws-s3.js";
 import * as Api from "../api.js";
-import { checkLogin, randomId, createNavbar } from "../useful-functions.js";
+import { checkAdmin, randomId, createNavbar } from "../useful-functions.js";
 
 // 요소(element)들과 상수들
 const nameInput = document.querySelector("#nameInput");
@@ -17,7 +17,7 @@ const desFileNameSpan = document.querySelector("#desFileNameSpan");
 
 let productId = new URLSearchParams(window.location.search).get("productId");
 
-//checkLogin();
+checkAdmin();
 addAllElements();
 addAllEvents();
 
