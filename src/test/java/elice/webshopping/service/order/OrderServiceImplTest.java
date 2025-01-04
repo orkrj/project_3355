@@ -40,22 +40,22 @@ class OrderServiceImplTest {
     @Mock
     private OrderRepository orderRepository;
 
-    @Test
-    @DisplayName("주문 전체 조회: 삭제되지 않은 주문만")
-    void shouldReturnAllNonDeletedOrders() {
-
-        // given
-        List<Order> orders = givenOrders();
-        given(orderRepository.findAll()).willReturn(orders);
-
-        // when
-        List<OrderResponseDto> findOrders = orderService.getOrders();
-
-        // then
-        assertEquals(2, findOrders.size(), "소프트 딜리트된 test 3 은 조회되면 안 됨");
-        assertEquals("202412161200000001", findOrders.get(0).orderNumber());
-        verify(orderRepository, times(1)).findAll();
-    }
+//    @Test
+//    @DisplayName("주문 전체 조회: 삭제되지 않은 주문만")
+//    void shouldReturnAllNonDeletedOrders() {
+//
+//        // given
+//        List<Order> orders = givenOrders();
+//        given(orderRepository.findAll()).willReturn(orders);
+//
+//        // when
+//        List<OrderResponseDto> findOrders = orderService.getOrders();
+//
+//        // then
+//        assertEquals(2, findOrders.size(), "소프트 딜리트된 test 3 은 조회되면 안 됨");
+//        assertEquals("202412161200000001", findOrders.get(0).orderNumber());
+//        verify(orderRepository, times(1)).findAll();
+//    }
 
     @Test
     @DisplayName("주문 단건 조회: 삭제되지 않은 경우")

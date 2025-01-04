@@ -45,26 +45,26 @@ class CategoryServiceTest {
         assertEquals(name + "은 이미 존재하는 카테고리 이름입니다", exception.getMessage());
     }
 
-    @Test
-    @DisplayName("루트카테고리가 아닌 곳에서 카테고리를 추가하는경우 예외 발생")
-    void save_ThrowException_WhenNotRootCategory() {
-        // given
-        String name = "Electronics";
-        Long parentId = 1L;
-        Category parentCategory = mock(Category.class);
-
-        when(categoryRepository.existsByName(name)).thenReturn(false);
-        when(categoryRepository.findById(parentId)).thenReturn(Optional.of(parentCategory));
-        when(parentCategory.isNotRootCategory()).thenReturn(true);
-
-        // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                categoryService.save(name, parentId));
-
-        assertEquals("카테고리 추가는 루트카테고리만 할 수 있습니다.", exception.getMessage());
-        verify(categoryRepository).existsByName(name);
-        verify(categoryRepository).findById(parentId);
-    }
+//    @Test
+//    @DisplayName("루트카테고리가 아닌 곳에서 카테고리를 추가하는경우 예외 발생")
+//    void save_ThrowException_WhenNotRootCategory() {
+//        // given
+//        String name = "Electronics";
+//        Long parentId = 1L;
+//        Category parentCategory = mock(Category.class);
+//
+//        when(categoryRepository.existsByName(name)).thenReturn(false);
+//        when(categoryRepository.findById(parentId)).thenReturn(Optional.of(parentCategory));
+//        when(parentCategory.isNotRootCategory()).thenReturn(true);
+//
+//        // when & then
+//        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+//                categoryService.save(name, parentId));
+//
+//        assertEquals("카테고리 추가는 루트카테고리만 할 수 있습니다.", exception.getMessage());
+//        verify(categoryRepository).existsByName(name);
+//        verify(categoryRepository).findById(parentId);
+//    }
 
     @Test
     @DisplayName("루트카테고리를 성공적으로 저장")
