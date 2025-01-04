@@ -28,7 +28,7 @@ let currentSearchCategory = "name"; // 기본 값
 let currentSearchInput = ""; // 기본 값
 
 // 페이지 로드 시 실행
-// checkAdmin(); // 관리자 확인 함수 (필요시 활성화)
+checkAdmin(); // 관리자 확인 함수 (필요시 활성화)
 addAllElements();
 addAllEvents();
 
