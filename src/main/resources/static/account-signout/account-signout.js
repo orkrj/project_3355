@@ -9,7 +9,7 @@ const modalCloseButton = document.querySelector("#modalCloseButton"); //모달�
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton"); //모달창에서 삭제하는 버튼
 const deleteCancelButton = document.querySelector("#deleteCancelButton"); //모달창에서 삭제 취소하는 버튼
 
-checkLogin();
+//checkLogin();
 addAllElements();
 addAllEvents();
 
@@ -17,7 +17,8 @@ const token = sessionStorage.getItem("Authorization");
 
 // html에 요소를 추가하는 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 async function addAllElements() {
-  createNavbar();
+  LoginCheck();
+  //createNavbar();
 }
 
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
@@ -28,6 +29,16 @@ function addAllEvents() {
   document.addEventListener("keydown", keyDownCloseModal);
   deleteCompleteButton.addEventListener("click", deleteUserData); //회원 정보 삭제, 얘 빼고는 다 창 닫기
   deleteCancelButton.addEventListener("click", closeModal);
+}
+
+async function LoginCheck(){
+  const authToken = sessionStorage.getItem("Authorization");
+  if (!authToken) {
+    document.addEventListener("DOMContentLoaded", () => {
+      alert("로그인이 필요합니다.");
+      window.location.href = "/login/login.html";
+    });
+  }
 }
 
 // Modal 창 열기
