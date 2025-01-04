@@ -28,7 +28,7 @@ let currentSearchCategory = "name"; // 기본 값
 let currentSearchInput = ""; // 기본 값
 
 // 페이지 로드 시 실행
-// checkAdmin(); // 관리자 확인 함수 (필요시 활성화)
+checkAdmin(); // 관리자 확인 함수 (필요시 활성화)
 addAllElements();
 addAllEvents();
 
@@ -110,8 +110,8 @@ async function insertProducts(page = 0, size = 8, sortBy = "createdAt", directio
 async function deleteProductData(e) {
   e.preventDefault();
 
-  const response = await fetch(`/api/product/${productIdToDelete}`, { //삭제 진행
-    method: "DELETE"
+  const response = await fetch(`/api/product/${productIdToDelete}`, {
+    method: "DELETE",
   });
 
   if (response.ok) {
@@ -127,7 +127,6 @@ async function deleteProductData(e) {
   } else {
     alert("상품 삭제 중 문제가 발생했습니다. 다시 시도해주세요.");
   }
-
 }
 
 // 삭제 취소
@@ -268,18 +267,21 @@ function createPaginationButtons() {
 function handlePaginationClick(event) {
   const target = event.target;
 
+  const criteria = sortCriteria.value; // 현재 정렬 기준
+  const direction = sortDirection.value; // 현재 정렬 방향
+
   if (target.classList.contains("pagination-link")) {
     currentPage = parseInt(target.dataset.page, 10);
-    applySearch(currentPage, 8, "createdAt", "DESC");
+    applySearch(currentPage, 8, criteria, direction);
   } else if (target.classList.contains("pagination-previous")) {
     if (currentPage > 0) {
       currentPage--;
-      applySearch(currentPage, 8, "createdAt", "DESC");
+      applySearch(currentPage, 8, criteria, direction);
     }
   } else if (target.classList.contains("pagination-next")) {
     if (currentPage < totalPages - 1) {
       currentPage++;
-      applySearch(currentPage, 8, "createdAt", "DESC");
+      applySearch(currentPage, 8, criteria, direction);
     }
   }
 }
@@ -289,10 +291,10 @@ function formatDate(dateString) {
   const date = new Date(dateString);
 
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 1을 더해줌
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 1을 더해줌
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
 
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 }

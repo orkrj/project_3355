@@ -91,18 +91,54 @@ async function navFunction() {
     const token = sessionStorage.getItem("Authorization");
 
     if (token) {
-        // 로그인 상태일 때
-        const myPage = document.createElement("a");
-        myPage.classList.add("navbar-item", "has-text-weight-semibold");
-        myPage.href = `/mypage`;
-        myPage.textContent = "My Page";
-        navbarEnd.appendChild(myPage);
+        // 관리자 여부 확인
+        const res = await fetch("/api/user/admin-check", {
+            method : "POST",
+            headers: {
+                "Content-Type" : "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
+        const isAdmin = await checkAdmin();
+
+        if (isAdmin) {
+            // 관리자일 경우
+            const adminPage = document.createElement("a");
+            adminPage.classList.add("navbar-item", "has-text-weight-semibold");
+            adminPage.href = `/admin/admin.html`;
+            adminPage.textContent = "관리자페이지";
+            navbarEnd.appendChild(adminPage);
+        } else {
+            // 일반 사용자일 경우
+
+            // 장바구니 링크 추가
+            const basket = document.createElement("a");
+            basket.classList.add("navbar-item", "has-text-weight-semibold");
+            basket.href = `/cart/cart.html`;
+            basket.textContent = "장바구니";
+            navbarEnd.appendChild(basket);
+
+            //마이페이지
+            const myPage = document.createElement("a");
+            myPage.classList.add("navbar-item", "has-text-weight-semibold");
+            myPage.href = `/account/account.html`;
+            myPage.textContent = "마이페이지";
+            navbarEnd.appendChild(myPage);
+        }
+
+
+        // 공통 로그아웃 링크
         const logOut = document.createElement("a");
         logOut.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
-        logOut.href = `/logOut`;
-        logOut.textContent = "LogOut";
+        logOut.href = "#"; // 기본 링크 제거
+        logOut.textContent = "로그아웃";
+        logOut.addEventListener("click", (e) => {
+            e.preventDefault(); // 기본 동작(페이지 이동) 막기
+            logout(); // 로그아웃 함수 호출
+        });
         navbarEnd.appendChild(logOut);
+
     } else {
         // 비로그인 상태일 때
         const join = document.createElement("a");
@@ -114,10 +150,9 @@ async function navFunction() {
         const logIn = document.createElement("a");
         logIn.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");
         logIn.href = `/login/login.html`;
-        logIn.textContent = "LogIn";
+        logIn.textContent = "로그인";
         navbarEnd.appendChild(logIn);
     }
-
 }
 
 // Bulma 화살표 제거 함수
@@ -130,4 +165,51 @@ function removeNavbarArrow() {
         }
     `;
     document.head.appendChild(style); // <head>에 추가
+}
+
+// 관리자 여부 확인 함수
+async function checkAdmin() {
+    const token = sessionStorage.getItem("Authorization");
+
+    if (!token) {
+        return false;
+    }
+
+    const response = await fetch("/api/user/admin-check", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (response.ok) {
+        const { result } = await response.json();
+        return result === "success"; // 관리자 여부 반환
+    }
+
+    return false;
+}
+
+
+async function logout() {
+    try {
+        const response = await fetch("/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${sessionStorage.getItem("Authorization")}`, // JWT 토큰 추가
+            },
+        });
+
+        if (response.ok) {
+            //alert("로그아웃되었습니다.");
+            sessionStorage.removeItem("Authorization"); // JWT 토큰 삭제
+            window.location.href = "/home/home.html"; // 리다이렉트
+        } else {
+            alert("로그아웃에 실패했습니다.");
+        }
+    } catch (error) {
+        console.error("로그아웃 중 오류 발생:", error);
+    }
 }
