@@ -19,7 +19,7 @@ const address1Input = document.querySelector("#address1");
 const address2Input = document.querySelector("#address2");
 const requestSelectBox = document.querySelector("#requestSelectBox");
 const customRequestContainer = document.querySelector(
-    "#customRequestContainer"
+  "#customRequestContainer"
 );
 const customRequestInput = document.querySelector("#customRequest");
 const productsTitleElem = document.querySelector("#productsTitle");
