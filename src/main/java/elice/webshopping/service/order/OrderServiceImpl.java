@@ -1,9 +1,6 @@
 package elice.webshopping.service.order;
 
-import elice.webshopping.domain.order.Order;
-import elice.webshopping.domain.order.OrderRequestDto;
-import elice.webshopping.domain.order.OrderResponseDto;
-import elice.webshopping.domain.order.Receiver;
+import elice.webshopping.domain.order.*;
 import elice.webshopping.domain.user.User;
 import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.exception.order.admin.OrderNotCanceledException;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -51,6 +49,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderResponseDto> getOrdersByUser(User user) {
+        return orderRepository.findAll()
+                .stream()
+                .filter(order -> Objects.equals(order.getUser().getUserId(), user.getUserId()))
+                .map(OrderResponseDto::from)
+                .toList();
+    }
+
+    @Override
     public OrderResponseDto getOrderResponseDtoById(Long orderId) {
         return OrderResponseDto.from(getOrderEntityById(orderId));
     }
@@ -59,6 +66,11 @@ public class OrderServiceImpl implements OrderService {
     public Order getOrderEntityById(Long orderId) {
         return orderRepository.findById(orderId).filter(order -> order.getDeletedAt() == null)
                 .orElseThrow(() -> new NoContentsException("Order " + orderId + " not found"));
+    }
+
+    @Override
+    public OrderStatus getOrderStatus(Long orderId) {
+        return getOrderEntityByIdIncludeDeletedAtIsNotNull(orderId).getStatus();
     }
 
     @Override
@@ -79,6 +91,7 @@ public class OrderServiceImpl implements OrderService {
      */
 
     @Override
+    @Transactional
     public void cancelOrder(Long orderId) {
         Order order = getOrderEntityById(orderId);
         if (order.getStatus().canBeCanceled()) {

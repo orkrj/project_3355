@@ -1,11 +1,13 @@
 package elice.webshopping.service.payment;
 
 import elice.webshopping.domain.order.Order;
+import elice.webshopping.domain.order.OrderStatus;
 import elice.webshopping.domain.payment.Payment;
 import elice.webshopping.domain.payment.PaymentRequestDto;
 import elice.webshopping.domain.payment.PaymentResponseDto;
 import elice.webshopping.repository.payment.PaymentRepository;
 import elice.webshopping.service.order.OrderService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,17 +21,14 @@ public class PaymentServiceImpl implements PaymentService {
     private final OrderService orderService;
 
     @Override
+    @Transactional
     public PaymentResponseDto createPayment(PaymentRequestDto paymentRequestDto) {
-        // TODO 주문 생성시 만들어지는 주문 번호가 결제 요청에 넘어가야 함
-        Order order = orderService.getOrderEntityById(paymentRequestDto.orderId());
+        Order order = orderService.getOrderEntityByOrderNumber(paymentRequestDto.orderNumber());
         Payment payment = paymentRepository.save(Payment.from(paymentRequestDto, order));
 
-        log.info("order : {}", order.getStatus());
-        log.info("Payment created: {}", payment.getAmount());
-
         order.setPayment(payment);
+        order.changeStatus(OrderStatus.ORDERED);
 
-        log.info("Payment created: {}", order.getPayment().getAmount());
         return PaymentResponseDto.from(payment);
     }
 }

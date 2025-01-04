@@ -1,53 +1,32 @@
-/* 헤더  */
-.header-search-input {
-  width: 20rem;
+#productContainer .card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.navbar-menu .is-info:focus {
-  outline: none;
-  box-shadow: none;
+#productContainer .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* 이미지 슬라이드  */
-.slider-arrow-container {
-  position: relative;
-}
-.slider-arrow {
-  position: absolute;
-  top: 500px;
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  z-index: 1;
-}
-.slider-arrow:hover {
-  opacity: 0.6;
-}
-.slider-arrow-left {
-  left: 0;
-}
-.slider-arrow-right {
-  right: 0;
-}
-.slider-navigation-previous {
-  display: none;
-}
-.slider-navigation-next {
-  display: none;
+#productContainer .card-content {
+  flex-grow: 1;
 }
 
-#slider .card {
-  outline: none;
-  border: white 1px solid;
-  box-shadow: none;
-  cursor: pointer;
+#productContainer .title {
+  min-height: 3rem;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
 }
-#slider .title:not(:last-child) {
-  margin-bottom: 0.5rem;
-}
-#slider .notification:not(:last-child) {
-  margin-bottom: 0;
-}
-#slider .column {
-  padding: 0;
+
+#productContainer .subtitle {
+  margin-top: 0.5rem;
 }

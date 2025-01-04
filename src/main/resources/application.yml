@@ -3,6 +3,8 @@ spring:
     name: webshopping
   main:
     allow-bean-definition-overriding: true
+  profiles:
+    active: default
 
   datasource:
     url: jdbc:mysql://34.64.172.140:5000/project2
@@ -12,10 +14,8 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
-    show-sql: true
     hibernate:
       ddl-auto: update
-    defer-datasource-initialization: true
 
   cloud:
     aws:

@@ -31,6 +31,7 @@ public class Order {
     @Column(nullable = false)
     private String orderNumber;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
@@ -96,7 +97,7 @@ public class Order {
     ) {
         return Order.builder()
                 .orderNumber(generateOrderNumber())
-                .status(OrderStatus.ORDERED)
+                .status(OrderStatus.PENDING)
                 .summaryTitle(orderRequestDto.summaryTitle())
                 .totalPrice(orderRequestDto.totalPrice())
                 .request(orderRequestDto.request())
@@ -108,6 +109,10 @@ public class Order {
     private static String generateOrderNumber() {
         return (LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + UUID.randomUUID())
                 .substring(0, 20);
+    }
+
+    public void changeStatus(OrderStatus status) {
+        this.status = status;
     }
 
     public void cancelOrder() {

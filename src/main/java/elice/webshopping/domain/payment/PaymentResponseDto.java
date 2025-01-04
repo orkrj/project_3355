@@ -1,7 +1,7 @@
 package elice.webshopping.domain.payment;
 
 public record PaymentResponseDto(
-        int amount
+        int totalAmount
 ) {
 
     public static PaymentResponseDto from(Payment payment) {

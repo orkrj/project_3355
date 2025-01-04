@@ -15,6 +15,7 @@ public record OrderResponseDto (
         String summaryTitle,
         int totalPrice,
         String request,
+        LocalDateTime createdAt,
         UserResponseDto user,
         ReceiverResponseDto receiver,
         List<ProductOrderResponseDto> productOrdersResponseDto
@@ -28,6 +29,7 @@ public record OrderResponseDto (
                 order.getSummaryTitle(),
                 order.getTotalPrice(),
                 order.getRequest(),
+                order.getCreatedAt(),
                 new UserResponseDto(order.getUser()),
                 ReceiverResponseDto.from(order),
                 ProductOrderResponseDto.from(order)
