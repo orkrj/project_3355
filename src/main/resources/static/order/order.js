@@ -19,7 +19,7 @@ const address1Input = document.querySelector("#address1");
 const address2Input = document.querySelector("#address2");
 const requestSelectBox = document.querySelector("#requestSelectBox");
 const customRequestContainer = document.querySelector(
-  "#customRequestContainer"
+    "#customRequestContainer"
 );
 const customRequestInput = document.querySelector("#customRequest");
 const productsTitleElem = document.querySelector("#productsTitle");
@@ -75,7 +75,7 @@ function searchAddress() {
         }
         if (data.buildingName !== "" && data.apartment === "Y") {
           extraAddr +=
-            extraAddr !== "" ? ", " + data.buildingName : data.buildingName;
+              extraAddr !== "" ? ", " + data.buildingName : data.buildingName;
         }
         if (extraAddr !== "") {
           extraAddr = " (" + extraAddr + ")";
@@ -117,8 +117,8 @@ const getProduct = async function (productId) {
 // 페이지 로드 시 실행되며, 결제정보 카드에 값을 삽입함.
 async function insertOrderSummary() {
   const { ids, selectedIds, productsTotal } = await getFromDb(
-    "order",
-    "summary"
+      "order",
+      "summary"
   );
 
   // 구매할 아이템이 없다면 다른 페이지로 이동시킴
