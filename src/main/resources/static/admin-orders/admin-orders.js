@@ -50,6 +50,7 @@ const getAddress = async function () {
                 <span class="product-details" style="display: none;">${additionalProducts || ""}</span>
             </div>
             <div class="column is-2 order-total">${orderData.totalPrice.toLocaleString()}원</div>
+            <div class="column is-2 order-status">${orderData.status.toLocaleString()}</div>
          </div>
         `;
 
@@ -246,6 +247,7 @@ sortForm.addEventListener('submit', (event) => {
           <span class="product-details" style="display: none;">${additionalProducts || ""}</span>
         </div>
         <div class="column is-2 order-total">${orderData.totalPrice.toLocaleString()}원</div>
+        <div class="column is-2 order-status">${orderData.status.toLocaleString()}</div>
       </div>
     `;
 
@@ -285,6 +287,7 @@ function searchHandler() {
       <div class="column is-2">주문한 사용자 ID</div>
       <div class="column is-4">주문정보</div>
       <div class="column is-2">주문총액</div>
+      <div class="column is-2">주문상태</div>
     </div>`;
 
   ordersContainer.insertAdjacentHTML('beforeend', newNavHTML);
@@ -310,6 +313,7 @@ function searchHandler() {
             <span class="product-details" style="display: none;">${additionalProducts || ""}</span>
           </div>
           <div class="column is-2 order-total">${orderData.totalPrice.toLocaleString()}원</div>
+          <div class="column is-2 order-status">${orderData.status.toLocaleString()}</div>
         </div>`;
 
       ordersContainer.insertAdjacentHTML('beforeend', newOrderHTML);
