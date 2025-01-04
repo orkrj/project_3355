@@ -72,7 +72,7 @@
             "Content-type": "application/json",
           },
           body: JSON.stringify({
-            orderId: orderNumber,
+            orderId: json.orderId,
             paymentKey: json.paymentKey,
             amount: amount,
           })
@@ -80,9 +80,10 @@
 
         return json;
       }
-      confirm().then(function (data) {
-        document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
-      });
+
+      // confirm().then(function (data) {
+      //   document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
+      // });
 
       const orderIdElement = document.getElementById("orderId");
       const amountElement = document.getElementById("amount");

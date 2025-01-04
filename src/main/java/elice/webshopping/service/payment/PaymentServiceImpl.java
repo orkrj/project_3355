@@ -24,10 +24,12 @@ public class PaymentServiceImpl implements PaymentService {
         Order order = orderService.getOrderEntityById(paymentRequestDto.orderId());
         Payment payment = paymentRepository.save(Payment.from(paymentRequestDto, order));
 
-        log.info("Payment created: {}", payment);
-        log.info("Payment created: {}", payment.getOrder().getOrderNumber());
+        log.info("order : {}", order.getStatus());
+        log.info("Payment created: {}", payment.getAmount());
+
         order.setPayment(payment);
-        log.info("Payment updated: {}", payment.getPaymentKey());
+
+        log.info("Payment created: {}", order.getPayment().getAmount());
         return PaymentResponseDto.from(payment);
     }
 }
