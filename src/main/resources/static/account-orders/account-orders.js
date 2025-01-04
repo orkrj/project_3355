@@ -89,6 +89,7 @@ async function deleteOrderData(e) {
     orderIdToDelete = "";
 
     closeModal();
+    window.location.reload();
   } catch (err) {
     alert(`주문 취소 과정에서 오류가 발생하였습니다: ${err}`);
   }
