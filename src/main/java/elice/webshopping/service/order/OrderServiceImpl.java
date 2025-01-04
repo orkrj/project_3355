@@ -43,7 +43,6 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseDto> getOrders() {
         return orderRepository.findAll()
                 .stream()
-                .filter(order -> order.getDeletedAt() == null)
                 .map(OrderResponseDto::from)
                 .toList();
     }
