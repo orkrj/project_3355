@@ -10,12 +10,14 @@ async function loadProducts() {
     products.forEach((product) => {
       const { productId, name, price, mainImageUrls } = product;
 
+      const imageUrl = mainImageUrls?.[0]?.split("?")[0] || "../noimage.jpg";
+
       const productCard = `
         <div class="column is-one-quarter">
           <div class="card" id="product-${productId}">
             <div class="card-image">
               <figure class="image is-4by3">
-                <img src="${mainImageUrls[0]}" alt="${name} 이미지" />
+                <img src="${imageUrl}" alt="${name} 이미지" />
               </figure>
             </div>
             <div class="card-content">
