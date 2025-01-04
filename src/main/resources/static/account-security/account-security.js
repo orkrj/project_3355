@@ -4,18 +4,13 @@ import { checkLogin, createNavbar } from "../../useful-functions.js";
 // 요소(element), input 혹은 상수
 const securityTitle = document.querySelector("#securityTitle"); //회원정보 관리
 const fullNameInput = document.querySelector("#fullNameInput"); //이름
-//const fullNameToggle = document.querySelector("#fullNameToggle");
+
 const passwordInput = document.querySelector("#passwordInput"); //비밀번호
-//const passwordToggle = document.querySelector("#passwordToggle");
+
 const passwordConfirmInput = document.querySelector("#passwordConfirmInput"); //비밀번호 확인
-//const postalCodeInput = document.querySelector("#postalCodeInput");
-//const searchAddressButton = document.querySelector("#searchAddressButton");
-//const addressToggle = document.querySelector("#addressToggle");
-//const address1Input = document.querySelector("#address1Input");
-//const address2Input = document.querySelector("#address2Input");
+
 const phoneNumberInput = document.querySelector("#phoneNumberInput"); //휴대폰 번호
-//const phoneNumberToggle = document.querySelector("#phoneNumberToggle");
-//const saveButton = document.querySelector("#saveButton"); //저장 버튼 누르면 모달창 열림
+
 const modal = document.querySelector("#modal");
 const modalBackground = document.querySelector("#modalBackground");
 const modalCloseButton = document.querySelector("#modalCloseButton");
@@ -27,29 +22,34 @@ const emailInput = document.querySelector("#emailInput"); //이메일
 
 const token = sessionStorage.getItem("Authorization");
 
-checkLogin();
+//checkLogin();
 addAllElements();
 addAllEvents();
 
 // 요소 삽입 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllElements() {
+  LoginCheck();
   createNavbar();
   insertUserData();
 }
 
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {
-  //fullNameToggle.addEventListener("change", toggleTargets);
-  //passwordToggle.addEventListener("change", toggleTargets);
-  //addressToggle.addEventListener("change", toggleTargets);
-  //phoneNumberToggle.addEventListener("change", toggleTargets);
-  //searchAddressButton.addEventListener("click", searchAddress);
-  //saveButton.addEventListener("click", openModal);
-  //modalBackground.addEventListener("click", closeModal);
-  //modalCloseButton.addEventListener("click", closeModal);
-  //document.addEventListener("keydown", keyDownCloseModal);
   saveCompleteButton.addEventListener("click", saveUserData);
 }
+
+
+async function LoginCheck(){
+  const authToken = sessionStorage.getItem("Authorization");
+  if (!authToken) {
+    document.addEventListener("DOMContentLoaded", () => {
+      alert("로그인이 필요합니다.");
+      window.location.href = "/login/login.html";
+    });
+  }
+}
+
+
 
 // 페이지 로드 시 실행
 // 나중에 사용자가 데이터를 변경했는지 확인하기 위해, 전역 변수로 userData 설정

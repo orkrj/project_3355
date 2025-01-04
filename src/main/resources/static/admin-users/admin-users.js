@@ -11,13 +11,14 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton"); //삭제 ok 버튼
 const deleteCancelButton = document.querySelector("#deleteCancelButton"); //삭제 취소 버튼
 
-checkAdmin();
+//checkAdmin();
 addAllElements();
 addAllEvents();
 
 // 요소 삽입 함수들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllElements() {
-  createNavbar();
+  AdminCheck();
+ // createNavbar();
   insertUsers();
 }
 
@@ -29,6 +30,43 @@ function addAllEvents() {
   deleteCompleteButton.addEventListener("click", deleteUserData); //회원 탈퇴
   deleteCancelButton.addEventListener("click", cancelDelete); //뭐지이건
 }
+
+async function AdminCheck(){
+  const token = sessionStorage.getItem("Authorization");
+  if (!token) {
+    document.addEventListener("DOMContentLoaded", () => {
+      window.document.body.style.display = "block";
+      alert("로그인이 필요합니다.");
+      window.location.href = "/login/login.html";
+    });
+  }
+
+  const response = await fetch("/api/user/admin-check", {
+    method : "POST",
+    headers: {
+      "Content-Type" : "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if(!response.ok){
+    alert("관리자 전용 페이지입니다.");
+    window.location.replace("/home/home.html");
+  }
+
+  const { result } = await response.json();
+  console.log(result);
+
+  if (result === "success") { // 관리자 체크 후 가져온 값이 success여야함
+    window.document.body.style.display = "block";
+
+    return;
+  } else {
+    alert("관리자 전용 페이지입니다.");
+    window.location.replace("/home/home.html");
+  }
+}
+
 
 // 페이지 로드 시 실행, 삭제할 회원 id를 전역변수로 관리함
 let userIdToDelete;
