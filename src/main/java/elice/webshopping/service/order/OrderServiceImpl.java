@@ -27,15 +27,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto, User user) {
-
         Receiver receiver = receiverService.createReceiverEntity(orderRequestDto.receiver());
         Order order = orderRepository.saveAndFlush(Order.of(orderRequestDto, user, receiver));
 
-//        List<ProductOrder> productOrders = productOrderService.getProductOrdersByOrderId(order);
-//        order.setProductOrders(productOrders);
-
-        // 1. order 가 먼저 만들어짐 2. product-order 가 만들어짐
-        // TODO productOrder.getProductOrdersByOrderId() 호출로 필드 할당해줘야 함
         return OrderResponseDto.from(order);
     }
 
@@ -73,6 +67,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
+    public OrderStatus updateOrderStatus(OrderStatusUpdateRequestDto orderStatusUpdateRequestDto) {
+        Order order = getOrderEntityById(orderStatusUpdateRequestDto.orderId());
+        order.setStatus(orderStatusUpdateRequestDto.orderStatus());
+
+        return order.getStatus();
+    }
+
+    @Override
     public Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
@@ -83,11 +86,6 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new OrderNotFoundException(orderNumber));
     }
 
-    /**
-     * 주문 수정 - 사용자는 주문 완료 후 배송이 시작되기 전까지 주문 정보를 수정할 수 있다.
-     * -> 결제 기능이 들어가면 주문 수정이 불가능함 -> 환불(주문 취소) => 재구매 시스템임
-     * 따라서, 배송 전이라면 배송 정보만 수정하는 게 좋아보임
-     */
 
     @Override
     @Transactional

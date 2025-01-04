@@ -3,6 +3,7 @@ package elice.webshopping.controller.order;
 import elice.webshopping.domain.order.OrderRequestDto;
 import elice.webshopping.domain.order.OrderResponseDto;
 import elice.webshopping.domain.order.OrderStatus;
+import elice.webshopping.domain.order.OrderStatusUpdateRequestDto;
 import elice.webshopping.domain.user.CustomUserDetails;
 import elice.webshopping.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,13 @@ public class OrderController {
     @GetMapping("/status/{orderId}")
     public ResponseEntity<OrderStatus> getOrderStatus(@PathVariable Long orderId) {
         return ResponseEntity.ok(orderService.getOrderStatus(orderId));
+    }
+
+    @PatchMapping("/status")
+    public ResponseEntity<OrderStatus> updateOrderStatus(
+            @RequestBody OrderStatusUpdateRequestDto orderStatusUpdateRequestDto
+    ) {
+        return ResponseEntity.ok(orderService.updateOrderStatus(orderStatusUpdateRequestDto));
     }
 
     @PatchMapping("/{orderId}")

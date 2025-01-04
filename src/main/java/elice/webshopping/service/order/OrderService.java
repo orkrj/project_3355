@@ -1,9 +1,6 @@
 package elice.webshopping.service.order;
 
-import elice.webshopping.domain.order.Order;
-import elice.webshopping.domain.order.OrderRequestDto;
-import elice.webshopping.domain.order.OrderResponseDto;
-import elice.webshopping.domain.order.OrderStatus;
+import elice.webshopping.domain.order.*;
 import elice.webshopping.domain.user.User;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +32,8 @@ public interface OrderService {
     //== 결제와 연동하기 위해 orderNumber 로 order entity 조회 ==//
     Order getOrderEntityByOrderNumber(String orderNumber);
 
-    //== 주문 수정 ==// -> 배송 수정만 허용할 거라 배송 로직에서 수정 책임 있음
+    //== 주문 상태 수정 ==//
+    OrderStatus updateOrderStatus(OrderStatusUpdateRequestDto orderStatusUpdateRequestDto);
 
     //== 주문 취소: 유저 ==//
     void cancelOrder(Long orderId);
