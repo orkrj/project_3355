@@ -3,6 +3,8 @@ spring:
     name: webshopping
   main:
     allow-bean-definition-overriding: true
+  profiles:
+    active: default
 
   datasource:
     url: jdbc:mysql://34.64.172.140:5000/project2

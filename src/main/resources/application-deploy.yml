@@ -1,6 +1,8 @@
 spring:
   application:
     name: webshopping
+  profiles:
+    include: deploy
 
   datasource:
     url: jdbc:mysql://localhost:5000/project2
