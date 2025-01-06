@@ -2,7 +2,6 @@ package elice.webshopping.service.order;
 
 import elice.webshopping.domain.order.*;
 import elice.webshopping.domain.user.User;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -39,5 +38,8 @@ public interface OrderService {
     void cancelOrder(Long orderId);
 
     //== 주문 삭제: 관리자 ==//
-    void deleteOrder(Long orderId);
+    void deleteOrderById(Long orderId);
+
+    //== 주문 전체 삭제: 관리자 ==//
+    void deleteOrders(User user);
 }

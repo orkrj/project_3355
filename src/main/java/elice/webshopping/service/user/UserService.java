@@ -6,8 +6,10 @@ import elice.webshopping.domain.user.UserResponseDto;
 import elice.webshopping.domain.user.UserUpdateDto;
 import elice.webshopping.repository.user.Role;
 import elice.webshopping.repository.user.UserRepository;
+import elice.webshopping.service.order.OrderService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,11 +17,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final OrderService orderService;
 
     public String save(UserRequestDto userRequestDto){ //회원가입
         User register = userRepository.save(User.builder()
@@ -92,6 +96,10 @@ public class UserService {
     @Transactional
     //회원 정보 삭제
     public void delete(String username){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(()->new UsernameNotFoundException(username));
+
+        orderService.deleteOrders(user);
         userRepository.deleteByUsername(username);
         //리프레쉬 토큰까지 삭제?
     }

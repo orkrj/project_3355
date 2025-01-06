@@ -59,15 +59,13 @@ public class OrderController {
 
     @PatchMapping("/{orderId}")
     public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
-        log.info("this controller activated {}", orderId);
         orderService.cancelOrder(orderId);
-        log.info("this controller finished {}", orderId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> deleteOrderForAdmin(@PathVariable Long orderId) {
-        orderService.deleteOrder(orderId);
+        orderService.deleteOrderById(orderId);
         return ResponseEntity.ok().build();
     }
 }

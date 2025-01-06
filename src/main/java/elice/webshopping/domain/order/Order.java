@@ -61,7 +61,7 @@ public class Order {
     private Receiver receiver;
 
     @Setter
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ProductOrder> productOrders = new ArrayList<>();
 

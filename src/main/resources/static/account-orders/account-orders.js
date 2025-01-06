@@ -71,9 +71,38 @@ async function deleteOrderData(e) {
   e.preventDefault();
 
   console.log(orderIdToDelete);
+
   try {
+    const response = await fetch(`/api/order/status/${orderIdToDelete}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("Authorization")}`
+      }
+    })
+
+    console.log(`%cGET 요청: /api/order/status/${orderIdToDelete} `, "color: #a25cd1;");
+
+    const result = await response.json();
+
+    if (result === "SHIPPING" || result === "DELIVERED") {
+      switch (result) {
+        case "SHIPPING":
+          alert("배송 중인 주문을 취소할 수 없습니다.");
+          break;
+        case "DELIVERED":
+          alert("배송 완료된 상품을 취소할 수 없습니다.\n고객 센터에 문의해주세요.");
+          break;
+      }
+
+      closeModal();
+      return;
+    }
+
     await fetch(`/api/order/${orderIdToDelete}`, {
       method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("Authorization")}`
+      }
     });
 
     // 삭제 성공

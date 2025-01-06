@@ -5,15 +5,20 @@ import elice.webshopping.domain.user.User;
 import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.exception.order.admin.OrderNotCanceledException;
 import elice.webshopping.exception.order.admin.OrderNotFoundException;
+import elice.webshopping.exception.order.user.InvalidOrderStateException;
 import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
+import elice.webshopping.service.payment.PaymentService;
+import elice.webshopping.service.productOrder.ProductOrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -22,7 +27,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final ReceiverService receiverService;
-    // private final ProductOrderService productOrderService;
 
     @Override
     @Transactional
@@ -69,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderStatus updateOrderStatus(OrderStatusUpdateRequestDto orderStatusUpdateRequestDto) {
-        Order order = getOrderEntityById(orderStatusUpdateRequestDto.orderId());
+        Order order = getOrderEntityByIdIncludeDeletedAtIsNotNull(orderStatusUpdateRequestDto.orderId());
         order.setStatus(orderStatusUpdateRequestDto.orderStatus());
 
         return order.getStatus();
@@ -99,7 +103,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(Long orderId) {
+    @Transactional
+    public void deleteOrderById(Long orderId) {
         /** TODO
          * 역할 필요: ADMIN
          * 직권 취소도 고려해야 함
@@ -110,6 +115,31 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.deleteById(orderId);
         } else {
             throw new OrderNotCanceledException(orderId);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteOrders(User user) {
+        List<Order> orders = orderRepository.findAll()
+                .stream()
+                .filter(order -> order.getUser().equals(user))
+                .toList();
+
+        orders.forEach(this::isInValidStatusToCancel);
+        orders.forEach(order -> orderRepository.deleteById(order.getOrderId()));
+    }
+
+    private void isInValidStatusToCancel(Order order) {
+        Set<OrderStatus> invalidStatusToDelete = Set.of(
+                OrderStatus.PENDING, OrderStatus.ORDERED, OrderStatus.SHIPPING
+        );
+
+        if (invalidStatusToDelete.contains(order.getStatus())) {
+            throw new InvalidOrderStateException(
+                    "진행 중인 주문이 있으면 회원 탈퇴할 수 없습니다.",
+                    HttpStatus.BAD_REQUEST
+            );
         }
     }
 }
