@@ -1,10 +1,8 @@
 package elice.webshopping.service.order;
 
-import elice.webshopping.domain.category.Category;
 import elice.webshopping.domain.order.*;
 import elice.webshopping.domain.payment.Payment;
 import elice.webshopping.domain.product.Product;
-import elice.webshopping.domain.product.ProductImage;
 import elice.webshopping.domain.productOrder.ProductOrder;
 import elice.webshopping.domain.productOrder.ProductOrderRequestDto;
 import elice.webshopping.domain.user.User;
@@ -12,7 +10,6 @@ import elice.webshopping.exception.common.NoContentsException;
 import elice.webshopping.exception.order.admin.OrderNotCanceledException;
 import elice.webshopping.exception.order.user.OrderReadyForShippingException;
 import elice.webshopping.repository.order.OrderRepository;
-import elice.webshopping.repository.product.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -117,14 +114,14 @@ class OrderServiceImplTest {
 
     @Test
     @DisplayName("주문 삭제: 주문 삭제 가능")
-    void shouldBeDeleted_whenDeleteOrder() {
+    void shouldBeDeleted_whenDeleteOrderById() {
 
         // given
         Order order = givenOrder(true, true);
         given(orderRepository.findById(1L)).willReturn(Optional.of(order));
 
         // when
-        orderService.deleteOrder(1L);
+        orderService.deleteOrderById(1L);
 
         // then
         assertThrows(NoContentsException.class, () -> orderService.getOrderEntityById(1L));
@@ -140,7 +137,7 @@ class OrderServiceImplTest {
         given(orderRepository.findById(1L)).willReturn(Optional.of(order));
 
         // when, then
-        assertThrows(OrderNotCanceledException.class, () -> orderService.deleteOrder(1L));
+        assertThrows(OrderNotCanceledException.class, () -> orderService.deleteOrderById(1L));
         verify(orderRepository, times(0)).deleteById(1L);
     }
 

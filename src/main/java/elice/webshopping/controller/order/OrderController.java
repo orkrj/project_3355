@@ -65,7 +65,7 @@ public class OrderController {
 
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> deleteOrderForAdmin(@PathVariable Long orderId) {
-        orderService.deleteOrder(orderId);
+        orderService.deleteOrderById(orderId);
         return ResponseEntity.ok().build();
     }
 }

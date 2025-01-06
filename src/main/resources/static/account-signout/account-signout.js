@@ -112,7 +112,12 @@ async function deleteUserData(e) {
         window.location.href = "/home/home.html"; //홈으로 이동
       }
       else { //삭제 실패
-        alert("회원정보 삭제 과정에서 오류가 발생하였습니다");
+        const {error, errorMessage} = await response.json();
+        if (error === "비즈니스 에러 발생") {
+          alert(errorMessage);
+        } else {
+          alert("회원 탈퇴 중 에러가 발생했습니다.");
+        }
         closeModal();
       }
     }
