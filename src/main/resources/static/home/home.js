@@ -17,7 +17,7 @@ async function loadProducts() {
           <div class="card" id="product-${productId}">
             <div class="card-image">
               <figure class="image is-4by3">
-                <img src="${imageUrl}" alt="${name} 이미지" />
+                <img src="${imageUrl}" alt="${name} 이미지" style="object-fit: cover"/>
               </figure>
             </div>
             <div class="card-content">

@@ -16,15 +16,6 @@
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
   />
-  <!-- 슬라이드 이미지용 css, js -->
-  <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/css/bulma-carousel.min.css"
-  />
-  <script
-          defer
-          src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/js/bulma-carousel.min.js"
-  ></script>
 
   <!-- 폰트 어썸: 아이콘 -->
   <script
@@ -32,9 +23,7 @@
           src="https://kit.fontawesome.com/9daa42bcef.js"
           crossorigin="anonymous"
   ></script>
-  <!-- AWS S3 사진 업로드용 -->
-  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.410.0.min.js"></script>
-<!--  <script src="../api.js"></script>-->
+
   <!-- 커스텀 css, js -->
   <link rel="stylesheet" href="index.css" />
   <script src="index.js" type="module" defer></script>
@@ -45,23 +34,11 @@
 <!-- 헤더 -->
 <div id="navContainer"></div>
 
-<!-- 슬라이드 이미지 -->
 <section class="section">
-  <div class="container is-clipped">
-    <div class="slider-arrow-container">
-      <button class="slider-arrow slider-arrow-left" id="sliderArrowLeft">
-            <span class="icon is-large">
-              <i class="fas fa-chevron-left fa-2x"></i>
-            </span>
-      </button>
-      <button class="slider-arrow slider-arrow-right" id="sliderArrowRight">
-            <span class="icon is-large">
-              <i class="fas fa-chevron-right fa-2x"></i>
-            </span>
-      </button>
+  <div class="container">
+    <div class="columns is-multiline" id="productContainer">
+      <!-- 상품 추가되는 곳 -->
     </div>
-
-    <div id="slider"></div>
   </div>
 </section>
 </body>

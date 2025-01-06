@@ -16,6 +16,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate.jdbc.time_zone: Asia/Seoul
 
   cloud:
     aws:
@@ -36,6 +38,7 @@ spring:
   jackson:
     stream-write-constraints:
       max-nesting-depth: 2000
+    time-zone: Asia/Seoul
 
   jwt:
     secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
