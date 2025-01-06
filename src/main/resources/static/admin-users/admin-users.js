@@ -142,7 +142,10 @@ async function deleteUserData(e) {
   e.preventDefault();
 
     const response = await fetch(`/api/user/adminDelete/${userIdToDelete}`, { //삭제 진행
-      method: "DELETE"
+      method: "DELETE",
+      headers: {
+        "Authorization" : sessionStorage.getItem("Authorization"),
+      }
     });
 
     if(response.ok){
