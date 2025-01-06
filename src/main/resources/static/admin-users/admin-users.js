@@ -75,9 +75,9 @@ async function insertUsers() {
 
   const response = await fetch("/api/user/findAllDto", {
     method: "GET",
-    //credentials : "include",
+    credentials : "include",
     headers: {
-      //"Authorization" : sessionStorage.getItem("Authorization"),
+      "Authorization" : sessionStorage.getItem("Authorization"),
       "Content-Type": "application/json"
     }
   });
