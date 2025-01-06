@@ -12,7 +12,7 @@ import { addToDb, putToDb } from "../indexed-db.js";
 const productMainImageTag = document.querySelector("#productMainImageTag");
 const manufacturerTag = document.querySelector("#manufacturerTag");
 const titleTag = document.querySelector("#titleTag");
-const stockTag = document.querySelector("#stockTag");
+// const stockTag = document.querySelector("#stockTag"); // 재고 수량 기능 구현 시 사용
 const priceTag = document.querySelector("#priceTag");
 const detailDescriptionTag = document.querySelector("#detailDescriptionTag");
 const addToCartButton = document.querySelector("#addToCartButton");
@@ -55,7 +55,7 @@ async function insertProductData() {
   titleTag.innerText = name;
   detailDescriptionTag.innerText = description;
   manufacturerTag.innerText = categoryName;
-  stockTag.innerText = `${stockQuantity}개`;
+  // stockTag.innerText = `${stockQuantity}개`; // 재고 수량 기능 구현 시 사용
   priceTag.innerText = `${addCommas(price)}원`;
 
   const sanitizedDescriptionImageUrls = descriptionImageUrls.map((url) =>
