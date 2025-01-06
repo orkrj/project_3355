@@ -69,11 +69,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderStatus updateOrderStatus(OrderStatusUpdateRequestDto orderStatusUpdateRequestDto) {
-        Order order = getOrderEntityById(orderStatusUpdateRequestDto.orderId());
+        Order order = getOrderEntityByIdIncludeDeletedAtIsNotNull(orderStatusUpdateRequestDto.orderId());
         order.setStatus(orderStatusUpdateRequestDto.orderStatus());
 
         return order.getStatus();
     }
+
 
     @Override
     public Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId) {
