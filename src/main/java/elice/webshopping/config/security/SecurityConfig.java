@@ -9,6 +9,7 @@ import elice.webshopping.service.user.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -78,14 +79,15 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                         .requestMatchers("/login", "/", "/user").permitAll() //추후 추가
-                         //.requestMatchers("/RoleTest").permitAll() //test
-                         .requestMatchers("/logout").authenticated() //test
-                         //.requestMatchers("/adminRoleTest").hasRole("ADMIN") //test
-                         //.requestMatchers("/userRoleTest").hasRole("USER") //test
-                         //.requestMatchers("/test").hasRole("USER")
-                         .requestMatchers("/reissue").permitAll()
-                         .anyRequest().permitAll());
+                        .requestMatchers("/", "/index.css", "/index.js", "/register/**", "/login", "/logout", "/home/*").permitAll()
+                        .requestMatchers("/api/user", "/api/category/findAll", "/api/category/").permitAll()
+                        .requestMatchers("/api/user/findAllDto", "/api/category/create", "/api/category/update", "/api/category/delete/**").hasRole("ADMIN")
+                        .requestMatchers("/api/order/user").hasRole("USER")
+                        .requestMatchers("/api/user/info", "/api/user/update", "/api/user/delete").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.POST, "/api/product").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/product/").hasRole("ADMIN")
+                      //  .requestMatchers(HttpMethod.DELETE, "/api/product/{productId}").hasRole("ADMIN")
+                        .anyRequest().permitAll());
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil, customUserDetailsService), LoginFilter.class);
