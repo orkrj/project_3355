@@ -75,13 +75,16 @@ async function deleteOrderData(e) {
   try {
     const response = await fetch(`/api/order/status/${orderIdToDelete}`, {
       method: "GET",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("Authorization")}`
+      }
     })
 
     console.log(`%cGET 요청: /api/order/status/${orderIdToDelete} `, "color: #a25cd1;");
 
     const result = await response.json();
 
-    if (result !== "PENDING" && result !== "ORDERED") {
+    if (result === "SHIPPING" || result === "DELIVERED") {
       switch (result) {
         case "SHIPPING":
           alert("배송 중인 주문을 취소할 수 없습니다.");
@@ -97,6 +100,9 @@ async function deleteOrderData(e) {
 
     await fetch(`/api/order/${orderIdToDelete}`, {
       method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("Authorization")}`
+      }
     });
 
     // 삭제 성공
