@@ -21,12 +21,23 @@
 /*내가 만든 버튼*/
 .toggle-button { font-size: 15px;  }
 
+/*내가 버튼 동적으로 적용*/
+/*.toggle-state {*/
+/*  margin-left: 10px;*/
+/*}*/
+
+/*.order-status span + .toggle-state {*/
+/*  margin-left: 15px;*/
+/*}*/
+
+
+
 /*내가 만든 검색어 입력 창*/
 #searchInput { width: 300px; /* 원하는 가로 길이로 변경 */ }
 
 /* 주문 리스트 */
 .orders-container {
-  max-width: 1000px !important;
+  max-width: 1200px !important;
   margin: 5rem auto 2rem auto;
 }
 

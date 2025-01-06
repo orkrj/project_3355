@@ -79,6 +79,7 @@ public class OrderServiceImpl implements OrderService {
         return order.getStatus();
     }
 
+
     @Override
     public Order getOrderEntityByIdIncludeDeletedAtIsNotNull(Long orderId) {
         return orderRepository.findById(orderId)
