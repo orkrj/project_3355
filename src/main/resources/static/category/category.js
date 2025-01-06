@@ -250,6 +250,7 @@ async function submitSubCategory(parentId) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${sessionStorage.getItem("Authorization")}`,
             },
             body: JSON.stringify({ parentId, name: childCategoryName }),
         });
@@ -330,7 +331,9 @@ async function deleteCategory(id) {
     if (confirm("정말로 삭제하시겠습니까?")) {
         const response = await fetch(`${BASE_URL}/delete/${id}`, {
             method: "DELETE",
-            Authorization: `Bearer ${sessionStorage.getItem("Authorization")}`,
+            headers: {
+                Authorization: `Bearer ${sessionStorage.getItem("Authorization")}`,
+            },
         });
 
         if (response.ok) {
