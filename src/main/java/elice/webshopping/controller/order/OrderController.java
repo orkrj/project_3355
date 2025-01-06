@@ -59,9 +59,7 @@ public class OrderController {
 
     @PatchMapping("/{orderId}")
     public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
-        log.info("this controller activated {}", orderId);
         orderService.cancelOrder(orderId);
-        log.info("this controller finished {}", orderId);
         return ResponseEntity.ok().build();
     }
 
