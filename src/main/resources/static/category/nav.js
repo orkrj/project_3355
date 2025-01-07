@@ -140,6 +140,13 @@ async function navFunction() {
         navbarEnd.appendChild(logOut);
 
     } else {
+        // 장바구니
+        const basket = document.createElement("a");
+        basket.classList.add("navbar-item", "has-text-weight-semibold");
+        basket.href = `/cart/cart.html`;
+        basket.textContent = "장바구니";
+        navbarEnd.appendChild(basket);
+
         // 비로그인 상태일 때
         const join = document.createElement("a");
         join.classList.add("navbar-item", "has-text-weight-semibold", "has-text-danger");

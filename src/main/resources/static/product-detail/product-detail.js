@@ -80,11 +80,11 @@ async function insertProductData() {
   addToCartButton.addEventListener("click", async () => {
     try {
       //장바구니 추가할 때 로그인되어 있는지 확인하고 아니면 리다이렉트하는 로직
-      const authToken = sessionStorage.getItem("Authorization");
-      if (!authToken) {
-        alert("로그인이 필요합니다.");
-        return; // 함수 종료
-      }
+      // const authToken = sessionStorage.getItem("Authorization");
+      // if (!authToken) {
+      //   alert("로그인이 필요합니다.");
+      //   return; // 함수 종료
+      // }
 
       await insertDb(product, productId);
 
@@ -102,11 +102,11 @@ async function insertProductData() {
   purchaseButton.addEventListener("click", async () => {
     try {
       //로그인되어 있는지 확인하하는 로직
-      const authToken = sessionStorage.getItem("Authorization");
-      if (!authToken) {
-        alert("로그인이 필요합니다.");
-        return; // 함수 종료
-      }
+      // const authToken = sessionStorage.getItem("Authorization");
+      // if (!authToken) {
+      //   alert("로그인이 필요합니다.");
+      //   return; // 함수 종료
+      // }
 
       await insertDb(product, productId);
       window.location.href = "../cart/cart.html";

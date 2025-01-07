@@ -33,7 +33,7 @@ function addAllElements() {
 function addAllEvents() {
   allSelectCheckbox.addEventListener("change", toggleAll);
   partialDeleteLabel.addEventListener("click", deleteSelectedItems);
-  purchaseButton.addEventListener("click", navigate("/order/order.html"));
+  purchaseButton.addEventListener("click", handlePurchaseClick);
 }
 
 
@@ -202,6 +202,17 @@ async function insertProductsfromCart() {
         .querySelector(`#quantityInput-${_id}`)
         .addEventListener("change", () => handleQuantityInput(_id));
   });
+}
+
+function handlePurchaseClick() {
+  const token = sessionStorage.getItem("Authorization");
+
+  if (!token) {
+    alert("로그인이 필요합니다.");
+    window.location.href = "/login/login.html";
+    return;
+  }
+  window.location.href = "/order/order.html";
 }
 
 

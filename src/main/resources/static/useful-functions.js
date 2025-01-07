@@ -104,6 +104,7 @@ export const blockIfLogin = () => {
 // 이벤트 핸들 함수로 쓰면 유용함
 export const navigate = (pathname) => {
   return function () {
+    console.log(`Navigating to: ${pathname}`);
     window.location.href = pathname;
   };
 };
