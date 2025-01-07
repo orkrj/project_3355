@@ -288,7 +288,9 @@ function handlePaginationClick(event) {
 
 // 날짜 포맷 함수
 function formatDate(dateString) {
-  const date = new Date(dateString);
+  const cleanDate = dateString.split(".")[0];
+
+  const date = new Date(cleanDate);
 
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 1을 더해줌
