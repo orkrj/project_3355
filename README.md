@@ -19,7 +19,7 @@
 ## 프로젝트 구성
 [WIREFRAME](https://www.figma.com/design/AoYtSyJMtbzgCgHb7GJrmt/3%ED%8C%80-%EC%82%BC%EC%82%BC%EC%98%A4%EC%98%A4?m=auto&t=0AaQxttZES8KxvNj-6) <br>
 [ERD](https://dbdiagram.io/d/%EC%82%BC%EC%82%BC%EC%98%A4%EC%98%A4-67594ef1e9daa85aca5a7ab5)<br>
-
+[PPT](https://www.canva.com/design/DAGbZo-Cq0M/BCFxDnObRAJLzhpR_Xx3QQ/view?utm_content=DAGbZo-Cq0M&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h0bc2b36b8d)
 
 ## 프로젝트 기능
 
